@@ -1,0 +1,182 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-slide-toggle formControlName="ativo" *ngIf="!editDescricao">
+        Ativo
+    </mat-slide-toggle>
+
+    <mat-form-field *ngIf="!editDescricao">
+        <mat-label>Numeração Sequencial</mat-label>
+        <input matInput #numeracaoSequencial
+               name="numeracaoSequencial"
+               formControlName="numeracaoSequencial">
+        <mat-hint align="end">{{numeracaoSequencial.value.length}} / 255</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!editDescricao">
+        <input matInput placeholder="Documento"
+               formControlName="documento"
+               [matAutocomplete]="documento.autocomplete" required
+               (blur)="checkDocumento()">
+        <cdk-documento-autocomplete
+            #documento="documentoAutocomplete"
+            [control]="form.get('documento')"
+            [pagination]="documentoPagination">
+        </cdk-documento-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showDocumentoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('documento').hasError('formError')">
+            {{form.get('documento').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Descrição</mat-label>
+        <input matInput #descricao
+               name="descricao"
+               formControlName="descricao"
+               maxlength="4000" upperCase minlength="3" maxlength="255" required>
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id && blocoEdit.blocoEditDescricao"
+                (click)="showLogEntryGrid('descricao')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+        <mat-hint align="end">{{descricao.value.length}} / 255</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!editDescricao">
+        <input matInput placeholder="Volume"
+               formControlName="volume"
+               [matAutocomplete]="volume.autocomplete" required
+               (blur)="checkVolume()">
+        <cdk-volume-autocomplete
+            #volume="volumeAutocomplete"
+            [control]="form.get('volume')"
+            [pagination]="volumePagination">
+        </cdk-volume-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showVolumeGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('volume').hasError('formError')">
+            {{form.get('volume').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!editDescricao">
+        <input matInput placeholder="Documento Avulso"
+               formControlName="documentoAvulso"
+               [matAutocomplete]="documentoAvulso.autocomplete" required
+               (blur)="checkDocumentoAvulso()">
+        <cdk-documento-avulso-autocomplete
+            #documentoAvulso="documentoAvulsoAutocomplete"
+            [control]="form.get('documentoAvulso')"
+            [pagination]="documentoAvulsoPagination">
+        </cdk-documento-avulso-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showDocumentoAvulsoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('documentoAvulso').hasError('formError')">
+            {{form.get('documentoAvulso').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!editDescricao">
+        <input matInput placeholder="Atividade"
+               formControlName="atividade"
+               [matAutocomplete]="atividade.autocomplete" required
+               (blur)="checkAtividade()">
+        <cdk-atividade-autocomplete
+            #atividade="atividadeAutocomplete"
+            [control]="form.get('atividade')"
+            [pagination]="atividadePagination">
+        </cdk-atividade-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showAtividadeGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('atividade').hasError('formError')">
+            {{form.get('atividade').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!editDescricao">
+            <input matInput placeholder="Tarefa"
+                   formControlName="tarefa"
+                   [matAutocomplete]="tarefa.autocomplete" required
+                   (blur)="checkTarefa()">
+        <cdk-tarefa-autocomplete
+            #tarefa="tarefaAutocomplete"
+            [control]="form.get('tarefa')"
+            [pagination]="tarefaPagination">
+        </cdk-tarefa-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showTarefaGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('tarefa').hasError('formError')">
+            {{form.get('tarefa').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving && actions.includes('save')">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving && actions.includes('abort')">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-documento-gridsearch
+    *ngIf="activeCard === 'documento-gridsearch'"
+    [pagination]="documentoPagination"
+    (selected)="selectDocumento($event)"
+    (cancel)="cancel()">
+</cdk-documento-gridsearch>
+
+<cdk-volume-gridsearch
+    *ngIf="activeCard === 'volume-gridsearch'"
+    [pagination]="volumePagination"
+    (selected)="selectVolume($event)"
+    (cancel)="cancel()">
+</cdk-volume-gridsearch>
+
+<cdk-documento-avulso-gridsearch
+    *ngIf="activeCard === 'documento-avulso-gridsearch'"
+    [pagination]="documentoAvulsoPagination"
+    (selected)="selectDocumentoAvulso($event)"
+    (cancel)="cancel()">
+</cdk-documento-avulso-gridsearch>
+
+<cdk-atividade-gridsearch
+    *ngIf="activeCard === 'atividade-gridsearch'"
+    [pagination]="atividadePagination"
+    (selected)="selectAtividade($event)"
+    (cancel)="cancel()">
+</cdk-atividade-gridsearch>
+
+<cdk-tarefa-gridsearch
+    *ngIf="activeCard === 'tarefa-gridsearch'"
+    [pagination]="tarefaPagination"
+    (selected)="selectTarefa($event)"
+    (cancel)="cancel()">
+</cdk-tarefa-gridsearch>
+
+<cdk-logentry-gridsearch
+    *ngIf="activeCard === 'logentry-gridsearch'"
+    [pagination]="logEntryPagination"
+    (cancel)="cancel()">
+</cdk-logentry-gridsearch>
+
+
+
+
+
+

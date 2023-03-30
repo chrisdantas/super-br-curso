@@ -1,0 +1,21 @@
+<div class="header">
+    <path icone="class"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="tipos-documentos">
+    </path>
+</div>
+<cdk-tipo-documento-grid
+    [loading]="(loading$ | async)"
+    [tiposDocumentos]="(tipoDocumentos$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [displayedColumns]="['select', 'id', 'nome', 'sigla', 'descricao', 'especieDocumento.nome', 'ativo', 'actions']"
+    [actions]="['edit', 'create', 'showInatived']"
+    (inatived)="inatived($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (create)="create()"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-tipo-documento-grid>

@@ -1,0 +1,33 @@
+<div class="page-layout full-width left-sidebar inner-scroll">
+    <!-- SIDEBAR -->
+    <cdk-sidebar class="sidebar" name="unidades-orgao-central-main-sidebar" position="left" [lockedOpen]="'gt-md'"
+                 *ngIf="showSidebar()">
+        <!-- SIDEBAR CONTENT -->
+        <unidades-orgao-central-main-sidebar [@animate]="{value:'*'}"></unidades-orgao-central-main-sidebar>
+    </cdk-sidebar>
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- CONTENT HEADER -->
+        <div class="header">
+            <div class="sidebar-toggle">
+                <button mat-icon-button
+                        *ngIf="showSidebar()"
+                        (click)="toggleSidebar('unidades-orgao-central-main-sidebar')" fxHide.gt-md>
+                    <mat-icon>menu</mat-icon>
+                </button>
+            </div>
+        </div>
+        <!-- / CONTENT HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content" cdkPerfectScrollbar>
+            <router-outlet></router-outlet>
+        </div>
+        <!-- / CONTENT CARD -->
+
+    </div>
+    <!-- / CENTER -->
+</div>
+

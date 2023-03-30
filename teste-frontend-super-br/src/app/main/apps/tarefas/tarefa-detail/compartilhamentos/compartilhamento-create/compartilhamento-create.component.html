@@ -1,0 +1,12 @@
+<div class="content">
+    <cdk-compartilhamento-form
+        [compartilhamento]="compartilhamento"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [usuarioPagination]="usuarioPagination"
+        [setoresPagination]="setorPagination"
+        [grupoContatoPagination]="grupoContatoPagination"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-compartilhamento-form>
+</div>

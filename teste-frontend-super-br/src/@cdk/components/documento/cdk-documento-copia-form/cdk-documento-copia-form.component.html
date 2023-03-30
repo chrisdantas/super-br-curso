@@ -1,0 +1,43 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="Processo"
+               formControlName="processoOrigem"
+               [matAutocomplete]="processoOrigem.autocomplete" required
+               (blur)="checkProcessoOrigem()">
+        <cdk-processo-autocomplete
+            #processoOrigem="processoAutocomplete"
+            [control]="form.get('processoOrigem')"
+            [pagination]="processoOrigemPagination">
+        </cdk-processo-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showProcessoOrigemGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('processoOrigem').hasError('formError')">
+            {{form.get('processoOrigem').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid || !valid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-processo-gridsearch
+    *ngIf="activeCard === 'processo-destino-gridsearch'"
+    [pagination]="processoOrigemPagination"
+    (selected)="selectProcesso($event)"
+    (cancel)="cancel()">
+</cdk-processo-gridsearch>

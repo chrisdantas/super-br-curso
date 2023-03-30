@@ -1,0 +1,20 @@
+<div class="header">
+    <path icone="view_array"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="templates">
+    </path>
+</div>
+<cdk-template-grid
+    [loading]="(loading$ | async)"
+    [templates]="(templates$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [actions]="['create', 'edit', 'editConteudo', 'showInatived']"
+    (inatived)="inatived($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (create)="create()"
+    (editConteudo)="editConteudo($event)">
+</cdk-template-grid>
+
+<router-outlet></router-outlet>
+

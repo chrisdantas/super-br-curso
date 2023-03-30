@@ -1,0 +1,24 @@
+<div class="header">
+    <path icone="record_voice_over"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="acompanhamentos">
+    </path>
+</div>
+<cdk-acompanhamento-grid
+        [loading]="(loading$ | async)"
+        [acompanhamentos]="(acompanhamentos$ | async)"
+        [arraySearchTypes]="arrayFiltrosEtiquetas"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [actions]="['create', 'edit', 'delete', 'showDeleted', 'view']"
+        [displayedColumns]="['select', 'id', 'processo', 'processo.titulo', 'etiquetas_processo', 'actions']"
+        (reload)="reload($event)"
+        (excluded)="excluded($event)"
+        (edit)="edit($event)"
+        (create)="create()"
+        (delete)="delete($event)"
+        (deleteBloco)="deleteBloco($event)"
+        (view)="view($event)">
+</cdk-acompanhamento-grid>

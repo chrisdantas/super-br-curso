@@ -1,0 +1,10 @@
+upload-bloco {
+    display: flex;
+    flex: 1 1 auto;
+    > .content {
+        display: flex;
+        flex: 1 1 auto;
+        padding: 8px;
+        flex-direction: column;
+    }
+}

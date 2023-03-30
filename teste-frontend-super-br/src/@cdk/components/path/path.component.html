@@ -1,0 +1,7 @@
+<div class="content">
+    <span class="material-icons-outlined mat-icon mat-icon-no-color mr-8">{{icone}}</span>
+    <span *ngFor="let caminho of linkCaminhos; let i = index">
+        <a [routerLink]="[caminho.link]">{{caminho.label}}</a>
+        <span *ngIf="!(i===linkCaminhos.length-1)" class="mr-4 ml-4">/</span>
+    </span>
+</div>

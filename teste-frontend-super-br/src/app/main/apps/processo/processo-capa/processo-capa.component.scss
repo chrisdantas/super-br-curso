@@ -1,0 +1,58 @@
+processo-capa {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+
+    > .header {
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: column;
+        margin: 20px 0 20px 0;
+
+        .title {
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+        }
+    }
+
+    > .content {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        height: 0;
+        overflow-y: auto;
+
+        .linha {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: row;
+        }
+
+        .titulo {
+            display: flex;
+            flex: 1 1 30%;
+            font-weight: 600;
+        }
+
+        .valor {
+            display: flex;
+            flex: 1 1 70%;
+            padding-left: 2px;
+        }
+
+        > mat-card {
+            flex: 1 1 auto;
+            display: flex !important;
+            flex-direction: column;
+            padding: 8px !important;
+            margin: 1px 2px 7px 2px !important;
+
+            .mat-grid-tile .mat-figure {
+                justify-content: left !important;
+            }
+        }
+    }
+}
+

@@ -1,0 +1,45 @@
+processos-main-sidebar  {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+
+    > .header {
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 8px;
+
+        .logo {
+
+            .logo-icon {
+                margin: 0 8px 0 0;
+            }
+
+            .logo-text {
+                font-size: 22px;
+                line-height: 22px;
+            }
+        }
+
+        .logo-nup {
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 8px;
+        }
+    }
+
+    > .content {
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: column;
+        height: 0;
+        overflow-y: auto;
+        margin-top: 8px;
+
+        .nav .nav-subheader {
+            white-space: unset !important;
+        }
+    }
+}

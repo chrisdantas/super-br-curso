@@ -1,0 +1,80 @@
+@import "@cdk/scss/cdk";
+
+ajuda {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    > .header{
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: column;
+        align-self: stretch;
+    }
+
+    > .content {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+        align-self: stretch;
+        > .form {
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        > .campo {
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: column;
+            align-self: stretch;
+        }
+    }
+    > .footer {
+        display: flex;
+        flex: 0 1 auto;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 8px;
+        .options {
+            margin: 0 8px 0 8px;
+        }
+    }
+    .topico-titulo {
+        cursor: pointer;
+        color: #1d75b3;
+    }
+
+    .topico-descricao {
+
+    }
+    section {
+        display: table;
+    }
+
+    .button-row {
+        display: table-cell;
+        width: 400px;
+        height: 20px;
+    }
+
+    .button-row .mat-button-base {
+        margin: 5px 10px 40px 10px;
+        font-size: 10px;
+    }
+
+    .mat-icon-button{
+        padding: 10px;
+        height: 20px;
+        margin-bottom: 5px;
+        line-height: 10px;
+    }
+
+
+    .flex-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+}

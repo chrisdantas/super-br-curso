@@ -1,0 +1,88 @@
+cdk-relatorio-list {
+
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+    > .page-layout {
+
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+
+        > .header {
+
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 8px;
+
+            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+            > .toolbar-separator {
+                height: 32px;
+                width: 1px;
+                margin: 0 12px;
+            }
+
+            > .relatorio-list-control {
+                margin-left: auto;
+            }
+
+            > .botao-novo {
+                margin-left: 15px;
+            }
+        }
+
+        > .content {
+
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            height: 0;
+            overflow-y: auto;
+
+            > .loading-wrapper {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                > .loading {
+                    z-index: 9999;
+                    margin-top: 48px;
+                    display: flex;
+                    position: fixed;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            > .no-relatorios-text {
+                flex: 1 1 auto;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                > .hint-text {
+                    font-size: 13px;
+                    font-weight: 300;
+                }
+            }
+        }
+    }
+}
+
+
+.display-none {
+    display: none !important;
+}
+
+.cdk-white-bg {
+    background: white !important;
+    color: black !important;
+}

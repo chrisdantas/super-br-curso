@@ -1,0 +1,12 @@
+componente-digital-empty {
+    display: flex;
+    flex: 1 1 auto;
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        justify-content: center;
+        align-items: center;
+    }
+}

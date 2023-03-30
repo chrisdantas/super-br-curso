@@ -1,0 +1,51 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+
+        <input matInput placeholder="Nome" formControlName="nome" maxlength="255" required upperCase>
+
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Descrição" formControlName="descricao" maxlength="255" required upperCase>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Modalidade"
+               formControlName="modalidadeFolder"
+               [matAutocomplete]="modalidadefolder.autocomplete"
+               (blur)="checkModalidadeFolder()" required>
+        <cdk-modalidade-folder-autocomplete
+            #modalidadefolder="modalidadeFolderAutocomplete"
+            [control]="form.get('modalidadeFolder')"
+            [pagination]="modalidadeFolderPagination">
+        </cdk-modalidade-folder-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showModalidadeFolderGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('modalidadeFolder').hasError('formError')">
+            {{form.get('modalidadeFolder').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-modalidade-folder-gridsearch
+    *ngIf="activeCard === 'modalidade-folder-gridsearch'"
+    (selected)="selectModalidadeFolder($event)"
+    (cancel)="cancel()">
+</cdk-modalidade-folder-gridsearch>

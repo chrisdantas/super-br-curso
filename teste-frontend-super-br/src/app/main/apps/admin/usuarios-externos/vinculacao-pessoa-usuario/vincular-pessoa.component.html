@@ -1,0 +1,19 @@
+<div class="vincular-content">
+    <div class="header">
+        <div class="actions m-8">
+            <button mat-icon-button
+                    *ngIf="action === 'listar'"
+                    (click)="goBack()"
+                    aria-label="voltar"
+                    matTooltip="Voltar">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content p-8" cdkPerfectScrollbar>
+        <router-outlet></router-outlet>
+    </div>
+    <!-- / CONTENT -->
+</div>

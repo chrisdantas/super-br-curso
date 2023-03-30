@@ -1,0 +1,225 @@
+<div class="header">
+    <mat-icon [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+        search
+    </mat-icon>
+    <span [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}"
+          *ngIf="this.mode === 'list'">Filtro</span>
+</div>
+
+<div class="content" cdkPerfectScrollbar>
+    <form fxLayoutGap="8px" name="form" [formGroup]="form" (keyup.enter)="buscar()">
+
+        <mat-form-field>
+            <mat-label>Nome</mat-label>
+            <input matInput #nome
+                   name="nome"
+                   formControlName="nome"
+                   maxlength="255">
+            <mat-hint align="end">{{nome.value.length}} / 255</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Endereço</mat-label>
+            <input matInput #endereco
+                   name="endereco"
+                   formControlName="endereco"
+                   maxlength="255">
+            <mat-hint align="end">{{endereco.value.length}} / 255</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput #email
+                   name="email"
+                   formControlName="email"
+                   maxlength="255">
+            <mat-hint align="end">{{email.value.length}} / 255</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Sigla</mat-label>
+            <input matInput #sigla
+                   name="sigla"
+                   formControlName="sigla"
+                   maxlength="25">
+            <mat-hint align="end">{{sigla.value.length}} / 25</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Prefixo NUP</mat-label>
+            <input matInput #prefixoNUP
+                   name="prefixoNUP"
+                   formControlName="prefixoNUP"
+                   maxlength="255">
+            <mat-hint align="end">{{prefixoNUP.value.length}} / 255</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Sequencia Inicial do NUP</mat-label>
+            <input matInput #sequenciaInicialNUP
+                   name="sequenciaInicialNUP"
+                   formControlName="sequenciaInicialNUP">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Prazo de Equalização</mat-label>
+            <input matInput #prazoEqualizacao
+                   name="prazoEqualizacao"
+                   formControlName="prazoEqualizacao">
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Unidade"
+                   formControlName="unidade"
+                   [matAutocomplete]="setor.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-setor-autocomplete #setor="setorAutocomplete" [control]="form.get('unidade')">
+            </cdk-setor-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Setor Pai"
+                   formControlName="parent"
+                   [matAutocomplete]="setor.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-setor-autocomplete #setor="setorAutocomplete" [control]="form.get('parent')">
+            </cdk-setor-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Unidade Pai"
+                   formControlName="unidadePai"
+                   [matAutocomplete]="setor.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-setor-autocomplete #setor="setorAutocomplete" [control]="form.get('unidadePai')">
+            </cdk-setor-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Município"
+                   formControlName="municipio"
+                   [matAutocomplete]="municipio.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-municipio-autocomplete #municipio="municipioAutocomplete" [control]="form.get('municipio')">
+            </cdk-municipio-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Genero do Setor"
+                   formControlName="generoSetor"
+                   [matAutocomplete]="generoSetor.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-genero-setor-autocomplete #generoSetor="generoSetorAutocomplete"
+                                           [control]="form.get('generoSetor')">
+            </cdk-genero-setor-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Espécie Setor"
+                   formControlName="especieSetor"
+                   [matAutocomplete]="especieSetor.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-especie-setor-autocomplete #especieSetor="especieSetorAutocomplete"
+                                            [control]="form.get('especieSetor')">
+            </cdk-especie-setor-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Modalidade do Órgão Central"
+                   formControlName="modalidadeOrgaoCentral"
+                   [matAutocomplete]="modalidadeOrgaoCentral.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-modalidade-orgao-central-autocomplete #modalidadeOrgaoCentral="modalidadeOrgaoCentralAutocomplete"
+                                                       [control]="form.get('modalidadeOrgaoCentral')">
+            </cdk-modalidade-orgao-central-autocomplete>
+        </mat-form-field>
+
+        <span class="botao-toggle" *ngIf="hasInatived">
+            Ativo
+            <mat-button-toggle-group class="mat-button-toggle-group-custom" formControlName="ativo">
+                <mat-button-toggle value="true" class="button-toggle-custom">Sim</mat-button-toggle>
+                <mat-button-toggle value="todos" class="button-toggle-custom">Todos</mat-button-toggle>
+                <mat-button-toggle value="false" class="button-toggle-custom">Não</mat-button-toggle>
+            </mat-button-toggle-group>
+        </span>
+
+        <mat-form-field>
+            <input matInput placeholder="Criado Por"
+                   formControlName="criadoPor"
+                   [matAutocomplete]="usuario.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-usuario-autocomplete #usuario="usuarioAutocomplete" [control]="form.get('criadoPor')">
+            </cdk-usuario-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Apagado Por"
+                   formControlName="apagadoPor"
+                   [matAutocomplete]="usuario.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-usuario-autocomplete #usuario="usuarioAutocomplete" [control]="form.get('apagadoPor')">
+            </cdk-usuario-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Atualizado Por"
+                   formControlName="atualizadoPor"
+                   [matAutocomplete]="usuario.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-usuario-autocomplete #usuario="usuarioAutocomplete" [control]="form.get('atualizadoPor')">
+            </cdk-usuario-autocomplete>
+        </mat-form-field>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterCriadoEm?.length}">Criado Em</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroCriadoEm"
+                    [ngClass]="{'filtrado': filterCriadoEm?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroCriadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="true" campo="criadoEm"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraCriadoEm($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterAtualizadoEm?.length}">Atualizado Em</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroAtualizadoEm"
+                    [ngClass]="{'filtrado': filterAtualizadoEm?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroAtualizadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="true" campo="atualizadoEm"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraAtualizadoEm($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterApagadoEm?.length}">Apagado Em</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroApagadoEm"
+                    [ngClass]="{'filtrado': filterApagadoEm?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroApagadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="true" campo="apagadoEm"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraApagadoEm($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+    </form>
+</div>
+
+<div class="footer">
+    <button mat-raised-button color="accent" (click)="buscar()">
+        Buscar
+    </button>
+    <button mat-raised-button color="warn" (click)="limpar()">
+        Limpar
+    </button>
+</div>

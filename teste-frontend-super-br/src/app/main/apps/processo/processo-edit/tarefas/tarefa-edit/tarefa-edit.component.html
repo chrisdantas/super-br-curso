@@ -1,0 +1,13 @@
+<div class="content" cdkPerfectScrollbar>
+    <cdk-tarefa-form
+        [tarefa]="tarefa"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [fromProcesso]="true"
+        [especieTarefaPagination]="especieTarefaPagination"
+        [logEntryPagination]="logEntryPagination"
+        (save)="submit($event)"
+        (saveBloco)="submitLote($event)"
+        (abort)="doAbort()">
+    </cdk-tarefa-form>
+</div>

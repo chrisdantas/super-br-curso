@@ -1,0 +1,17 @@
+<cdk-tramitacao-grid
+        [loading]="(loading$ | async)"
+        [tramitacoes]="(tramitacoes$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [actions]="['create', 'edit', 'delete', 'showDeleted', 'view']"
+        (reload)="reload($event)"
+        (excluded)="excluded($event)"
+        (edit)="edit($event)"
+        (recebimento)="recebimento($event)"
+        (view)="view($event)"
+        (create)="create()"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-tramitacao-grid>

@@ -1,0 +1,16 @@
+<mat-autocomplete (closed)="fechado()" [displayWith]="displaySetorFn">
+    <mat-option [ngClass]="{'multiline':setor.unidade}"
+                *ngFor="let setor of setorList"
+                [value]="setor">
+        <div *ngIf="setor.unidade">{{ setor.unidade.nome | titleCasePipe }}</div>
+        <div [ngClass]="{'strong':setor.unidade}">
+            <span *ngIf="setor.unidade">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+            {{ setor.nome | titleCasePipe }} ({{ setor.sigla}})
+        </div>
+    </mat-option>
+    <mat-option *ngIf="setorListIsLoading">
+        <mat-spinner diameter="16"></mat-spinner>
+    </mat-option>
+</mat-autocomplete>

@@ -1,0 +1,10 @@
+<cdk-genero-tarefa-grid
+        [loading]="loading"
+        [generoTarefas]="generoTarefas"
+        [displayedColumns]="['id', 'nome', 'descricao', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-genero-tarefa-grid>

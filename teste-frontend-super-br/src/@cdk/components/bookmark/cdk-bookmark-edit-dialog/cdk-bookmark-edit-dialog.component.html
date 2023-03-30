@@ -1,0 +1,69 @@
+<h1 mat-dialog-title>
+    <span>
+        <mat-icon>bookmark</mat-icon> Marcação de página para
+        {{ (data.fileName.length > 40) ?
+        (data.fileName | slice:0:40)+'...' :
+        (data.fileName)
+        }}
+    </span>
+</h1>
+
+<form name="form" [formGroup]="form">
+    <div mat-dialog-content class="content">
+        <mat-form-field>
+            <mat-label>Nome</mat-label>
+            <input matInput #nome
+                   name="nome"
+                   formControlName="nome"
+                   maxlength="255"
+                   required upperCase>
+            <mat-hint align="end">{{nome.value.length}} / 255</mat-hint>
+            <mat-error *ngIf="form.get('nome').hasError('formError')">
+                {{form.get('nome').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Página</mat-label>
+            <input matInput #pagina
+                   name="pagina"
+                   formControlName="pagina"
+                   required>
+            <mat-error *ngIf="form.get('pagina').hasError('formError')">
+                {{form.get('pagina').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Descrição</mat-label>
+            <input matInput #descricao
+                   name="descricao"
+                   formControlName="descricao"
+                   maxlength="255" upperCase>
+            <mat-hint align="end">{{descricao.value.length}} / 255</mat-hint>
+            <mat-error *ngIf="form.get('descricao').hasError('formError')">
+                {{form.get('descricao').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+        <mcc-color-picker [overlay]="false" [hideUsedColors]="true"
+                          [hideColorPickerSelector]="true" [hideButtons]="true" (selected)="selectColor($event)">
+            <div class="selected-color mb-8" class="cor" [ngStyle]="{background: this.form.get('corHexadecimal').value}"></div>
+            <mcc-color-picker-collection [colors]="colors" [hideEmpty]="true" [label]="'Cores'" required></mcc-color-picker-collection>
+        </mcc-color-picker>
+    </div>
+
+   <mat-error style="font-size: small;" *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+   <div mat-dialog-actions class="actions" align="end">
+        <button *ngIf="!loading" mat-button mat-dialog-close (click)="onCloseClick()">Fechar</button>
+        <mat-spinner *ngIf="loading" diameter="24"></mat-spinner>
+        <button *ngIf="!loading"
+                mat-raised-button
+                color="accent"
+                (click)="submit()"
+                [disabled] = form.invalid>
+            Salvar
+        </button>
+    </div>
+</form>
+
+
+

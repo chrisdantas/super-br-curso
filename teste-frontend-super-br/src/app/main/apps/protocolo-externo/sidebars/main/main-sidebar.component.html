@@ -1,0 +1,37 @@
+<!-- SIDEBAR HEADER -->
+<div class="header">
+    <div class="logo">
+        <span class="logo-text" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">Processos</span>
+    </div>
+</div>
+<!-- / SIDEBAR HEADER -->
+
+<!-- SIDEBAR CONTENT -->
+<div class="content" cdkPerfectScrollbar>
+
+    <div class="px-24 pt-32 pb-12">
+        <button mat-raised-button
+                class="mat-accent compose-dialog-button w-100-p"
+                (click)="create()"
+                aria-label="Criar">
+            {{ 'PROCESSO.COMPOSE' | translate }}
+        </button>
+    </div>
+
+    <div class="nav material2">
+
+        <div class="nav-subheader">MEUS PROCESSOS</div>
+
+        <div class="nav-item" dndDropzone (dndDrop)="onDrop([$event, null])">
+            <a class="nav-link" matRipple [routerLink]="'/apps/protocolo-externo/meus-processos/entrada'"
+               [routerLinkActive]="['active', 'accent']" (click)="fecharSidebar()">
+                <mat-icon class="nav-link-icon">inbox</mat-icon>
+                <span>Entrada</span>
+            </a>
+        </div>
+
+
+    </div>
+
+</div>
+<!-- / SIDEBAR CONTENT -->

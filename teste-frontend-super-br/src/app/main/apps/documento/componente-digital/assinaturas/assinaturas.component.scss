@@ -1,0 +1,15 @@
+assinaturas {
+    display: flex;
+    flex: 1 1 auto;
+
+    > div:first-of-type {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+
+        > .content {
+            display: flex;
+            flex: 1 1 auto;
+        }
+    }
+}

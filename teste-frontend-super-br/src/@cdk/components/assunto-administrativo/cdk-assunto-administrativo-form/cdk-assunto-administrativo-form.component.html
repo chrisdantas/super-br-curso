@@ -1,0 +1,97 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <mat-label>Nome</mat-label>
+        <input matInput #nome
+               name="nome"
+               formControlName="nome"
+               minLength="3" maxlength="255" upperCase required>
+        <mat-hint align="end">{{nome.value.length}} / 255</mat-hint>
+        <mat-error *ngIf="form.get('nome').hasError('formError')">
+            {{form.get('nome').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Dispositivo Legal</mat-label>
+        <input matInput #dispositivoLegal
+               name="dispositivoLegal"
+               formControlName="dispositivoLegal"
+               maxlength="255" upperCase>
+        <mat-hint align="end">{{dispositivoLegal.value.length}} / 255</mat-hint>
+        <mat-error *ngIf="form.get('dispositivoLegal').hasError('formError')">
+            {{form.get('dispositivoLegal').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Código CNJ</mat-label>
+        <input matInput #codigoCNJ
+               name="codigoCNJ"
+               formControlName="codigoCNJ"
+               minLength="3" maxlength="25" upperCase>
+        <mat-hint align="end">{{codigoCNJ.value.length}} / 25</mat-hint>
+        <mat-error *ngIf="form.get('codigoCNJ').hasError('formError')">
+            {{form.get('codigoCNJ').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Glossário</mat-label>
+        <textarea formControlName="glossario"
+                  matInput #glossario
+                  cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize"
+                  maxlength="255"
+                  cdkAutosizeMinRows="4"
+                  cdkAutosizeMaxRows="10" upperCase></textarea>
+        <mat-hint align="end">{{glossario.value.length}} / 255</mat-hint>
+        <mat-error *ngIf="form.get('glossario').hasError('formError')">
+            {{form.get('glossario').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Assunto Pai"
+               formControlName="parent"
+               [matAutocomplete]="assuntoAdministrativo.autocomplete">
+        <cdk-assunto-administrativo-autocomplete
+            #assuntoAdministrativo="assuntoAdministrativoAutocomplete"
+            [control]="form.get('parent')">
+        </cdk-assunto-administrativo-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showAssuntoAdministrativoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('parent').hasError('formError')">
+            {{form.get('parent').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="ativo">
+        Ativo
+        <mat-error *ngIf="form.get('ativo').hasError('formError')">
+            {{form.get('ativo').errors.formError}}
+        </mat-error>
+    </mat-checkbox>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" [disabled]="form.invalid" *ngIf="!saving" (click)="submit()">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-assunto-administrativo-gridsearch
+    *ngIf="activeCard === 'assunto-administrativo-gridsearch'"
+    [pagination]="assuntoAdministrativoPagination"
+    (selected)="selectAssuntoAdministrativo($event)"
+    (cancel)="cancel()">
+</cdk-assunto-administrativo-gridsearch>

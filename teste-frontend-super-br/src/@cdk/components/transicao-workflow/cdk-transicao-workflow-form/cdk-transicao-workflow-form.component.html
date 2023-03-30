@@ -1,0 +1,81 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="Espécie Atividade Lançada"
+               formControlName="especieAtividade"
+               [matAutocomplete]="especieAtividade.autocomplete">
+        <cdk-especie-atividade-autocomplete
+            [pagination]="especieAtividadePagination"
+            #especieAtividade="especieAtividadeAutocomplete"
+            [control]="form.get('especieAtividade')">
+        </cdk-especie-atividade-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showEspecieAtividadeGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Espécie Tarefa De"
+               formControlName="especieTarefaFrom"
+               [matAutocomplete]="especieTarefaFrom.autocomplete">
+        <cdk-especie-tarefa-autocomplete
+            #especieTarefaFrom="especieTarefaAutocomplete"
+            [control]="form.get('especieTarefaFrom')">
+        </cdk-especie-tarefa-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showEspecieTarefaGrid('from')">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <mat-form-field>
+            <input matInput placeholder="Espécie Tarefa Para"
+                   formControlName="especieTarefaTo"
+                   [matAutocomplete]="especieTarefaTo.autocomplete">
+        <cdk-especie-tarefa-autocomplete
+            #especieTarefaTo="especieTarefaAutocomplete"
+            [control]="form.get('especieTarefaTo')">
+        </cdk-especie-tarefa-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showEspecieTarefaGrid('to')">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-select formControlName="qtdDiasPrazo" placeholder="Prazo Próxima Tarefa">
+            <div *ngFor="let criteria of prazoCriteriaList">
+                <mat-option [value]="criteria.valor">{{ criteria.descricao }}</mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-especie-atividade-gridsearch
+    *ngIf="activeCard === 'especie-atividade-gridsearch'"
+    [pagination]="workflowPagination"
+    (selected)="selectEspecieAtividade($event)"
+    (cancel)="cancel()">
+</cdk-especie-atividade-gridsearch>
+
+<cdk-especie-tarefa-gridsearch
+    *ngIf="activeCard === 'especie-tarefa-gridsearch'"
+    [pagination]="workflowPagination"
+    (selected)="selectEspecieTarefa($event)"
+    (cancel)="cancel()">
+</cdk-especie-tarefa-gridsearch>
+

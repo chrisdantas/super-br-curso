@@ -1,0 +1,16 @@
+modelos {
+    display: flex;
+    flex: 1 1 auto;
+
+    .modelos-content {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+
+        > .content {
+            display: flex;
+            flex: 1 1 auto;
+            overflow-y: auto;
+        }
+    }
+}

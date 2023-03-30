@@ -1,0 +1,21 @@
+<div class="header">
+    <path icone="group"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="assessores">
+    </path>
+</div>
+<cdk-vinculacao-usuario-grid
+        [loading]="(loading$ | async)"
+        [vinculacoesUsuarios]="(vinculacoesUsuarios$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [actions]="['create', 'edit', 'delete', 'showDeleted']"
+        (reload)="reload($event)"
+        (excluded)="excluded($event)"
+        (edit)="edit($event)"
+        (create)="create()"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-vinculacao-usuario-grid>

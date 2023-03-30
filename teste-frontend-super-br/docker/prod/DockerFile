@@ -1,0 +1,40 @@
+# build
+FROM node:18.12.1-alpine AS build
+
+ENV NODE_OPTIONS=--max-old-space-size=12192
+ENV CYPRESS_CACHE_FOLDER=./tmp/Cypress
+
+WORKDIR /var/www/html
+
+COPY package.json /var/www/html/package.json
+
+RUN npm config set unsafe-perm true
+
+RUN apk add python3 make g++
+
+RUN npm install npm@8.19.2 -g
+
+RUN npm install -g @angular/cli@14.2.10
+
+RUN npm install --legacy-peer-deps --package-lock=false
+
+COPY . /var/www/html
+
+COPY docker/pkg/pdf.worker.js /var/www/html/node_modules/ng2-pdfjs-viewer/pdfjs/build/pdf.worker.js
+
+RUN node --max_old_space_size=12192 node_modules/@angular/cli/bin/ng build --configuration production
+
+FROM nginx:stable-alpine
+
+COPY --from=build /var/www/html/docker/prod/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /var/www/html/dist /usr/share/nginx/html
+
+RUN chown -R root:nginx /usr/share/nginx/html/*
+RUN chmod -R 440 /usr/share/nginx/html/*
+RUN find /usr/share/nginx/html/ -mindepth 1 -type d -exec chmod +x {} \;
+
+HEALTHCHECK --interval=5s --timeout=3s CMD curl --fail http://localhost:4200/ || exit
+
+EXPOSE 4200
+
+CMD ["nginx", "-g", "daemon off;"]

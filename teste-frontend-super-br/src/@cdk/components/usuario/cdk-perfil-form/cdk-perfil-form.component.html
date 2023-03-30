@@ -1,0 +1,105 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <ng-container>
+        <div class="image-box-perfil">
+            <img class="img-perfil" [src]="usuario.imgPerfil.conteudo|safeResourceUrl" *ngIf="!!usuario.imgPerfil?.conteudo === true">
+            <img class="img-perfil" src="assets/images/avatars/User.png" *ngIf="!!usuario.imgPerfil?.conteudo === false">
+            <button mat-icon-button (click)="doUploadImagemPerfil()" [ngSwitch]="!!usuario.imgPerfil">
+                <mat-icon *ngSwitchCase="true">mode_edit</mat-icon>
+                <mat-icon *ngSwitchCase="false">photo</mat-icon>
+            </button>
+        </div>
+    </ng-container>
+    <mat-form-field>
+        <mat-label>CPF</mat-label>
+        <input matInput #username
+               name="username"
+               formControlName="username"
+               readonly
+               maxlength="255" upperCase>
+        <mat-hint align="end">{{username.value.length}} / 255</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Nome</mat-label>
+        <input matInput #nome
+               name="nome"
+               formControlName="nome"
+               readonly
+               maxlength="255" upperCase>
+        <mat-hint align="end">{{nome.value.length}} / 255</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput #email
+               name="email"
+               formControlName="email"
+               readonly
+               maxlength="255" upperCase>
+        <mat-hint align="end">{{email.value.length}} / 255</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="usuario.colaborador">
+        <mat-label>Modalidade</mat-label>
+        <input matInput #modalidadeColaborador
+               name="modalidadeColaborador"
+               formControlName="modalidadeColaborador"
+               readonly
+               maxlength="255" upperCase>
+        <mat-hint align="end">{{modalidadeColaborador.value.length}} / 255</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="usuario.colaborador">
+        <mat-label>Cargo</mat-label>
+        <input matInput #cargo
+               name="cargo"
+               formControlName="cargo"
+               readonly
+               maxlength="255" upperCase>
+        <mat-hint align="end">{{cargo.value.length}} / 255</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+            <textarea formControlName="assinaturaHTML"
+                      matInput placeholder="Assinatura" required></textarea>
+        <mat-error *ngIf="form.get('assinaturaHTML').hasError('formError')">
+            {{form.get('assinaturaHTML').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <ng-container>
+        <span class="secondary-text">
+            Chancela
+        </span>
+        <div class="chancela">
+            <div class="image-box-chancela" *ngIf="!!usuario.imgChancela?.id === true">
+                <img class="img-chancela" [src]="usuario.imgChancela.conteudo|safeResourceUrl" >
+                <button mat-icon-button (click)="doUploadImagemChancela()">
+                    <mat-icon>mode_edit</mat-icon>
+                </button>
+            </div>
+            <div class="img-chancela-empty"
+                 (click)="doUploadImagemChancela()"
+                 *ngIf="!!usuario.imgChancela?.id === false">
+                <span>
+                    Clique para adicionar uma imagem de chancela...
+                </span>
+            </div>
+
+        </div>
+    </ng-container>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+       <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>

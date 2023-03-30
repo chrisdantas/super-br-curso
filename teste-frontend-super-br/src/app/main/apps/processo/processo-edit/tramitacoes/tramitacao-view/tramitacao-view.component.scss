@@ -1,0 +1,60 @@
+@import "src/@cdk/scss/cdk";
+
+tramitacao-view {
+
+    > .header {
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+
+        height: 56px !important;
+        min-height: 56px !important;
+        max-height: 56px !important;
+
+        .actions {
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 8px;
+        }
+
+        .tramitacao-navigation {
+            flex: 0 1 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    > .content {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+
+        > .loading {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        > .tramitacao-view-content {
+            flex: 1 1 auto;
+            display: flex;
+            @include mat-elevation(1);
+
+            > iframe {
+                flex: 1 1 auto;
+                display: flex;
+                border: none;
+            }
+        }
+
+    }
+}
+

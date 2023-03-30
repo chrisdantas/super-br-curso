@@ -1,0 +1,144 @@
+<!-- SIDE PANEL -->
+<ng-container *ngIf="!cdkConfig.layout.sidepanel.hidden && cdkConfig.layout.sidepanel.position === 'left'">
+
+    <!-- PANEL CONTENT -->
+
+</ng-container>
+<!-- / SIDE PANEL -->
+
+<div id="main">
+
+    <!-- NOTIFICACOES -->
+    <ng-container>
+        <notification></notification>
+    </ng-container>
+
+    <!-- TOOLBAR: Above -->
+    <ng-container *ngIf="cdkConfig.layout.toolbar.position === 'above'">
+        <ng-container *ngTemplateOutlet="toolbar"></ng-container>
+    </ng-container>
+    <!-- / TOOLBAR: Above -->
+
+    <!-- NAVBAR: Top -->
+    <ng-container>
+        <ng-container *ngTemplateOutlet="topNavbar"></ng-container>
+    </ng-container>
+    <!-- / NAVBAR: Top -->
+
+    <!-- TOOLBAR: Below -->
+    <ng-container *ngIf="cdkConfig.layout.toolbar.position === 'below'">
+        <ng-container *ngTemplateOutlet="toolbar"></ng-container>
+    </ng-container>
+    <!-- / TOOLBAR: Below -->
+
+    <div id="container-1" class="container">
+
+        <!-- NAVBAR: Left -->
+        <ng-container>
+            <ng-container *ngTemplateOutlet="leftNavbar"></ng-container>
+        </ng-container>
+        <!-- / NAVBAR: Left -->
+
+        <div id="container-2" class="container">
+
+            <div id="container-3" class="container" cdkPerfectScrollbar
+                 [cdkPerfectScrollbarOptions]="{suppressScrollX: true, updateOnRouteChange : true}">
+
+                <!-- CONTENT -->
+                <content></content>
+                <!-- / CONTENT -->
+
+                <!-- FOOTER: Below -->
+                <ng-container *ngIf="cdkConfig.layout.footer.position === 'above-static'">
+                    <ng-container *ngTemplateOutlet="footer"></ng-container>
+                </ng-container>
+                <!-- / FOOTER: Below -->
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER: Above -->
+    <ng-container *ngIf="cdkConfig.layout.footer.position === 'above-fixed'">
+        <ng-container *ngTemplateOutlet="footer"></ng-container>
+    </ng-container>
+    <!-- FOOTER: Above -->
+
+</div>
+
+<!-- SIDE PANEL -->
+<ng-container *ngIf="!cdkConfig.layout.sidepanel.hidden && cdkConfig.layout.sidepanel.position === 'right'">
+
+    <!-- PANEL CONTENT -->
+
+</ng-container>
+<!-- / SIDE PANEL -->
+
+<!-- AJUDA PANEL -->
+<cdk-sidebar name="ajudaPanel" position="right" [ngClass]="{'ajuda-panel': !mobileMode, 'ajuda-panel-mobile': mobileMode}">
+    <ajuda-panel></ajuda-panel>
+</cdk-sidebar>
+<!-- / AJUDA PANEL -->
+
+<!-- CHAT PANEL -->
+<cdk-sidebar name="chatPanel" position="right" class="chat-panel" tabindex="-1"
+             [ngClass]="{'chat-open': chatOpen === true}"
+             [folded]="false"
+             [foldedAutoTriggerOnHover]="false"
+             [hidden]="false">
+    <chat-panel tabindex="-1" (toogleChatHandler)="toogleChat($event)">
+    </chat-panel>
+</cdk-sidebar>
+<!-- / CHAT PANEL -->
+
+<!-- QUICK PANEL -->
+<cdk-sidebar name="quickPanel" position="right" class="quick-panel"
+             [folded]="true"
+             lockedOpen="gt-md"
+             [foldedWidth]="56"
+             [foldedAutoTriggerOnHover]="false"
+             [hidden]="false">
+    <quick-panel></quick-panel>
+</cdk-sidebar>
+<!-- / QUICK PANEL -->
+
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- @ PARTIALS                                                                                            -->
+<!-- ----------------------------------------------------------------------------------------------------- -->
+
+<!-- TOOLBAR -->
+<ng-template #toolbar>
+    <toolbar *ngIf="!cdkConfig.layout.toolbar.hidden"
+             [ngClass]="cdkConfig.layout.toolbar.customBackgroundColor === true ? cdkConfig.layout.toolbar.position + ' ' + cdkConfig.layout.toolbar.background : cdkConfig.layout.toolbar.position">
+    </toolbar>
+</ng-template>
+<!-- / TOOLBAR -->
+
+<!-- FOOTER -->
+<ng-template #footer>
+    <footer *ngIf="!cdkConfig.layout.footer.hidden"
+            [ngClass]="cdkConfig.layout.footer.customBackgroundColor === true ? cdkConfig.layout.footer.position + ' ' + cdkConfig.layout.footer.background : cdkConfig.layout.footer.position">
+    </footer>
+</ng-template>
+<!-- / FOOTER -->
+
+<!-- TOP NAVBAR -->
+<ng-template #topNavbar>
+    <navbar variant="horizontal-style-1"
+            class="top-navbar" fxHide fxShow.gt-md
+            *ngIf="!cdkConfig.layout.navbar.hidden">
+    </navbar>
+</ng-template>
+<!-- / TOP NAVBAR -->
+
+<!-- LEFT NAVBAR -->
+<ng-template #leftNavbar>
+    <cdk-sidebar name="navbar" class="navbar-cdk-sidebar"
+                  [folded]="cdkConfig.layout.navbar.folded"
+                  *ngIf="!cdkConfig.layout.navbar.hidden">
+        <navbar [variant]="cdkConfig.layout.navbar.variant" class="left-navbar"></navbar>
+    </cdk-sidebar>
+</ng-template>
+<!-- / LEFT NAVBAR -->

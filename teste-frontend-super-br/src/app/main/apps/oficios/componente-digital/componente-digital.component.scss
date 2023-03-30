@@ -1,0 +1,24 @@
+componente-digital {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    > .header {
+        flex: 0 1 auto;
+        display: flex;
+        border-bottom: 1px solid;
+
+        > .actions {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+        }
+    }
+
+    > .content {
+        flex: 1 1 auto;
+        display: flex;
+    }
+}

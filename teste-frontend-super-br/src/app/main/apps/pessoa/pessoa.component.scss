@@ -1,0 +1,37 @@
+pessoa {
+    > .full-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 100000 !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.5) !important;
+
+        > .modal {
+            height: 95%;
+            width: 98%;
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: column;
+            background: white;
+
+            > .header {
+                flex: 0 1 auto;
+                justify-content: flex-end;
+                align-items: center;
+                display: flex;
+                flex-direction: row;
+                padding: 8px;
+            }
+
+            > .content {
+                flex: 1 1 auto;
+                display: flex;
+            }
+        }
+    }
+}

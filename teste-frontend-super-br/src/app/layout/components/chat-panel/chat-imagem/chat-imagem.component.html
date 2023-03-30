@@ -1,0 +1,9 @@
+<span matBadge="{{mensagensNaoLidas > 99 ? '99+' : mensagensNaoLidas}}" matBadgePosition="above after"
+      matBadgeHidden="{{mensagensNaoLidas === 0}}"
+      matBadgeColor="warn">
+    <img class="avatar" src="assets/images/avatars/User.png"
+         *ngIf="!imagem?.conteudo">
+    <img class="avatar" [src]="imagem.conteudo|safeResourceUrl"
+         *ngIf="!!imagem?.conteudo">
+</span>
+

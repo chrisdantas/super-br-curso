@@ -1,0 +1,10 @@
+<cdk-vinculacao-role-grid
+        [loading]="loading"
+        [vinculacaoRoles]="vinculacaoRoles"
+        [displayedColumns]="['id', 'role', 'usuario.nome', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-vinculacao-role-grid>

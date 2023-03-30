@@ -1,0 +1,26 @@
+<div>
+    <div class="info">
+        <div class="title">
+            <span>{{visibilidade.label}}</span>
+        </div>
+        <div class="body mt-4">
+            <div *ngFor="let poder of visibilidade.poderes">
+                {{poder}}
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+
+        <div class="spinner-container m-8" *ngIf="deleting">
+            <mat-spinner diameter="24"></mat-spinner>
+        </div>
+
+        <button
+            [disabled]="(visibilidade.valor === 'ROLE_USER' && !tipoRelatorio) || ((visibilidade.valor === usuario.username  && total > 1) || (adminCount <= 1  && visibilidade.poderes.includes('ADMINISTRADOR')) && total > 1)"
+            mat-icon-button *ngIf="!deleting" aria-label="remover"
+            (click)="doDelete()">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </div>
+</div>

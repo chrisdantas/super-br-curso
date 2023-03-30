@@ -1,0 +1,13 @@
+<cdk-repositorio-grid
+    [layout]="'vertical'"
+    [loading]="(loading$ | async)"
+    [repositorios]="(repositorios$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [mode]="'search'"
+    [documento]="true"
+    [actions]="['download']"
+    (download)="doDownload($event)"
+    [downloadedId]="(repositorioIdLoaded$ | async)"
+    (reload)="reload($event)"
+    (visualizar)="showConteudo($event)">
+</cdk-repositorio-grid>

@@ -1,0 +1,17 @@
+<div class="header">
+    <path icone="new_releases"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="especie-relevancias">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-especie-relevancia-form
+        [especieRelevancia]="(especieRelevancia$ | async)"
+        [form]="formEspecieRelevancia"
+        [generoRelevanciaPagination]="generoRelevanciaPagination"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        (save)="submitEspecieRelevancia($event)"
+        (abort)="doAbort()">
+    </cdk-especie-relevancia-form>
+</div>

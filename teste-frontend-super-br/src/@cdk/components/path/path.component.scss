@@ -1,0 +1,18 @@
+@import "../../scss/cdk";
+
+path {
+    flex: 1 1 auto;
+    display: flex;
+    > .content {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .mat-icon {
+            font-size: 16px;
+            height: 16px;
+            width: 16px;
+        }
+    }
+}

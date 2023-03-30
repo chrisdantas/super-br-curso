@@ -1,0 +1,135 @@
+<div class="atividade">
+    <div class="warn mb-8" *ngIf="mensagemErro">
+        {{mensagemErro}}
+    </div>
+
+    <div class="upload">
+
+        <button mat-mini-fab
+                class="active accent m-12"
+                [matMenuTriggerFor]="moreMenu" aria-label="Criar Documento"
+                #menuTriggerList="matMenuTrigger"
+                (click)="$event.stopPropagation()">
+            <mat-icon class="secondary-text">attach_file</mat-icon>
+        </button>
+
+        <mat-menu #moreMenu="matMenu">
+            <button mat-menu-item aria-label="upload"
+                    (click)="upload()">
+                <ng-container>
+                    <mat-icon>picture_as_pdf</mat-icon>
+                    <span>Upload</span>
+                </ng-container>
+            </button>
+
+            <button fxLayout="row" aria-label="editor de textos" fxLayoutAlign="start center"
+                    [matMenuTriggerFor]="modeloMenu" mat-menu-item>
+                <mat-icon>create</mat-icon>
+                <span>Editor</span>
+            </button>
+
+            <button mat-menu-item aria-label="upload"
+                    (click)="minutasExcluidas()">
+                <ng-container>
+                    <mat-icon>delete</mat-icon>
+                    <span>Lixeira</span>
+                </ng-container>
+            </button>
+
+            <ng-template #dynamicComponent></ng-template>
+        </mat-menu>
+
+        <mat-menu #modeloMenu="matMenu">
+            <h4 class="p-8">Modelos Individuais e em Branco (Outros na Lupa)</h4>
+            <form class="p-8 mb-8" style="width: 400px !important" fxLayoutGap="8px" fxLayout="column"
+                  fxLayoutAlign="start"
+                  (submit)="doEditor()"
+                  fxFlex="1 0 auto" [formGroup]="formEditor" (click)="$event.stopPropagation()">
+                <mat-form-field fxFlex="100">
+                    <div fxLayout="row" fxLayoutAlign="start center" mat-menu-item>
+                        <input matInput placeholder="Nome ou Id"
+                               formControlName="modelo"
+                               [matAutocomplete]="modelo.autocomplete"
+                               (blur)="checkModelo()">
+                    </div>
+                    <cdk-modelo-autocomplete
+                        #modelo="modeloAutocomplete"
+                        [control]="formEditor.get('modelo')"
+                        [pagination]="modeloPagination">
+                    </cdk-modelo-autocomplete>
+                    <button matSuffix mat-button mat-icon-button type="button"
+                            (click)="$event.stopPropagation(); doVisualizarModelo()" [disabled]="!formEditorValid">
+                        <mat-icon matTooltip="Prévia do modelo">remove_red_eye</mat-icon>
+                    </button>
+                    <button matSuffix mat-button mat-icon-button type="button"
+                            (click)="$event.stopPropagation(); goToModelo()">
+                        <mat-icon matTooltip="Procurar">search</mat-icon>
+                    </button>
+                </mat-form-field>
+                <button mat-raised-button color="accent" type="submit" [disabled]="!formEditorValid">
+                    CRIAR MINUTA
+                </button>
+            </form>
+        </mat-menu>
+
+        <cdk-minutas-atividade-card-list
+                                 [documentos]="minutas"
+                                 [selectedIds]="(selectedIds$ | async)"
+                                 [deletingId]="(deletingDocumentosId$ | async)"
+                                 [assinandoId]="(assinandoDocumentosId$ | async)"
+                                 [alterandoId]="(alterandoDocumentosId$ | async)"
+                                 [removendoAssinaturaId]="(removendoAssinaturaDocumentosId$ | async)"
+                                 [convertendoId]="(convertendoDocumentosId$ | async)"
+                                 [downloadId] ="(downloadP7SDocumentosId$ | async)"
+                                 [disabledSelects]="disabledIds"
+                                 [saving]="(saving$ | async)"
+                                 [loading]="(isLoading$ | async)"
+                                 (delete)="doDelete($event)"
+                                 (deleteBlocoEmmitter)="doDeleteBloco($event)"
+                                 (assinaturaBloco)="doAssinaturaBloco($event)"
+                                 (removeAssinatura)="doRemoveAssinatura($event)"
+                                 (assinatura)="doAssinatura($event)"
+                                 (converte)="doConverte($event)"
+                                 (converteHtml)="doConverteHtml($event)"
+                                 (downloadP7S)="doDownloadP7S($event)"
+                                 (restaurar)="doRestaurar($event)"
+                                 (alterarTipoDocumento)="doAlterarTipoDocumento($event)"
+                                 (clicked)="onClicked($event)"
+                                 (changedSelectedIds)="changedSelectedIds($event)"
+                                 [loadingDocumentosExcluidos]="(loadDocumentosExcluidos$ | async)"
+                                 [lixeiraMinutas]="(lixeiraMinutas$| async)"
+                                 [assinaturaErrors]="(assinaturaErrors$ | async)"
+                                 [assinaturasErrosDocumentosId]="(assinaturaErrosDocumentosId$ | async)"
+                                 [errorsAssinatura]="errorsAssinatura"
+                                 (sairLixeira)="doSairLixeiraMinutas($event)"
+                                 [undeletingId]="(undeletingDocumentosId$ | async)">
+        </cdk-minutas-atividade-card-list>
+        <cdk-componente-digital-card-list class="componente-digital-card"
+                                          #ckdUpload
+                                          [tarefaOrigem]="tarefa"
+                                          (completed)="onComplete()"
+                                          [uploadMode]="'linear'"
+                                          (completedAll)="onCompleteAll()"
+                                          (erroUpload)="erroUpload($event)">
+        </cdk-componente-digital-card-list>
+    </div>
+
+    <cdk-atividade-form
+        [atividade]="atividade"
+        [temMinutas]="!!selectedMinutas.length"
+        [documentoAvulsoVinculado]="(tarefa$ | async)?.processo?.documentoAvulsoOrigem"
+        [especieAtividadePagination]="especieAtividadePagination"
+        [mode]="mode"
+        [form]="form"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [lixeiraMinutas]="(lixeiraMinutas$ | async)"
+        (changeEncerramentoTarefa)="changeEncerramentoTarefa($event)"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-atividade-form>
+
+</div>
+
+<router-outlet></router-outlet>
+

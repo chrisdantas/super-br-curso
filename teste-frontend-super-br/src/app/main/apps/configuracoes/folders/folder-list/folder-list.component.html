@@ -1,0 +1,21 @@
+<div class="header">
+    <path icone="folder"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="pastas">
+    </path>
+</div>
+<cdk-folder-grid
+        [loading]="(loading$ | async)"
+        [folders]="(folders$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [actions]="['create', 'edit', 'delete', 'showDeleted']"
+        (reload)="reload($event)"
+        (excluded)="excluded($event)"
+        (edit)="edit($event)"
+        (create)="create()"
+        (delete)="delete($event)"
+        (deleteBloco)="deleteBloco($event)">
+</cdk-folder-grid>

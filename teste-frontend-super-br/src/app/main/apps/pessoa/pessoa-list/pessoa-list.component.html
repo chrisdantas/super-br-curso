@@ -1,0 +1,20 @@
+<cdk-pessoa-grid
+        [mode]="'search'"
+        [loading]="(loading$ | async)"
+        [pessoas]="(pessoas$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [pageSize]="(pagination$ | async)?.limit"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [actions]="['create', 'edit', 'select']"
+        [displayedColumns]="['id', 'nome', 'numeroDocumentoPrincipal',
+        'pessoaConveniada', 'pessoaValidada', 'actions']"
+        (reload)="reload($event)"
+        (edit)="edit($event)"
+        (create)="create()"
+        (cancel)="cancel()"
+        (selected)="doSelect($event)"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-pessoa-grid>

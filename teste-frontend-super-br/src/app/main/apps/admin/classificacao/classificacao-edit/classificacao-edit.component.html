@@ -1,0 +1,18 @@
+<div class="header">
+    <path icone="low_priority"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="classificacoes">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-classificacao-form
+        [classificacao]="(classificacao$ | async)"
+        [form]="formClassificacao"
+        [logEntryPagination]="logEntryPagination"
+        [classificacaoPagination]="classificacaoPagination"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        (save)="submitClassificacao($event)"
+        (abort)="doAbort()">
+    </cdk-classificacao-form>
+</div>

@@ -1,0 +1,12 @@
+cdk-classificacao-autocomplete {
+
+}
+
+.mat-option {
+    &.multiline {
+        height: 90px !important;
+        .strong {
+            font-weight: bold;
+        }
+    };
+}

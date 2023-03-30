@@ -1,0 +1,13 @@
+<div class="content" cdkPerfectScrollbar>
+    <cdk-interessado-form
+        [interessado]="interessado"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        (gerirPessoa)="gerirPessoa()"
+        (editPessoa)="editPessoa($event)"
+        [pessoa]="pessoa"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-interessado-form>
+</div>
+<router-outlet (activate)="onActivate($event)" (deactivate)="onDeactivate($event)"></router-outlet>

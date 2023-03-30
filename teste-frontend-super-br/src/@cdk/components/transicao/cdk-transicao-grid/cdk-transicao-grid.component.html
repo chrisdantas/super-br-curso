@@ -1,0 +1,255 @@
+<div class="page-layout left-sidebar">
+
+    <!-- SIDEBAR -->
+    <cdk-sidebar name="cdk-transicao-filter" position="left">
+        <cdk-transicao-filter (selected)="setFilter($event)" [mode]="this.mode"></cdk-transicao-filter>
+    </cdk-sidebar>
+    <!-- / SIDEBAR -->
+
+    <div class="responsive-grid" [ngClass]="{'search': (this.mode === 'search')}">
+
+        <div class="actions">
+
+            <div class="back">
+                <button mat-icon-button *ngIf="actions.indexOf('cancel') > -1"
+                        (click)="doCancel()"
+                        aria-label="cancelar"
+                        matTooltip="Cancelar">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <button class="accent" mat-icon-button *ngIf="actions.indexOf('create') > -1"
+                        (click)="doCreate()"
+                        aria-label="novo"
+                        matTooltip="Novo">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+
+            <button mat-icon-button *ngIf="selectedIds.length > 1 && actions.indexOf('delete') > -1"
+                    (click)="deleteBloco(selectedIds)"
+                    aria-label="remover"
+                    matTooltip="Remover">
+                <mat-icon>delete</mat-icon>
+            </button>
+
+            <mat-form-field class="colunas mr-8" aria-label="colunas" matTooltip="Colunas">
+                <mat-select [formControl]="columns" multiple>
+                    <div *ngFor="let column of allColumns">
+                        <mat-option *ngIf="!column.fixed" [value]="column.id">{{ column.label }}</mat-option>
+                    </div>
+                </mat-select>
+            </mat-form-field>
+
+            <button class="refresh" mat-icon-button
+                    (click)="loadPage()"
+                    aria-label="recarregar"
+                    matTooltip="Recarregar">
+                <mat-icon>refresh</mat-icon>
+            </button>
+
+            <button class="toggle-filter" mat-icon-button [ngClass]="{'warn': !(gridFilter | json).includes('{}')}"
+                    (click)="toggleFilter()"
+                    aria-label="filtrar"
+                    matTooltip="Filtrar">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+
+            <button mat-icon-button [ngClass]="{'warn': hasExcluded}" *ngIf="actions.indexOf('showDeleted') > -1"
+                    (click)="loadExcluded()"
+                    aria-label="mostrar apagados"
+                    matTooltip="Mostrar Apagados">
+                <mat-icon>delete_sweep</mat-icon>
+            </button>
+        </div>
+
+        <div class="loading" *ngIf="loading">
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <div class="content" cdkPerfectScrollbar>
+            <table mat-table [dataSource]="dataSource" matSort [ngStyle]="loading ? {'display': 'none'} : {}">
+
+                <!-- Selection Column -->
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (click)="toggleSelectAll($event)"
+                                      [checked]="hasSelected"
+                                      [disabled]="hasExcluded"
+                                      [indeterminate]="isIndeterminate">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let transicao">
+                        <mat-checkbox [checked]="selectedIds.indexOf(transicao.id) > -1"
+                                      (change)="toggleInSelected(transicao.id)"
+                                      (click)="$event.stopPropagation();"
+                                      [disabled]="deletedIds?.indexOf(transicao.id) > -1">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- Id Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Id
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Id: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.id}} </td>
+                </ng-container>
+
+                <!-- Processo Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('processo') > -1" matColumnDef="processo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        NUP
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='NUP: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.processo?.NUP}} </td>
+                </ng-container>
+
+                <!-- ModalidadeTransicao Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('modalidadeTransicao.valor') > -1"
+                              matColumnDef="modalidadeTransicao.valor">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Modalidade da Transição
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile'
+                        data-label='Modalidade da Transicao: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.modalidadeTransicao?.valor | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- Metodo Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('metodo') > -1" matColumnDef="metodo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Método
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Método: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.metodo | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- Edital Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('edital') > -1" matColumnDef="edital">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Edital
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Edital: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.edital | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- Observacao Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('observacao') > -1" matColumnDef="observacao">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Observação
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Observação: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.observacao | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- CriadoPor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('criadoPor.nome') > -1" matColumnDef="criadoPor.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Criado Por
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Criado Por: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.criadoPor?.nome | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- CriadoEm Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('criadoEm') > -1" matColumnDef="criadoEm">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Criado Em
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Criado Em: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.criadoEm?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}} </td>
+                </ng-container>
+
+                <!-- AtualizadoPor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('atualizadoPor.nome') > -1"
+                              matColumnDef="atualizadoPor.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Atualizado Por
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Atualizado Por: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.atualizadoPor?.nome | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- AtualizadoEm Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('atualizadoEm') > -1" matColumnDef="atualizadoEm">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Atualizado Em
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Atualizado Em: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.atualizadoEm?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}} </td>
+                </ng-container>
+
+                <!-- ApagadoPor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('apagadoPor.nome') > -1" matColumnDef="apagadoPor.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Apagado Por
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Apagado Por: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.apagadoPor?.nome | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- ApagadoEm Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('apagadoEm') > -1" matColumnDef="apagadoEm">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Apagado Em
+                    </th>
+                    <td mat-cell *matCellDef="let transicao" class='has_label_on_mobile' data-label='Apagado Em: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(transicao.id) > -1, 'error': getProp(deletingErrors, transicao.id)}"> {{transicao.apagadoEm?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}} </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let transicao">
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('select') > -1 && !hasExcluded"
+                                (click)="selectTransicao(transicao)"
+                                aria-label="selecionar"
+                                matTooltip="Selecionar">
+                            <mat-icon>keyboard_return</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('edit') > -1 && !hasExcluded"
+                                [disabled]="deletedIds?.indexOf(transicao.id) > -1"
+                                (click)="editTransicao(transicao.id)"
+                                aria-label="editar"
+                                matTooltip="Editar">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+
+
+                        <div class="spinner-container m-8" *ngIf="deletingIds?.indexOf(transicao.id) > -1">
+                            <mat-spinner diameter="24"></mat-spinner>
+                        </div>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('delete') > -1 && deletingIds?.indexOf(transicao.id) === -1 && !hasExcluded"
+                                [disabled]="deletedIds?.indexOf(transicao.id) > -1"
+                                (click)="deleteTransicao(transicao.id)"
+                                aria-label="remover"
+                                matTooltip="Remover">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+
+                        <mat-error *ngIf="getProp(deletingErrors, transicao.id)">
+                            {{ getMessageError(getProp(deletingErrors, transicao.id)) }}
+                        </mat-error>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+                <tr mat-row *matRowDef="let transicao; columns: displayedColumns;">
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <mat-paginator [disabled]="loading" [pageSizeOptions]="[10, 25]" showFirstLastButtons="true"></mat-paginator>
+        </div>
+
+    </div>
+
+</div>

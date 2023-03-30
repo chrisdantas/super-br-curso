@@ -1,0 +1,23 @@
+<div class="header">
+    <path icone="edit_location"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="modelos">
+    </path>
+</div>
+<cdk-vinculacao-modelo-grid
+    [loading]="(loading$ | async)"
+    [vinculacaoModelos]="(vinculacoesModelos$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [modalidadeOrgaoCentralPagination]="modalidadeOrgaoCentralPagination"
+    [modeloPagination]="modeloPagination"
+    [actions]="['create', 'delete']"
+    [displayedColumns]="['id', 'modelo.nome', 'especieSetor.nome', 'actions']"
+    (reload)="reload($event)"
+    (create)="create()"
+    (edit)="edit($event)"
+    (delete)="delete($event)"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-vinculacao-modelo-grid>

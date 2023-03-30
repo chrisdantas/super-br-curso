@@ -1,0 +1,21 @@
+<div class="header">
+    <path icone="map"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="{{modulo}}">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-lotacao-form
+        [lotacao]="lotacao"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [usuario]="(usuario$ | async)"
+        [setor]="(setor$ | async)"
+        [setorPagination]="setorPagination"
+        [logEntryPagination]="logEntryPagination"
+        [colaboradorPagination]="colaboradorPagination"
+        [displayedColumnsGridSetor]="['id', 'unidade.nome', 'nome', 'sigla', 'actions']"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-lotacao-form>
+</div>

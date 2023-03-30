@@ -1,0 +1,21 @@
+<div class="header">
+    <path icone="check_box"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="especie-tarefas">
+    </path>
+</div>
+<cdk-especie-tarefa-grid
+    [loading]="(loading$ | async)"
+    [especieTarefas]="(especieTarefas$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [displayedColumns]="['select', 'id', 'nome', 'descricao', 'generoTarefa.nome', 'ativo', 'actions']"
+    [actions]="['edit', 'create', 'showInatived']"
+    (inatived)="inatived($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (create)="create()"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-especie-tarefa-grid>

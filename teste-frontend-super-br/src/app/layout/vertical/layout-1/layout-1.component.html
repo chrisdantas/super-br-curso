@@ -1,0 +1,162 @@
+<!-- SIDE PANEL -->
+<ng-container *ngIf="!cdkConfig.layout.sidepanel.hidden && cdkConfig.layout.sidepanel.position === 'left'">
+
+    <!-- PANEL CONTENT -->
+
+</ng-container>
+<!-- / SIDE PANEL -->
+
+<div id="main">
+
+    <!-- NOTIFICACOES -->
+    <ng-container>
+        <notification></notification>
+    </ng-container>
+
+    <!-- TOOLBAR: Above -->
+    <ng-container *ngIf="cdkConfig.layout.toolbar.position === 'above'">
+        <ng-container *ngTemplateOutlet="toolbar"></ng-container>
+    </ng-container>
+    <!-- / TOOLBAR: Above -->
+
+    <div id="container-1" class="container">
+
+        <!-- NAVBAR: Left -->
+        <ng-container *ngIf="cdkConfig.layout.navbar.position === 'left'">
+            <ng-container *ngTemplateOutlet="leftNavbar"></ng-container>
+        </ng-container>
+        <!-- / NAVBAR: Left -->
+
+        <div id="container-2" class="container">
+
+            <!-- TOOLBAR: Below fixed -->
+            <ng-container *ngIf="cdkConfig.layout.toolbar.position === 'below-fixed'">
+                <ng-container *ngTemplateOutlet="toolbar"></ng-container>
+            </ng-container>
+            <!-- / TOOLBAR: Below fixed -->
+
+            <div id="container-3" class="container" cdkPerfectScrollbar
+                 [cdkPerfectScrollbarOptions]="{suppressScrollX: true, updateOnRouteChange : true}">
+
+                <!-- TOOLBAR: Below static -->
+                <ng-container *ngIf="cdkConfig.layout.toolbar.position === 'below-static'">
+                    <ng-container *ngTemplateOutlet="toolbar"></ng-container>
+                </ng-container>
+                <!-- / TOOLBAR: Below static -->
+
+                <!-- CONTENT -->
+                <content></content>
+                <!-- / CONTENT -->
+
+                <!-- FOOTER: Below static -->
+                <ng-container *ngIf="cdkConfig.layout.footer.position === 'below-static'">
+                    <ng-container *ngTemplateOutlet="footer"></ng-container>
+                </ng-container>
+                <!-- / FOOTER: Below static -->
+
+            </div>
+
+            <!-- FOOTER: Below fixed -->
+            <ng-container *ngIf="cdkConfig.layout.footer.position === 'below-fixed'">
+                <ng-container *ngTemplateOutlet="footer"></ng-container>
+            </ng-container>
+            <!-- / FOOTER: Below fixed -->
+
+        </div>
+
+        <!-- NAVBAR: Right -->
+        <ng-container *ngIf="cdkConfig.layout.navbar.position === 'right'">
+            <ng-container *ngTemplateOutlet="rightNavbar"></ng-container>
+        </ng-container>
+        <!-- / NAVBAR: Right -->
+
+    </div>
+
+    <!-- FOOTER: Above -->
+    <ng-container *ngIf="cdkConfig.layout.footer.position === 'above'">
+        <ng-container *ngTemplateOutlet="footer"></ng-container>
+    </ng-container>
+    <!-- FOOTER: Above -->
+
+</div>
+
+<!-- SIDE PANEL -->
+<ng-container *ngIf="!cdkConfig.layout.sidepanel.hidden && cdkConfig.layout.sidepanel.position === 'right'">
+
+    <!-- PANEL CONTENT -->
+
+</ng-container>
+<!-- / SIDE PANEL -->
+
+<!-- AJUDA PANEL -->
+<cdk-sidebar name="ajudaPanel" position="right"
+             [ngClass]="{'ajuda-panel': !mobileMode, 'ajuda-panel-mobile': mobileMode}"
+             [hidden]="cdkConfig.layout.toolbar.hidden">
+    <ajuda-panel></ajuda-panel>
+</cdk-sidebar>
+<!-- / AJUDA PANEL -->
+
+<!-- CHAT PANEL -->
+<cdk-sidebar name="chatPanel" position="right" class="chat-panel" tabindex="-1"
+             [ngClass]="{'chat-open': chatOpen === true}"
+             [folded]="false"
+             [foldedAutoTriggerOnHover]="false"
+             [hidden]="cdkConfig.layout.toolbar.hidden">
+    <chat-panel tabindex="-1"
+        (toogleChatHandler)="toogleChat($event)">
+    </chat-panel>
+</cdk-sidebar>
+<!-- / CHAT PANEL -->
+
+<!-- QUICK PANEL -->
+<cdk-sidebar name="quickPanel" position="right" class="quick-panel"
+             [folded]="true"
+             lockedOpen="gt-md"
+             [foldedWidth]="56"
+             [foldedAutoTriggerOnHover]="false"
+             [hidden]="cdkConfig.layout.toolbar.hidden">
+    <quick-panel></quick-panel>
+</cdk-sidebar>
+<!-- / QUICK PANEL -->
+
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- @ PARTIALS                                                                                            -->
+<!-- ----------------------------------------------------------------------------------------------------- -->
+
+<!-- TOOLBAR -->
+<ng-template #toolbar>
+    <toolbar *ngIf="!cdkConfig.layout.toolbar.hidden"
+             [ngClass]="cdkConfig.layout.toolbar.customBackgroundColor === true ? cdkConfig.layout.toolbar.position + ' ' + cdkConfig.layout.toolbar.background : cdkConfig.layout.toolbar.position">
+    </toolbar>
+</ng-template>
+<!-- / TOOLBAR -->
+
+<!-- FOOTER -->
+<ng-template #footer>
+    <footer *ngIf="!cdkConfig.layout.footer.hidden"
+            [ngClass]="cdkConfig.layout.footer.customBackgroundColor === true ? cdkConfig.layout.footer.position + ' ' + cdkConfig.layout.footer.background : cdkConfig.layout.footer.position">
+    </footer>
+</ng-template>
+<!-- / FOOTER -->
+
+<!-- LEFT NAVBAR -->
+<ng-template #leftNavbar>
+    <cdk-sidebar name="navbar" class="navbar-cdk-sidebar"
+                 [folded]="cdkConfig.layout.navbar.folded"
+                 lockedOpen="gt-md"
+                 *ngIf="!cdkConfig.layout.navbar.hidden">
+        <navbar [variant]="cdkConfig.layout.navbar.variant" class="left-navbar"></navbar>
+    </cdk-sidebar>
+</ng-template>
+<!-- / LEFT NAVBAR -->
+
+<!-- RIGHT NAVBAR -->
+<ng-template #rightNavbar>
+    <cdk-sidebar name="navbar" position="right" class="navbar-cdk-sidebar"
+                 [folded]="cdkConfig.layout.navbar.folded"
+                 lockedOpen="gt-md"
+                 *ngIf="!cdkConfig.layout.navbar.hidden">
+        <navbar [variant]="cdkConfig.layout.navbar.variant" class="right-navbar"></navbar>
+    </cdk-sidebar>
+</ng-template>
+<!-- / RIGHT NAVBAR -->

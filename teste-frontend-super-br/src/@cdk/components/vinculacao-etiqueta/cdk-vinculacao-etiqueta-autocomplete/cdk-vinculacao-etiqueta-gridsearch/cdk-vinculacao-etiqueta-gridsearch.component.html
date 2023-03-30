@@ -1,0 +1,10 @@
+<cdk-vinculacao-etiqueta-grid
+        [loading]="loading"
+        [vinculacaoEtiquetas]="vinculacaoEtiquetas"
+        [displayedColumns]="['id', 'etiqueta.nome', 'tarefa.especieTarefa.nome', 'documento.tipoDocumento.nome', 'processo', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-vinculacao-etiqueta-grid>

@@ -1,0 +1,94 @@
+<!-- SIDEBAR HEADER -->
+<div class="side-header">
+    <div class="logo">
+        <span class="logo-text ml-8 s-24" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">Eventos</span>
+    </div>
+</div>
+<!-- / SIDEBAR HEADER -->
+
+<!-- SIDEBAR CONTENT -->
+<div class="content" cdkPerfectScrollbar>
+
+    <div class="nav material2">
+
+        <div class="nav-subheader">MEUS EVENTOS</div>
+
+        <div class="nav-item">
+            <a class="nav-link" matRipple [routerLink]="'/apps/calendario/evento/minhas-tarefas/todas'"
+               [routerLinkActive]="['active', 'accent']" (click)="fecharSidebar()">
+                <mat-icon class="nav-link-icon">{{ 'group' }}</mat-icon>
+                <span>Meu Calendário</span>
+            </a>
+        </div>
+
+        <div class="nav-subheader">Compartilhamento</div>
+
+        <div class="nav-item">
+            <a class="nav-link" matRipple [routerLink]="'/apps/calendario/evento/compartilhadas/outros-usuarios'"
+               [routerLinkActive]="['active', 'accent']" (click)="fecharSidebar()">
+                <mat-icon class="nav-link-icon">share</mat-icon>
+                <span>Outros Usuários</span>
+            </a>
+        </div>
+
+        <div *ngIf="setoresCoordenacao.length > 0" class="nav-subheader">COORDENAÇÃO</div>
+
+        <div class="nav-item" *ngFor="let setor of setoresCoordenacao">
+            <a class="nav-link" matRipple [routerLink]="'/apps/calendario/evento/coordenacao/' + setor.id"
+               [routerLinkActive]="['active', 'accent']" (click)="fecharSidebar()">
+                <mat-icon class="nav-link-icon">{{ 'group' }}</mat-icon>
+                <span>{{setor.nome | titleCasePipe}}</span>
+            </a>
+        </div>
+
+        <div *ngIf="usuariosAssessor.length > 0" class="nav-subheader">ASSESSOR</div>
+
+        <div class="nav-item" *ngFor="let usuario of usuariosAssessor">
+            <a class="nav-link" matRipple [routerLink]="'/apps/calendario/evento/assessor/' + usuario.id"
+               [routerLinkActive]="['active', 'accent']" (click)="fecharSidebar()">
+                <mat-icon class="nav-link-icon">{{ 'person' }}</mat-icon>
+                <span>{{usuario.nome | titleCasePipe}}</span>
+            </a>
+        </div>
+
+        <div class="nav-subheader">MINHAS TAREFAS</div>
+
+        <div class="nav-item">
+            <a class="nav-link" matRipple [routerLink]="'/apps/calendario/tarefa/minhas-tarefas/todas'"
+               [routerLinkActive]="['active', 'accent']" (click)="fecharSidebar()">
+                <mat-icon class="nav-link-icon">{{ 'check_box' }}</mat-icon>
+                <span>Tarefas Comuns</span>
+            </a>
+        </div>
+
+    </div>
+</div>
+<!-- / SIDEBAR CONTENT -->
+
+<!-- SIDEBAR FOOT -->
+<div class="footer">
+    <mat-divider></mat-divider>
+    <div class="actions">
+        <mat-toolbar>
+            <button mat-icon-button class="secondary-text" [routerLink]="'/apps/tarefas/administrativo/minhas-tarefas/entrada'"
+                    [state]="{'viewMode': 'list'}"
+                    routerLinkActive="mat-accent" matTooltip="Lista de Tarefas">
+                <mat-icon>check_box</mat-icon>
+            </button>
+            <button mat-icon-button class="secondary-text" [routerLink]="'/apps/tarefas/administrativo/minhas-tarefas/entrada'"
+                    [state]="{'viewMode': 'grid'}"
+                    routerLinkActive="mat-accent" matTooltip="Grid de Tarefas">
+                <mat-icon>view_list</mat-icon>
+            </button>
+            <button disabled mat-icon-button class="secondary-text" routerLink="/apps/calendario/evento/minhas-tarefas/todas"
+                    routerLinkActive="mat-accent" matTooltip="Calendário">
+                <mat-icon>calendar_today</mat-icon>
+            </button>
+            <button mat-icon-button class="secondary-text" [routerLink]="'/apps/board-tarefas/administrativo'"
+                    routerLinkActive="mat-accent" matTooltip="Quadro de Tarefas">
+                <mat-icon>assessment</mat-icon>
+            </button>
+        </mat-toolbar>
+    </div>
+</div>
+<!-- / SIDEBAR FOOT -->

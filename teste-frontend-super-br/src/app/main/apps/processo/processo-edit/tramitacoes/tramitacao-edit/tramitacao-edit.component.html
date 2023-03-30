@@ -1,0 +1,12 @@
+<div class="content" cdkPerfectScrollbar>
+    <cdk-tramitacao-form
+        [tramitacao]="tramitacao"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        (save)="submit($event)"
+        (abort)="doAbort()"
+        [setorOrigemPagination]="setorOrigemPagination"
+        [setorOrigemPaginationTree]="setorOrigemPaginationTree"
+        [setorDestinoPagination]="setorDestinoPagination">
+    </cdk-tramitacao-form>
+</div>

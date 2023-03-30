@@ -1,0 +1,10 @@
+<div class="content" cdkPerfectScrollbar>
+    <cdk-relevancia-form
+        [relevancia]="relevancia"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [especieRelevanciaPagination]="especieRelevanciaPagination"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-relevancia-form>
+</div>

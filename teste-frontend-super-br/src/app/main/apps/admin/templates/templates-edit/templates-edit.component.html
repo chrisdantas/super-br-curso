@@ -1,0 +1,17 @@
+<div class="header">
+    <path icone="view_array"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="templates">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-template-form
+        [template]="template"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [tipoDocumentoPagination]="tipoDocumentoPagination"
+        [modalidadeTemplatePagination]="modalidadeTemplatePagination"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-template-form>
+</div>

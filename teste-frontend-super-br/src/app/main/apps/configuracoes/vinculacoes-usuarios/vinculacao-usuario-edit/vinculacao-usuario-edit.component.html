@@ -1,0 +1,17 @@
+<div class="header">
+    <path icone="group"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="assessores">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-vinculacao-usuario-form
+        [vinculacaoUsuario]="vinculacaoUsuario"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [usuarioVinculadoPagination]="usuarioVinculadoPagination"
+        (save)="submit($event)"
+        [logEntryPagination]="logEntryPagination"
+        (abort)="doAbort()">
+    </cdk-vinculacao-usuario-form>
+</div>

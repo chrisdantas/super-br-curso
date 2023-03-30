@@ -1,0 +1,327 @@
+<div class="header">
+    <mat-icon [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+        search
+    </mat-icon>
+    <span [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">Filtro</span>
+</div>
+
+<div class="content" cdkPerfectScrollbar>
+    <form fxLayoutGap="8px" name="form" [formGroup]="form" (keyup.enter)="buscar()">
+
+        <div class="search-wrapper">
+            <div class="search">
+                <ng-container *ngIf="typeHandle === 'minhas-tarefas'">
+                    Pesquisar em
+                    <mat-button-toggle-group class="mat-button-toggle-group-custom" formControlName="tipoBusca">
+                        <mat-button-toggle value="pastaAtual" [checked]=true class="button-toggle-custom">Pasta atual</mat-button-toggle>
+                        <mat-button-toggle value="todas" class="button-toggle-custom">Todas as pastas</mat-button-toggle>
+                    </mat-button-toggle-group>
+                </ng-container>
+
+                <cdk-search-bar-etiquetas [etiquetas]="etiquetas"
+                                          [entidades]="''"
+                                          [arraySearchTypes]="arrayFiltrosEtiquetas"
+                                          (create)="addEtiqueta($event)"
+                                          (changeFilter)="changeEtiquetaFilter($event)"
+                                          (delete)="deleteEtiqueta($event)">
+                </cdk-search-bar-etiquetas>
+            </div>
+        </div>
+
+        <mat-expansion-panel expanded="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Dados Administrativos
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-form-field>
+                <input matInput placeholder="Processo"
+                       formControlName="processo"
+                       [matAutocomplete]="processo.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-processo-autocomplete #processo="processoAutocomplete" [control]="form.get('processo')">
+                </cdk-processo-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+                <cdk-especie-tarefa-autocomplete-chiplist #especieTarefaChiplist
+                                                          [pagination]="especieTarefaPagination"
+                                                          [selectedEspecieTarefaList]="selectedEspecieTarefaList"
+                                                          (valuesChanged)="updateSelectedEspecieTarefaList($event)"
+                                                          [disableItemFn]="especieTarefaDisabledFn"
+                                                          [displayItemFn]="especieTarefaDisplayItemFn">
+                    <input matInput placeholder="Especie Tarefa"
+                           formControlName="especieTarefa"
+                           #especieTarefa
+                           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                           [matChipInputFor]="especieTarefaChiplist.chipList"
+                           [cdkAutocompleteMultiple]="especieTarefaAutocomplete.autocomplete">
+                </cdk-especie-tarefa-autocomplete-chiplist>
+                <cdk-especie-tarefa-autocomplete-multiple
+                    #especieTarefaAutocomplete="especieTarefaAutocomplete"
+                    [pagination]="especieTarefaPagination"
+                    (valuesChanged)="updateSelectedEspecieTarefaList($event)"
+                    [selectedEspecieTarefaList]="selectedEspecieTarefaList"
+                    [disableItemFn]="especieTarefaDisabledFn"
+                    [displayItemFn]="especieTarefaDisplayItemFn"
+                    [control]="form.get('especieTarefa')">
+                </cdk-especie-tarefa-autocomplete-multiple>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput #interessado
+                       placeholder="Interessado"
+                       name="interessado"
+                       formControlName="interessado">
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Assunto"
+                       formControlName="assunto"
+                       [matAutocomplete]="assunto.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-assunto-administrativo-autocomplete #assunto="assuntoAdministrativoAutocomplete"
+                                                         [control]="form.get('assunto')">
+                </cdk-assunto-administrativo-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Usuário Responsável"
+                       formControlName="usuarioResponsavel"
+                       [matAutocomplete]="usuario.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-usuario-autocomplete #usuario="usuarioAutocomplete"
+                                          [control]="form.get('usuarioResponsavel')">
+                </cdk-usuario-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Unidade Responsável"
+                       formControlName="unidadeResponsavel"
+                       [matAutocomplete]="unidade.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-setor-autocomplete #unidade="setorAutocomplete" [control]="form.get('unidadeResponsavel')"
+                                        [pagination]="unidadeResponsavelPagination">
+                </cdk-setor-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="this.form.get('setorResponsavel').enabled">
+                <input matInput placeholder="Setor Responsável"
+                       formControlName="setorResponsavel"
+                       [matAutocomplete]="setorResponsavel.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-setor-autocomplete #setorResponsavel="setorAutocomplete" [control]="form.get('setorResponsavel')"
+                                        [pagination]="setorResponsavelPagination">
+                </cdk-setor-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Unidade de Origem"
+                       formControlName="unidadeOrigem"
+                       [matAutocomplete]="unidadeOrigem.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-setor-autocomplete #unidadeOrigem="setorAutocomplete" [control]="form.get('unidadeOrigem')"
+                                        [pagination]="unidadeOrigemPagination">
+                </cdk-setor-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="this.form.get('setorOrigem').enabled">
+                <input matInput placeholder="Setor de Origem"
+                       formControlName="setorOrigem"
+                       [matAutocomplete]="setor.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-setor-autocomplete #setor="setorAutocomplete" [control]="form.get('setorOrigem')"
+                                        [pagination]="setorOrigemPagination">
+                </cdk-setor-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Usuário da Conclusão do Prazo"
+                       formControlName="usuarioConclusaoPrazo"
+                       [matAutocomplete]="usuarioConclusao.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-usuario-autocomplete #usuarioConclusao="usuarioAutocomplete"
+                                          [control]="form.get('usuarioResponsavel')">
+                </cdk-usuario-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Relevância"
+                       formControlName="especieRelevancia"
+                       [matAutocomplete]="especieRelevancia.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-especie-relevancia-autocomplete #especieRelevancia="especieRelevanciaAutocomplete"
+                                                     [control]="form.get('especieRelevancia')">
+                </cdk-especie-relevancia-autocomplete>
+            </mat-form-field>
+
+            <div class="filtro-data">
+                <span [ngClass]="{'filtrado': filterDataHoraLeitura?.length}">Data da Leitura</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataHoraLeitura">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroDataHoraLeitura="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="dataHoraLeitura"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraDataHoraLeitura($event)">
+                </cdk-date-filter>
+            </mat-menu>
+
+            <div class="filtro-data">
+                <span [ngClass]="{'filtrado': filterDataHoraDistribuicao?.length}">Data da Distribuição</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataHoraDistribuicao">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroDataHoraDistribuicao="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="dataHoraDistribuicao"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraDataHoraDistribuicao($event)">
+                </cdk-date-filter>
+            </mat-menu>
+
+            <div class="filtro-data">
+                <span [ngClass]="{'filtrado': filterDataHoraInicioPrazo?.length}">Data do Início do Prazo</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataHoraInicioPrazo">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroDataHoraInicioPrazo="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="dataHoraInicioPrazo"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraDataHoraInicioPrazo($event)">
+                </cdk-date-filter>
+            </mat-menu>
+
+            <div class="filtro-data">
+                <span [ngClass]="{'filtrado': filterDataHoraFinalPrazo?.length}">Data do Final do Prazo</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataHoraFinalPrazo">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroDataHoraFinalPrazo="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="dataHoraFinalPrazo"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraDataHoraFinalPrazo($event)">
+                </cdk-date-filter>
+            </mat-menu>
+
+            <div class="filtro-data">
+                <span [ngClass]="{'filtrado': filterDataHoraConclusaoPrazo?.length}">Data da Conclusão do Prazo</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataHoraConclusaoPrazo">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroDataHoraConclusaoPrazo="matMenu" class="menuDatas" [overlapTrigger]="false"
+                      xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="dataHoraConclusaoPrazo"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraDataHoraConclusaoPrazo($event)">
+                </cdk-date-filter>
+            </mat-menu>
+
+            <mat-form-field>
+                <mat-label>Observação</mat-label>
+                <input matInput #observacao
+                       name="observacao"
+                       formControlName="observacao">
+            </mat-form-field>
+
+            Urgente
+            <mat-button-toggle-group class="mat-button-toggle-group-custom" formControlName="urgente">
+                <mat-button-toggle value="true" class="button-toggle-custom">Sim</mat-button-toggle>
+                <mat-button-toggle value="todos" [checked]=true class="button-toggle-custom">Todos</mat-button-toggle>
+                <mat-button-toggle value="false" class="button-toggle-custom">Não</mat-button-toggle>
+            </mat-button-toggle-group>
+
+            Redistribuída
+            <mat-button-toggle-group class="mat-button-toggle-group-custom" formControlName="redistribuida">
+                <mat-button-toggle value="true" class="button-toggle-custom">Sim</mat-button-toggle>
+                <mat-button-toggle value="todos" [checked]=true class="button-toggle-custom">Todos</mat-button-toggle>
+                <mat-button-toggle value="false" class="button-toggle-custom">Não</mat-button-toggle>
+            </mat-button-toggle-group>
+
+            <mat-form-field>
+                <input matInput placeholder="Criado Por"
+                       formControlName="criadoPor"
+                       [matAutocomplete]="usuarioCriadoPor.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-usuario-autocomplete #usuarioCriadoPor="usuarioAutocomplete" [control]="form.get('criadoPor')">
+                </cdk-usuario-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Atualizado Por"
+                       formControlName="atualizadoPor"
+                       [matAutocomplete]="usuarioAtualizadoPor.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-usuario-autocomplete #usuarioAtualizadoPor="usuarioAutocomplete"
+                                          [control]="form.get('atualizadoPor')">
+                </cdk-usuario-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Apagado Por"
+                       formControlName="apagadoPor"
+                       [matAutocomplete]="usuario.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-usuario-autocomplete #usuario="usuarioAutocomplete" [control]="form.get('apagadoPor')">
+                </cdk-usuario-autocomplete>
+            </mat-form-field>
+
+            <div class="filtro-data">
+                <span [ngClass]="{'filtrado': filterCriadoEm?.length}">Criado Em</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroCriadoEm"
+                        [ngClass]="{'filtrado': filterCriadoEm?.length}">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroCriadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="criadoEm"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraCriadoEm($event)">
+                </cdk-date-filter>
+            </mat-menu>
+
+            <div class="filtro-data">
+                <span [ngClass]="{'filtrado': filterAtualizadoEm?.length}">Atualizado Em</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroAtualizadoEm"
+                        [ngClass]="{'filtrado': filterAtualizadoEm?.length}">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroAtualizadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="atualizadoEm"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraAtualizadoEm($event)">
+                </cdk-date-filter>
+            </mat-menu>
+
+            <div class="filtro-data">
+                <span [ngClass]="{'filtrado': filterApagadoEm?.length}">Apagado Em</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroApagadoEm"
+                        [ngClass]="{'filtrado': filterApagadoEm?.length}">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroApagadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="apagadoEm"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraApagadoEm($event)">
+                </cdk-date-filter>
+            </mat-menu>
+        </mat-expansion-panel>
+    </form>
+    <ng-template #dynamicComponent></ng-template>
+
+</div>
+
+<div class="footer">
+    <button mat-raised-button color="accent" (click)="buscar()">
+        Buscar
+    </button>
+    <button mat-raised-button color="warn" (click)="limpar()">
+        Limpar
+    </button>
+</div>

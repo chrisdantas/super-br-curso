@@ -1,0 +1,10 @@
+<div class="content" cdkPerfectScrollbar>
+    <cdk-transicao-form
+        [transicao]="transicao"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [modalidadeTransicaoPagination]="modalidadeTransicaoPagination"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-transicao-form>
+</div>

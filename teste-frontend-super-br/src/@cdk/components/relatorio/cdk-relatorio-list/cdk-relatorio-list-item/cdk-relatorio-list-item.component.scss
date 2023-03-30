@@ -1,0 +1,93 @@
+cdk-relatorio-list-item {
+
+    flex: 0 1 auto;
+    display: flex;
+    padding: 8px 8px 8px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    text-transform: none;
+    cursor: pointer;
+
+    > .content {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        .check {
+            flex: 0 1 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .info {
+
+            word-break: break-word;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+            -moz-hyphens: auto;
+
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+
+            &.nao-lido {
+                font-weight: bold;
+            }
+
+            margin: 0 8px 0 8px;
+
+            .title {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: row;
+                font-size: 15px;
+                font-weight: 600;
+            }
+
+            .subtitle {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: row;
+                font-style: italic;
+                font-size: 12px;
+            }
+
+            .body {
+                margin-top: 6px;
+            }
+
+            .etiquetas {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                margin-top: 8px;
+
+                .etiqueta {
+                    font-size: 11px;
+                    border-radius: 4px;
+                    margin-bottom: 4px;
+                    margin-right: 4px;
+                    padding: 3px 8px;
+
+                    .etiqueta-color {
+                        width: 8px;
+                        height: 8px;
+                        margin-right: 8px;
+                        border-radius: 50%;
+                    }
+                }
+            }
+        }
+
+        .actions {
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+        }
+    }
+}

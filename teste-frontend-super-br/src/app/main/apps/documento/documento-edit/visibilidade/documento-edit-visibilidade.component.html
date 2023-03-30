@@ -1,0 +1,39 @@
+<h3 style="font-weight: bold">Acesso Restrito</h3>
+
+<div class="visibilidade-actions m-8">
+    <button class="accent" mat-icon-button
+            *ngIf="!formAcessoRestrito"
+            (click)="showFormAcessoRestrito()"
+            aria-label="novo"
+            matTooltip="Novo">
+        <mat-icon>add</mat-icon>
+    </button>
+    <button mat-icon-button
+            (click)="showFormAcessoRestrito()"
+            *ngIf="formAcessoRestrito"
+            aria-label="voltar"
+            matTooltip="Voltar">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+</div>
+
+<cdk-visibilidade-form cdkPerfectScrollbar *ngIf="formAcessoRestrito"
+                       [visibilidade]="visibilidade"
+                       [saving]="(visibilidadeIsSaving$ | async)"
+                       [errors]="(errors$ | async)"
+                       [unidadePagination]="unidadePagination"
+                       [actions]="['save']"
+                       [setorPagination]="setorPagination"
+                       [usuarioPagination]="usuarioPagination"
+                       (save)="submitVisibilidade($event)">
+</cdk-visibilidade-form>
+
+<cdk-visibilidade-list class="mr-8" *ngIf="!formAcessoRestrito"
+                       [loading]="(loadingAcessoRestrito$ | async)"
+                       [visibilidades]="(visibilidades$ | async)"
+                       [deletingIds]="(deletingVisibilidadeIds$ | async)"
+                       [deletedIds]="(deletedVisibilidadeIds$ | async)"
+                       [actions]="['delete']"
+                       (delete)="deleteVisibilidade($event)"
+                       (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-visibilidade-list>

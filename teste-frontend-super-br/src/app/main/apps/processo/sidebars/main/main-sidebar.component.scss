@@ -1,0 +1,71 @@
+processo-main-sidebar {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+
+    > .header {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 8px;
+
+        .logo {
+
+            .logo-text {
+                font-size: 22px;
+                line-height: 22px;
+            }
+        }
+
+        .logo-nup {
+            font-size: 12px;
+            line-height: 22px;
+        }
+
+        .logo-subtext {
+            font-size: 12px;
+            line-height: 12px;
+        }
+    }
+
+    > .content {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        height: 0;
+        overflow-y: auto;
+        margin-top: 8px;
+
+        > .nav {
+            > .nav-item {
+                > .children {
+                    overflow: hidden;
+                }
+
+                &.closed {
+                    > .children {
+                        display: none !important;
+                    }
+                }
+                > .nav-link {
+                    > span {
+                        flex: 1 1 auto;
+                        white-space: nowrap;
+                    }
+
+                    .collapsable-arrow {
+                        transition: transform .3s ease-in-out, opacity .25s ease-in-out .1s;
+                        transform: rotate(0);
+                    }
+
+                    &.open {
+                        .collapsable-arrow {
+                            transform: rotate(90deg);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

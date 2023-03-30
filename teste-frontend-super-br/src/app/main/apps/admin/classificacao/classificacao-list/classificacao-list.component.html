@@ -1,0 +1,23 @@
+<div class="header">
+    <path icone="low_priority"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="classificacoes">
+    </path>
+</div>
+<cdk-classificacao-grid
+    [loading]="(loading$ | async)"
+    [_classificacoes]="(classificacoes$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [displayedColumns]="['select', 'id', 'codigo', 'nome', 'modalidadeDestinacao.valor', 'parent.nome', 'ativo', 'permissaoUso', 'actions']"
+    [actions]="['edit', 'create', 'delete', 'showInatived', 'visibility']"
+    (inatived)="inatived($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (visibility)="visibility($event)"
+    (create)="create()"
+    (delete)="delete($event)"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-classificacao-grid>

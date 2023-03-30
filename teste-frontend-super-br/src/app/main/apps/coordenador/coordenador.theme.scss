@@ -1,0 +1,38 @@
+@mixin coordenador-theme($theme) {
+
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+
+    // Coordenador
+    coordenador {
+
+        .logo-text {
+            font-size: 20px;
+        }
+
+        .center {
+
+            .header {
+                height: 30px !important;
+                min-height: 30px !important;
+                max-height: 30px !important;
+
+                .title {
+                    color: white;
+                    font-size: 24px;
+                }
+
+            }
+
+            .content-card {
+
+                .content {
+
+                    background: map-get($background, card);
+                }
+            }
+        }
+    }
+}

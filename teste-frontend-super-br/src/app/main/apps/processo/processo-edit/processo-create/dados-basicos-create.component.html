@@ -1,0 +1,311 @@
+<mat-horizontal-stepper linear="isLinear" #stepper [selectedIndex]="selectedIndex" *ngIf="!mobileMode">
+    <mat-step [completed]="formProcesso.value.id">
+        <ng-template matStepLabel>Dados básicos</ng-template>
+        <cdk-processo-form
+            [form]="formProcesso"
+            [processo]="processo"
+            [configuracaoNupList]="configuracaoNupList"
+            [saving]="(isSavingProcesso$ | async)"
+            [errors]="(errors$ | async)"
+            [especieProcessoPagination]="especieProcessoPagination"
+            [setorAtualPagination]="setorAtualPagination"
+            [_classificacaoPagination]="classificacaoPagination"
+            [colaborador]="_loginService.isGranted('ROLE_COLABORADOR')"
+            [procedencia]="procedencia"
+            [configuracaoNupPagination]="configuracaoNupPagination"
+            [logEntryPagination]="logEntryPagination"
+            [nupIsValid]="nupIsValid"
+            (calcularNup)="calcularNup($event)"
+            (gerirProcedencia)="gerirProcedencia()"
+            (classificacao)="doSelectClassificacao($event)"
+            (editProcedencia)="editProcedencia($event)"
+            (validateNup)="validateNup($event)"
+            (save)="submit($event)"
+            (abort)="abort()">
+        </cdk-processo-form>
+    </mat-step>
+    <mat-step [completed]="(assuntos$ | async)?.length > 0">
+        <ng-template matStepLabel>Assuntos</ng-template>
+        <cdk-assunto-form *ngIf="assuntoActivated === 'form'"
+                          [assunto]="assunto"
+                          [form]="formAssunto"
+                          [assuntoAdministrativoPagination]="assuntoAdministrativoPagination"
+                          [saving]="(isSavingAssunto$ | async)"
+                          [errors]="(errors$ | async)"
+                          (save)="submitAssunto($event)"
+                          (abort)="doAbort()">
+        </cdk-assunto-form>
+
+        <cdk-assunto-grid *ngIf="assuntoActivated === 'grid'"
+                          [loading]="(assuntosLoading$ | async)"
+                          [assuntos]="(assuntos$ | async)"
+                          [total]="(assuntosPagination$ | async)?.total"
+                          [deletingIds]="(assuntosDeletingIds$ | async)"
+                          [deletedIds]="(assuntosDeletedIds$ | async)"
+                          [actions]="['create', 'delete', 'showDeleted']"
+                          (reload)="reloadAssuntos($event)"
+                          (excluded)="excludedAssuntos($event)"
+                          (create)="create('assunto')"
+                          (delete)="deleteAssunto($event)"
+                          (deleteBlocoEmmitter)="deleteBlocoAssunto($event)">
+        </cdk-assunto-grid>
+    </mat-step>
+    <mat-step [completed]="(interessados$ | async)?.length > 0">
+        <ng-template matStepLabel>Interessados</ng-template>
+        <cdk-interessado-form *ngIf="interessadoActivated === 'form'"
+                              [interessado]="interessado"
+                              [form]="formInteressado"
+                              [saving]="(isSavingInteressado$ | async)"
+                              [errors]="(errors$ | async)"
+                              (save)="submitInteressado($event)"
+                              (abort)="doAbort()"
+                              [pessoa]="pessoa"
+                              (editPessoa)="editPessoa($event)"
+                              (gerirPessoa)="gerirPessoa()">
+        </cdk-interessado-form>
+
+        <cdk-interessado-grid *ngIf="interessadoActivated === 'grid'"
+                              [loading]="(interessadosLoading$ | async)"
+                              [interessados]="(interessados$ | async)"
+                              [total]="(interessadosPagination$ | async)?.total"
+                              [deletingIds]="(interessadosDeletingIds$ | async)"
+                              [deletedIds]="(interessadosDeletedIds$ | async)"
+                              [actions]="['create', 'delete', 'showDeleted']"
+                              (reload)="reloadInteressados($event)"
+                              (excluded)="excludedInteressados($event)"
+                              (create)="create('interessado')"
+                              (delete)="deleteInteressado($event)"
+                              (deleteBlocoEmmitter)="deleteBlocoInteressado($event)">
+        </cdk-interessado-grid>
+    </mat-step>
+    <mat-step optional>
+        <ng-template matStepLabel>Documentos</ng-template>
+        <div fxFlex fxLayout="column">
+            <div fxLayout="row" class="mt-8">
+                <button mat-mini-fab
+                        class="active accent mt-4 mb-8 ml-8 mr-8"
+                        (click)="upload()">
+                    <mat-icon class="secondary-text">attach_file</mat-icon>
+                </button>
+
+                <cdk-componente-digital-card-list #ckdUpload
+                                                  [processoOrigem]="processo"
+                                                  [uploadMode]="'linear'"
+                                                  (completed)="onCompleteJuntada()">
+                </cdk-componente-digital-card-list>
+            </div>
+
+            <cdk-juntada-grid
+                [displayedColumns]="['id', 'numeracaoSequencial', 'descricao', 'documento.tipoDocumento.nome', 'actions']"
+                [loading]="(juntadasLoading$ | async)"
+                [juntadas]="(juntadas$ | async)"
+                [total]="(juntadasPagination$ | async)?.total"
+                [actions]="['edit', 'assinar', 'desentranharJuntada']"
+                [assinandoId]="(assinandoDocumentosId$ | async)"
+                [desentranhadoId]="(desentranhadoJuntadasId$ | async)"
+                [deletingIds]="(desentranhandoJuntadasId$ | async)"
+                (reload)="reloadJuntadas($event)"
+                (excluded)="excludedJuntadas($event)"
+                (desentranharJuntada)="desentranhar($event)"
+                (edit)="editar($event)"
+                (assinar)="assinar($event)">
+            </cdk-juntada-grid>
+        </div>
+    </mat-step>
+    <mat-step optional>
+        <ng-template matStepLabel>Vinculações</ng-template>
+        <cdk-vinculacao-processo-form *ngIf="vinculacaoProcessoActivated === 'form'"
+                                      [vinculacaoProcesso]="vinculacaoProcesso"
+                                      [processoVinculadoPagination]="processoVinculadoPagination"
+                                      [form]="formVinculacaoProcesso"
+                                      [saving]="(isSavingVinculacao$ | async)"
+                                      [errors]="(errorsVinculacoes$ | async)"
+                                      (save)="submitVinculacaoProcesso($event)"
+                                      (abort)="doAbort()">
+        </cdk-vinculacao-processo-form>
+
+        <cdk-vinculacao-processo-grid *ngIf="vinculacaoProcessoActivated === 'grid'"
+                                      [loading]="(vinculacoesProcessosLoading$ | async)"
+                                      [vinculacoesProcessos]="(vinculacoesProcessos$ | async)"
+                                      [total]="(vinculacoesProcessosPagination$ | async)?.total"
+                                      [deletingIds]="(vinculacoesProcessosDeletingIds$ | async)"
+                                      [deletedIds]="(vinculacoesProcessosDeletedIds$ | async)"
+                                      [actions]="['create', 'delete']"
+                                      (reload)="reloadVinculacoesProcessos($event)"
+                                      (excluded)="excludedVinculacoesProcessos($event)"
+                                      (create)="create('vinculacao-processo')"
+                                      (delete)="deleteVinculacaoProcesso($event)"
+                                      (deleteBlocoEmmitter)="deleteBlocoVinculacaoProcesso($event)">
+        </cdk-vinculacao-processo-grid>
+    </mat-step>
+    <mat-step [stepControl]="formTarefa">
+        <ng-template matStepLabel>Distribuição</ng-template>
+        <cdk-tarefa-form
+            [form]="formTarefa"
+            [tarefa]="tarefa"
+            [saving]="(isSavingTarefa$ | async)"
+            [errors]="(errorsTarefa$ | async)"
+            [fromProcesso]="true"
+            [especieTarefaPagination]="especieTarefaPagination"
+            [setorOrigemPagination]="setorOrigemPagination"
+            [logEntryPagination]="logEntryPagination"
+            (save)="submitTarefa($event)"
+            (saveBloco)="submitLote($event)"
+            (abort)="doAbort()">
+        </cdk-tarefa-form>
+    </mat-step>
+</mat-horizontal-stepper>
+
+<mat-vertical-stepper linear="isLinear" #stepper [selectedIndex]="selectedIndex" *ngIf="mobileMode">
+    <mat-step [completed]="formProcesso.value.id">
+        <ng-template matStepLabel>Dados básicos</ng-template>
+        <cdk-processo-form
+            [form]="formProcesso"
+            [processo]="processo"
+            [saving]="(isSavingProcesso$ | async)"
+            [errors]="(errors$ | async)"
+            [especieProcessoPagination]="especieProcessoPagination"
+            [setorAtualPagination]="setorAtualPagination"
+            [_classificacaoPagination]="classificacaoPagination"
+            [colaborador]="_loginService.isGranted('ROLE_COLABORADOR')"
+            [procedencia]="procedencia"
+            [logEntryPagination]="logEntryPagination"
+            [configuracaoNupList]="configuracaoNupList"
+            [nupIsValid] = "nupIsValid"
+            (gerirProcedencia)="gerirProcedencia()"
+            (editProcedencia)="editProcedencia($event)"
+            (validateNup)="validateNup($event)"
+            (calcularNup)="calcularNup($event)"
+            (save)="submit($event)">
+        </cdk-processo-form>
+    </mat-step>
+    <mat-step [completed]="(assuntos$ | async)?.length > 0">
+        <ng-template matStepLabel>Assuntos</ng-template>
+        <cdk-assunto-form *ngIf="assuntoActivated === 'form'"
+                          [assunto]="assunto"
+                          [form]="formAssunto"
+                          [saving]="(isSavingAssunto$ | async)"
+                          [errors]="(errors$ | async)"
+                          (save)="submitAssunto($event)"
+                          (abort)="doAbort()">
+        </cdk-assunto-form>
+
+        <cdk-assunto-grid *ngIf="assuntoActivated === 'grid'"
+                          [loading]="(assuntosLoading$ | async)"
+                          [assuntos]="(assuntos$ | async)"
+                          [total]="(assuntosPagination$ | async)?.total"
+                          [deletingIds]="(assuntosDeletingIds$ | async)"
+                          [deletedIds]="(assuntosDeletedIds$ | async)"
+                          [actions]="['create', 'delete', 'showDeleted']"
+                          (reload)="reloadAssuntos($event)"
+                          (excluded)="excludedAssuntos($event)"
+                          (create)="create('assunto')"
+                          (delete)="deleteAssunto($event)"
+                          (deleteBlocoEmmitter)="deleteBlocoAssunto($event)">
+        </cdk-assunto-grid>
+    </mat-step>
+    <mat-step [completed]="(interessados$ | async)?.length > 0">
+        <ng-template matStepLabel>Interessados</ng-template>
+        <cdk-interessado-form *ngIf="interessadoActivated === 'form'"
+                              [interessado]="interessado"
+                              [form]="formInteressado"
+                              [saving]="(isSavingInteressado$ | async)"
+                              [errors]="(errors$ | async)"
+                              (save)="submitInteressado($event)"
+                              (abort)="doAbort()"
+                              [pessoa]="pessoa"
+                              (editPessoa)="editPessoa($event)"
+                              (gerirPessoa)="gerirPessoa()">
+        </cdk-interessado-form>
+
+        <cdk-interessado-grid *ngIf="interessadoActivated === 'grid'"
+                              [loading]="(interessadosLoading$ | async)"
+                              [interessados]="(interessados$ | async)"
+                              [total]="(interessadosPagination$ | async)?.total"
+                              [deletingIds]="(interessadosDeletingIds$ | async)"
+                              [deletedIds]="(interessadosDeletedIds$ | async)"
+                              [actions]="['create', 'delete', 'showDeleted']"
+                              (reload)="reloadInteressados($event)"
+                              (excluded)="excludedInteressados($event)"
+                              (create)="create('interessado')"
+                              (delete)="deleteInteressado($event)"
+                              (deleteBlocoEmmitter)="deleteBlocoInteressado($event)">
+        </cdk-interessado-grid>
+    </mat-step>
+    <mat-step optional>
+        <ng-template matStepLabel>Documentos</ng-template>
+        <div fxFlex fxLayout="column">
+            <div fxLayout="row" class="mt-8">
+                <button mat-mini-fab
+                        class="m-4 active accent"
+                        (click)="upload()">
+                    <mat-icon class="secondary-text">attach_file</mat-icon>
+                </button>
+
+                <cdk-componente-digital-card-list #ckdUpload
+                                                  [processoOrigem]="processo"
+                                                  [uploadMode]="'linear'"
+                                                  (completed)="onCompleteJuntada()">
+                </cdk-componente-digital-card-list>
+            </div>
+
+            <cdk-juntada-grid
+                [displayedColumns]="['id', 'numeracaoSequencial', 'descricao', 'documento.tipoDocumento.nome', 'actions']"
+                [loading]="(juntadasLoading$ | async)"
+                [juntadas]="(juntadas$ | async)"
+                [total]="(juntadasPagination$ | async)?.total"
+                [actions]="['edit', 'assinar', 'desentranharJuntada']"
+                [assinandoId]="(assinandoDocumentosId$ | async)"
+                [desentranhadoId]="(desentranhadoJuntadasId$ | async)"
+                [deletingIds]="(desentranhandoJuntadasId$ | async)"
+                (reload)="reloadJuntadas($event)"
+                (excluded)="excludedJuntadas($event)"
+                (edit)="editar($event)"
+                (desentranharJuntada)="desentranhar($event)"
+                (assinar)="assinar($event)">
+            </cdk-juntada-grid>
+        </div>
+    </mat-step>
+    <mat-step optional>
+        <ng-template matStepLabel>Vinculações</ng-template>
+        <cdk-vinculacao-processo-form *ngIf="vinculacaoProcessoActivated === 'form'"
+                                      [vinculacaoProcesso]="vinculacaoProcesso"
+                                      [form]="formVinculacaoProcesso"
+                                      [saving]="(isSavingVinculacao$ | async)"
+                                      [errors]="(errors$ | async)"
+                                      (save)="submitVinculacaoProcesso($event)"
+                                      (abort)="doAbort()">
+        </cdk-vinculacao-processo-form>
+
+        <cdk-vinculacao-processo-grid *ngIf="vinculacaoProcessoActivated === 'grid'"
+                                      [loading]="(vinculacoesProcessosLoading$ | async)"
+                                      [vinculacoesProcessos]="(vinculacoesProcessos$ | async)"
+                                      [total]="(vinculacoesProcessosPagination$ | async)?.total"
+                                      [deletingIds]="(vinculacoesProcessosDeletingIds$ | async)"
+                                      [deletedIds]="(vinculacoesProcessosDeletedIds$ | async)"
+                                      [actions]="['create', 'delete', 'showDeleted']"
+                                      (reload)="reloadVinculacoesProcessos($event)"
+                                      (excluded)="excludedVinculacoesProcessos($event)"
+                                      (create)="create('vinculacao-processo')"
+                                      (delete)="deleteVinculacaoProcesso($event)"
+                                      (deleteBlocoEmmitter)="deleteBlocoVinculacaoProcesso($event)">
+        </cdk-vinculacao-processo-grid>
+    </mat-step>
+    <mat-step [stepControl]="formTarefa">
+        <ng-template matStepLabel>Distribuição</ng-template>
+        <cdk-tarefa-form
+            [form]="formTarefa"
+            [tarefa]="tarefa"
+            [saving]="(isSavingTarefa$ | async)"
+            [errors]="(errorsTarefa$ | async)"
+            [fromProcesso]="true"
+            [especieTarefaPagination]="especieTarefaPagination"
+            [setorOrigemPagination]="setorOrigemPagination"
+            [logEntryPagination]="logEntryPagination"
+            (save)="submitTarefa($event)"
+            (abort)="doAbort()">
+        </cdk-tarefa-form>
+    </mat-step>
+</mat-vertical-stepper>
+
+<router-outlet (activate)="onActivate($event)" (deactivate)="onDeactivate($event)"></router-outlet>

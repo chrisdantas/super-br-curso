@@ -1,0 +1,20 @@
+<div class="header">
+    <path icone="supervisor_account"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="avisos">
+    </path>
+</div>
+<cdk-aviso-grid
+    [loading]="(loading$ | async)"
+    [avisos]="(avisos$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [actions]="['edit', 'create', 'delete', 'showInatived']"
+    (inatived)="inatived($event)"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (create)="create()"
+    (delete)="delete($event)"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-aviso-grid>

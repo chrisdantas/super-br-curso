@@ -1,0 +1,113 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="CPF"
+               formControlName="username"
+               [readonly]="!!usuario"
+               [matAutocomplete]="usuarioAutocomplete.autocomplete"
+               oninput="this.value=this.value.replace(/\D/g,'')">
+        <cdk-usuario-autocomplete
+            #usuarioAutocomplete="usuarioAutocomplete"
+            [control]="form.get('username')"
+            [pagination]="usuarioPagination"
+            [exibirUsername]="true"
+            (usuarioListIsLoadingEmit)="usuarioAutocompleteLoading($event)">
+        </cdk-usuario-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                [disabled]="!!usuario"
+                (click)="showUsuarioGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="(form.get('username').invalid && (form.get('username').dirty || form.get('username').touched )) || form.get('username').hasError('formError')">
+            <div *ngIf="form.get('username').hasError('formError')">
+                {{form.get('username').errors.formError}}
+            </div>
+            <div *ngIf="form.get('username').errors?.['required']">
+                CPF é Obrigatório
+            </div>
+            <div *ngIf="form.get('username').errors?.['minlength']|| form.get('username').errors?.['maxlength']">
+                CPF deve ter 11 caracteres
+            </div>
+        </mat-error>
+    </mat-form-field>
+
+    <ng-template
+        [ngIf]="(isCarregadoAutocomplete && isCpfValido) || (usuario && usuario.username && usuario.username.length===11)">
+        <mat-form-field>
+            <mat-label>Nome</mat-label>
+            <input matInput #nome
+                   name="nome"
+                   formControlName="nome" required
+                   maxlength="255" upperCase>
+            <mat-hint align="end">{{nome.value.length}} / 255</mat-hint>
+            <mat-error *ngIf="form.get('nome').hasError('formError')">
+                {{form.get('nome').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput #email
+                   name="email"
+                   formControlName="email" required
+                   maxlength="255">
+            <mat-hint align="end">{{email.value.length}} / 255</mat-hint>
+            <mat-error>
+                <ng-container *ngIf="form.get('email').invalid && (form.get('email').dirty
+                || form.get('email').touched )">
+                    <div *ngIf="form.get('email').errors?.['email']">
+                        Email inválido
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="form.get('email').hasError('formError')">
+                    {{form.get('email').errors.formError}}
+                </ng-container>
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="usuario && usuario.id">
+            <mat-label>Nível de Acesso</mat-label>
+            <input matInput #nivelAcesso
+                   name="nivelAcesso"
+                   formControlName="nivelAcesso"
+                   type="number"
+                   max="4"
+                   maxlength="2">
+            <mat-error *ngIf="form.get('nivelAcesso').hasError('formError')">
+                {{form.get('nivelAcesso').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="enabled"
+                      class="mr-8 mb-8" fxFlex="0 1 auto">
+            Ativo
+        </mat-checkbox>
+
+        <mat-checkbox formControlName="validado" *ngIf="usuarioExterno"
+                      class="mr-8 mb-8" fxFlex="0 1 auto">
+            Validado
+        </mat-checkbox>
+    </ng-template>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <ng-template [ngIf]="(isCarregadoAutocomplete && isCpfValido) || (usuario && usuario.id)">
+        <div class="actions">
+            <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid"
+                    *ngIf="!saving">
+                SALVAR
+            </button>
+            <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+                CANCELAR
+            </button>
+            <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+        </div>
+    </ng-template>
+</form>
+
+<cdk-usuario-gridsearch
+    *ngIf="activeCard === 'usuario-gridsearch'"
+    [pagination]="usuarioPagination"
+    (selected)="selectUsuario($event)"
+    (cancel)="cancel()">
+</cdk-usuario-gridsearch>

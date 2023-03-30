@@ -1,0 +1,91 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="Nome" formControlName="nome" required maxlength="255" upperCase>
+        <mat-error *ngIf="form.get('nome').hasError('minlength')">O campo deve ter no mínimo 3 caracteres!
+        </mat-error>
+        <mat-error *ngIf="form.get('nome').hasError('formError')">
+            {{form.get('nome').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Descrição" formControlName="descricao" maxlength="255" required upperCase>
+        <mat-error *ngIf="form.get('descricao').hasError('minlength')">O campo deve ter no mínimo 3 caracteres!
+        </mat-error>
+        <mat-error *ngIf="form.get('descricao').hasError('formError')">
+            {{form.get('descricao').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Modalidade Template"
+               formControlName="modalidadeTemplate"
+               [matAutocomplete]="modalidadeTemplate.autocomplete"
+               (blur)="checkModalidadeTemplate()" required>
+        <cdk-modalidade-template-autocomplete
+            #modalidadeTemplate="modalidadeTemplateAutocomplete"
+            [control]="form.get('modalidadeTemplate')"
+            [pagination]="modalidadeTemplatePagination">
+        </cdk-modalidade-template-autocomplete>
+
+        <button matSuffix mat-button mat-icon-button
+                (click)="showModalidadeTemplateGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('modalidadeTemplate').hasError('formError')">
+            {{form.get('modalidadeTemplate').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Tipo Documento"
+               formControlName="tipoDocumento"
+               [matAutocomplete]="tipoDocumento.autocomplete"
+               (blur)="checkTipoDocumento()" required>
+        <cdk-tipo-documento-autocomplete
+            #tipoDocumento="tipoDocumentoAutocomplete"
+            [control]="form.get('tipoDocumento')"
+            [pagination]="tipoDocumentoPagination">
+        </cdk-tipo-documento-autocomplete>
+
+        <button matSuffix mat-button mat-icon-button
+                (click)="showTipoDocumentoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('tipoDocumento').hasError('formError')">
+            {{form.get('tipoDocumento').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="ativo">
+        Ativo
+    </mat-checkbox>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-modalidade-template-gridsearch
+    *ngIf="activeCard === 'modalidadeTemplate-gridsearch'"
+    (selected)="selectModalidadeTemplate($event)"
+    (cancel)="cancel()">
+</cdk-modalidade-template-gridsearch>
+
+<cdk-tipo-documento-gridsearch
+    *ngIf="activeCard === 'tipo-documento-gridsearch'"
+    (selected)="selectTipoDocumento($event)"
+    (cancel)="cancel()">
+</cdk-tipo-documento-gridsearch>
+

@@ -1,0 +1,41 @@
+atividade-create {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+
+    > .atividade {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+
+        > .mensagem-erro {
+            color: red;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        > .titulo {
+            display: flex;
+            flex-direction: row;
+            flex: 0 0 auto;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        > .upload {
+            padding-bottom: 8px;
+            display: flex;
+            flex: 0 1 auto;
+            flex-direction: row;
+            flex-wrap: wrap;
+
+            > .componente-digital-card {
+                padding-left: 10px;
+                padding-bottom: 8px;
+                margin-top: 8px;
+            }
+        }
+    }
+}

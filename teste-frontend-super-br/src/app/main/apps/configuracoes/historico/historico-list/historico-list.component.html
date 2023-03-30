@@ -1,0 +1,22 @@
+<div class="header">
+    <path icone="file_copy"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="historico">
+    </path>
+</div>
+<cdk-historico-grid
+        [loading]="(loading$ | async)"
+        [historicos]="(historicosConfig$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [actions]="['redefinir_tabela', 'abrirOutraAba']"
+        [mode]="'search'"
+        [displayedColumns]="['id', 'descricao', 'processo', 'criadoEm', 'actions']"
+        [resizableColumns]="['allTableColumns']"
+        [ordableColumns]="['allTableColumns']"
+        [tableDefinitions]="tableDefinitions"
+        (tableDefinitionsChange)="doTableDefinitionsChange($event)"
+        (reload)="reload($event)"
+        (resetTableDefinitions)="doResetTableDefinitions()">
+</cdk-historico-grid>
+
+<router-outlet></router-outlet>

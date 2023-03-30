@@ -1,0 +1,40 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <div class="title-lembrete">
+        <h2>CADASTRAR LEMBRETE</h2>
+    </div>
+
+    <mat-form-field>
+        <mat-label>Conteúdo</mat-label>
+        <textarea matInput
+                  cdkTextareaAutosize
+                  formControlName="conteudo"
+                  #conteudo
+                  #autosize="cdkTextareaAutosize"
+                  maxlength="255"
+                  cdkAutosizeMinRows="5"
+                  cdkAutosizeMaxRows="5"></textarea>
+        <button matSuffix mat-button mat-icon-button *ngIf="!isBloco"
+                (click)="showLogLembreteGrid()">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+        <mat-hint align="end">{{conteudo.value.length}} / 255</mat-hint>
+    </mat-form-field>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid" *ngIf="!saving">
+            CRIAR LEMBRETE
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+</form>
+
+<cdk-lembrete-gridsearch
+    *ngIf="activeCard === 'lembrete-gridsearch'"
+    [pagination]="pagination"
+    (cancel)="cancel()">
+</cdk-lembrete-gridsearch>

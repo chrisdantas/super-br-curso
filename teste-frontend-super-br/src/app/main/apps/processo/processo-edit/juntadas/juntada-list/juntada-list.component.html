@@ -1,0 +1,42 @@
+<div class="header">
+    <button mat-mini-fab
+            class="m-8 active accent"
+            (click)="upload()"
+            matTooltip="Anexar">
+        <mat-icon class="secondary-text">attach_file</mat-icon>
+    </button>
+
+    <button mat-mini-fab
+            class="m-8 active accent"
+            (click)="desentranhar()"
+            matTooltip="Desentranhar">
+        <mat-icon class="secondary-text">low_priority</mat-icon>
+    </button>
+</div>
+
+<div class="content">
+
+    <cdk-componente-digital-card-list #ckdUpload
+                                      [processoOrigem]="processo"
+                                      [uploadMode]="'linear'"
+                                      (completed)="onComplete()">
+    </cdk-componente-digital-card-list>
+
+    <cdk-juntada-grid
+        [loading]="(loading$ | async)"
+        [juntadas]="(juntadas$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [actions]="['copiar','edit', 'assinar', 'adicionarVinculacao', 'removerVinculacoes', 'removerRestricoes']"
+        (reload)="reload($event)"
+        (excluded)="excluded($event)"
+        (copiar)="copiar($event)"
+        (edit)="editar($event)"
+        (assinar)="assinar($event)"
+        (adicionarVinculacao)="adicionarVinculacao($event)"
+        (removerVinculacoes)="removerVinculacoes($event)"
+        (removerRestricoes)="removerRestricoes($event)"
+        [assinandoId]="(assinandoDocumentosId$ | async)"
+        [desentranhadoId]="(desentranhadoIds$ | async)">
+    </cdk-juntada-grid>
+</div>
+<router-outlet></router-outlet>

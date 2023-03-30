@@ -1,0 +1,10 @@
+<cdk-pais-grid
+        [loading]="loading"
+        [paises]="paises"
+        [displayedColumns]="['id', 'nome', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-pais-grid>

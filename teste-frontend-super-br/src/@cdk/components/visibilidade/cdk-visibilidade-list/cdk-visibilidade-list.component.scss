@@ -1,0 +1,64 @@
+cdk-visibilidade-list {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        overflow-y: auto;
+        height: 0;
+
+        > .loading {
+            flex: 1 1 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            > .visibilidade-list-loading {
+                z-index: 9999;
+                margin-top: 48px;
+                display: flex;
+                position: fixed;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        > .items {
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 100%;
+        }
+
+    }
+
+    > .no-items {
+        display: flex;
+        flex-direction: row;
+        flex: 0 0 100%;
+        place-content: flex-start flex-start;
+    }
+
+    .toolbar {
+
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+        .toolbar-separator {
+            height: 32px;
+            width: 1px;
+            margin: 0 12px;
+        }
+
+        .visibilidade-list-control {
+            margin-left: auto;
+        }
+    }
+
+    .no-visibilidades-text {
+        font-size: 13px;
+        font-weight: 300;
+    }
+}

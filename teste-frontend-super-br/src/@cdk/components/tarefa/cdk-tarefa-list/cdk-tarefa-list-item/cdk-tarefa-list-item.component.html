@@ -1,0 +1,456 @@
+<div class="content" cdkHoverClass="show-actions" *ngIf="tarefa">
+
+    <div class="check">
+        <mat-checkbox class="mr-8" [checked]="selected" (change)="onSelectedChange()"
+                      (click)="$event.stopPropagation();">
+        </mat-checkbox>
+    </div>
+
+    <div class="info" [ngClass]="{'nao-lido': !tarefa.dataHoraLeitura}">
+        <ng-template #dynamicText></ng-template>
+
+        <div class="mb-4">
+            <mat-icon *ngIf="tarefa.especieTarefa?.evento">calendar_today</mat-icon>
+
+            <div class="title">
+                <mat-icon *ngIf="tarefa.processo?.acessoNegado" matTooltip="Acesso negado!" class="red-fg">block
+                </mat-icon>
+                <mat-icon *ngIf="tarefa.processo?.acessoRestrito" matTooltip="Acesso restrito!" class="red-fg">lock
+                </mat-icon>
+                <mat-icon *ngIf="tarefa.processo?.documentoAvulsoOrigem">mail</mat-icon>
+                <span>
+                    NUP {{tarefa.processo?.NUP | formatNup}}
+                </span>
+                <mat-icon class="s-18" (click)="doTogglePanel(); $event.stopPropagation();"
+                          *ngIf="!tarefa.processo?.acessoNegado && !isOpen">keyboard_arrow_down
+                </mat-icon>
+                <mat-icon class="s-18" (click)="doTogglePanel(); $event.stopPropagation();"
+                          *ngIf="!tarefa.processo?.acessoNegado && isOpen">keyboard_arrow_up
+                </mat-icon>
+                <mat-icon class="s-12 mt-2" [matTooltip]="'Filtrar por NUP'" (click)="doFilterNup(tarefa?.processo); $event.stopPropagation();">
+                    search
+                </mat-icon>
+                <mat-icon class="s-12 mt-2" [matTooltip]="'Copiar NUP para o clipboard'" (click)="copiarParaAreaTrabalho(tarefa.processo?.NUP); $event.stopPropagation();">file_copy
+                </mat-icon>
+            </div>
+
+            <div class="subtitle" *ngIf="!tarefa.processo?.acessoNegado">
+                <span style="color: red">{{ tarefa.processo?.emTramitacaoExterna ? ' (Em Remessa Externa)' : '' }}</span>
+                <span>{{tarefa.processo?.modalidadeMeio?.valor | titleCasePipe}}
+                      {{tarefa.processo?.especieProcesso?.nome | titleCasePipe }}
+                      {{ tarefa.vinculacaoWorkflow ? ' (Workflow)' : '' }} </span>
+            </div>
+
+            <div class="subtitle" *ngIf="tarefa.processo?.acessoNegado">
+                <span>Usuário com acesso negado ao processo</span>
+            </div>
+
+            <div class="subtitle" *ngIf="tarefa.processo?.documentoAvulsoOrigem">
+                <span *ngIf="!tarefa.processo?.documentoAvulsoOrigem?.dataHoraResposta">
+                    Ofício vinculado pendente de resposta
+                </span>
+                <span *ngIf="tarefa.processo?.documentoAvulsoOrigem?.dataHoraResposta">
+                    Ofício vinculado respondido em {{tarefa.processo?.documentoAvulsoOrigem?.dataHoraResposta?.toDate() | date: 'dd/MM/yyyy H:mm'}}
+                </span>
+            </div>
+
+            <div class="subtitle" *ngIf="isOpen">
+                <div *ngIf="loadingAssuntosProcessosId.indexOf(tarefa.processo.id) !== -1 || loadingInteressados">
+                    <mat-spinner diameter=16></mat-spinner>
+                </div>
+                <div class="assunto">
+                    <div *ngIf="tarefa.processo?.assuntos?.length > 0">
+                        <span>{{tarefa.processo?.assuntos[0]?.assuntoAdministrativo?.nome | titleCasePipe}}</span>
+                    </div>
+                </div>
+                <div class="interessados" *ngIf="!loadingInteressados && tarefa.processo?.interessados?.length > 0">
+                    <span
+                        *ngFor="let nomeInteressado of (tarefa.processo?.interessados | formatInteressados: totalInteressados)">
+                        {{nomeInteressado}}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="body mt-4">
+            <div>
+                Id {{tarefa.id}}
+            </div>
+
+            <div *ngIf="displayedCampos.indexOf('especieTarefa.nome') > -1">
+                {{tarefa.especieTarefa?.nome | titleCasePipe}}
+            </div>
+
+            <div *ngIf="displayedCampos.indexOf('especieTarefa.nome') > -1">
+                {{tarefa.vinculacaoWorkflow ? 'Tarefa de Workflow' : ''}}
+            </div>
+
+            <div *ngIf="displayedCampos.indexOf('setorResponsavel.nome') > -1">
+                {{tarefa.setorResponsavel?.nome | titleCasePipe}} ({{tarefa.setorResponsavel?.unidade?.sigla}})
+            </div>
+
+            <div *ngIf="(!usuarioAtual || (tarefa.usuarioResponsavel?.id !== usuarioAtual.id)) &&  displayedCampos.indexOf('usuarioResponsavel.nome') > -1">
+                {{tarefa.usuarioResponsavel?.nome | titleCasePipe}}
+            </div>
+
+            <div *ngIf="tarefa.dataHoraDistribuicao && displayedCampos.indexOf('dataHoraDistribuicao') > -1">
+                Distribuída em {{tarefa.dataHoraDistribuicao?.toDate() | date: 'dd/MM/yyyy'}}
+            </div>
+
+            <div *ngIf="tarefa.dataHoraFinalPrazo && displayedCampos.indexOf('dataHoraFinalPrazo') > -1">
+                Prazo de {{tarefa.dataHoraInicioPrazo?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}}
+                até <span [ngClass]="{'prazo-vence-hoje': prazoVenceHoje || prazoVenceu, 'prazo-venceu': prazoVenceu}">{{tarefa.dataHoraFinalPrazo?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}}</span>
+            </div>
+
+            <div *ngIf="!tarefa.dataHoraFinalPrazo && displayedCampos.indexOf('dataHoraFinalPrazo') > -1">
+                Prazo de {{(tarefa.dataHoraInicioPrazo?.toDate() | date: 'dd/MM/yyyy HH:mm:ss')}}
+                até
+                <mat-icon class="secondary-text" matTooltip="Prazo fechado">
+                    lock
+                </mat-icon>
+            </div>
+
+            <div class="search-wrapper" (click)="$event.stopPropagation();" *ngIf="typeHandle !== 'concluidas' && typeHandle !== 'enviadas'">
+                <mat-icon class="secondary-text mr-8">label</mat-icon>
+                <cdk-vinculacao-etiqueta-chips
+                    [placeholder]="'Adicionar etiquetas...'"
+                    [pagination]="vinculacaoEtiquetaPagination"
+                    [vinculacoesEtiquetas]="vinculacoesEtiquetas"
+                    (create)="doVinculacaoEtiquetaCreate($event)"
+                    (delete)="doVinculacaoEtiquetaDelete($event)"
+                    (edit)="doVinculacaoEtiquetaEdit($event)"
+                    (addEtiqueta)="doAddEtiqueta($event)"
+                    (pendencies)="doPendencies($event)"
+                    [savingVinculacaoEtiquetaId]="savingVinculacaoEtiquetaId"
+                    [errorsAddEtiqueta]="errorsAddEtiqueta"
+                    [habilitarOpcaoBtnAddEtiqueta]="habilitarOpcaoBtnAddEtiqueta"
+                    (filter)="doFilterEtiqueta($event)">
+                </cdk-vinculacao-etiqueta-chips>
+            </div>
+
+            <div class="etiquetas-minutas">
+                <div class="etiqueta" *ngFor="let vinculacaoEtiqueta of vinculacoesEtiquetasMinutas; index as i; trackBy: vinculacaoEtiquetaTrackBy"
+                     (click)="doClickEtiqueta(vinculacaoEtiqueta, tarefa, $event); $event.stopPropagation();"
+                     [matTooltip]="'Clique para abrir o documento'">
+                    <mat-icon class="mr-4 small" *ngIf="!vinculacaoEtiqueta.objectContext['podeConverterPDF']">picture_as_pdf</mat-icon>
+                    <mat-icon class="mr-4 small" *ngIf="!!vinculacaoEtiqueta.objectContext['podeConverterPDF']">insert_drive_file</mat-icon>
+                    <div class="etiqueta-title mr-4">{{vinculacaoEtiqueta.label ? vinculacaoEtiqueta.label : vinculacaoEtiqueta.etiqueta?.nome}}{{i + 1}}</div>
+                    <mat-icon *ngIf="!!vinculacaoEtiqueta.objectContext['temAnexos']" [matTooltip]="'Possui Anexos'" class="ml-2 mr-2 small"
+                              (click)="doUploadAnexos(vinculacaoEtiqueta); $event.stopPropagation();">attach_file</mat-icon>
+                    <mat-icon class="ml-2 mr-4 small" *ngIf="!!vinculacaoEtiqueta.objectContext['assinado']">lock</mat-icon>
+                    <button class="mb-2" mat-icon-button [matMenuTriggerFor]="minutaMenu" #menuTriggerMinutas="matMenuTrigger"
+                            *ngIf="typeHandle !== 'concluidas' && typeHandle !== 'enviadas' &&
+                            !(deletingDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1) &&
+                            !(assinandoDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1) &&
+                            !(convertendoDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1) &&
+                            !(downloadP7SDocumentoIds.indexOf(vinculacaoEtiqueta.objectId) > -1) &&
+                            !(removendoAssinaturaDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1) &&
+                            !(alterandoDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1)"
+                            aria-label="Ferramentas" (click)="$event.stopPropagation()">
+                        <mat-icon class="small">keyboard_arrow_down</mat-icon>
+                    </button>
+                    <div *ngIf="(deletingDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1) ||
+                            (assinandoDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1) ||
+                            (convertendoDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1) ||
+                            (downloadP7SDocumentoIds.indexOf(vinculacaoEtiqueta.objectId) > -1) ||
+                            (removendoAssinaturaDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1) ||
+                            (alterandoDocumentosId.indexOf(vinculacaoEtiqueta.objectId) > -1)"
+                         class="spinner-container ml-2 mr-2">
+                        <mat-spinner diameter="16"></mat-spinner>
+                    </div>
+                    <mat-menu #minutaMenu="matMenu">
+                        <button
+                            *ngIf="!!vinculacaoEtiqueta.objectContext['podeApagar']"
+                            fxLayout="row" fxLayoutAlign="start center" (click)="doDeleteDocumento(vinculacaoEtiqueta.objectId, tarefa.id, vinculacaoEtiqueta.objectContext['documentoAvulsoUuid']); $event.stopPropagation();"
+                            mat-menu-item>
+                            <mat-icon color="accent">delete</mat-icon>
+                            <span>Apagar Minuta</span>
+                        </button>
+                        <button fxLayout="row" fxLayoutAlign="start center"
+                                (click)="doAssinaDocumento(vinculacaoEtiqueta); $event.stopPropagation();"
+                                mat-menu-item>
+                            <mat-icon color="accent">lock</mat-icon>
+                            <span>Assinar</span>
+                        </button>
+                        <button fxLayout="row" fxLayoutAlign="start center"
+                                (click)="doRemoveAssinaturaDocumento(vinculacaoEtiqueta.objectId); $event.stopPropagation();"
+                                mat-menu-item
+                                *ngIf="!!vinculacaoEtiqueta.objectContext['assinado']">
+                            <mat-icon color="accent">lock_open</mat-icon>
+                            <span>Remover Assinatura</span>
+                        </button>
+                        <button fxLayout="row" fxLayoutAlign="start center"
+                                *ngIf="_loginService.isGranted('ROLE_COLABORADOR')"
+                                (click)="doAbrirMinutaEmOutraAba(vinculacaoEtiqueta, tarefa); $event.stopPropagation();"
+                                mat-menu-item>
+                            <mat-icon color="accent">open_in_new</mat-icon>
+                            <span>Abrir em outra aba</span>
+                        </button>
+                        <button fxLayout="row" fxLayoutAlign="start center"
+                                *ngIf="!!vinculacaoEtiqueta.objectContext['podeConverterPDF']"
+                                (click)="doConvertePdf(vinculacaoEtiqueta.objectId); $event.stopPropagation();"
+                                mat-menu-item>
+                            <mat-icon color="accent">picture_as_pdf</mat-icon>
+                            <span>Converter em PDF</span>
+                        </button>
+                        <button fxLayout="row" fxLayoutAlign="start center"
+                                *ngIf="!!vinculacaoEtiqueta.objectContext['podeConverterHTML']"
+                                (click)="doConverteHtml(vinculacaoEtiqueta.objectId); $event.stopPropagation();"
+                                mat-menu-item>
+                            <mat-icon color="accent">restore_page</mat-icon>
+                            <span>Converter em HTML</span>
+                        </button>
+                        <button fxLayout="row" fxLayoutAlign="start center"
+                                *ngIf="!!vinculacaoEtiqueta.objectContext['assinado']"
+                                (click)="doDownloadP7S(vinculacaoEtiqueta); $event.stopPropagation();"
+                                mat-menu-item>
+                            <mat-icon color="accent">get_app</mat-icon>
+                            <span>Exportar como P7S</span>
+                        </button>
+                        <button
+                            *ngIf="!!vinculacaoEtiqueta.objectContext['verRespostaId']"
+                            fxLayout="row" fxLayoutAlign="start center"
+                            (click)="doVerResposta(vinculacaoEtiqueta.objectContext['verRespostaId'], tarefa)"
+                            mat-menu-item>
+                            <mat-icon color="accent">picture_as_pdf</mat-icon>
+                            <span>Ver Resposta</span>
+                        </button>
+                        <button fxLayout="row" fxLayoutAlign="start center"
+                                *ngIf="_loginService.isGranted('ROLE_COLABORADOR') && !vinculacaoEtiqueta.objectContext['documentoAvulsoUuid']"
+                                (click)="$event.stopPropagation();"
+                                [matMenuTriggerFor]="tipoDocumentoMenu" #menuTrigger="matMenuTrigger"
+                                mat-menu-item>
+                            <mat-icon color="accent">edit</mat-icon>
+                            <span>Alterar Tipo de Documento</span>
+                        </button>
+                        <button fxLayout="row" fxLayoutAlign="start center"
+                                mat-menu-item aria-label="upload anexo"
+                                (click)="doUploadAnexos(vinculacaoEtiqueta); $event.stopPropagation();">
+                            <ng-container>
+                                <mat-icon color="accent">picture_as_pdf</mat-icon>
+                                <span>Anexos</span>
+                            </ng-container>
+                        </button>
+                        <button fxLayout="row" fxLayoutAlign="start center"
+                                mat-menu-item aria-label="aprovar"
+                                (click)="doAprovaDocumento(vinculacaoEtiqueta.objectId); $event.stopPropagation();">
+                            <ng-container>
+                                <mat-icon color="accent">check_circle_outline</mat-icon>
+                                <span>Anexar Aprovação</span>
+                            </ng-container>
+                        </button>
+                    </mat-menu>
+                    <mat-menu #tipoDocumentoMenu="matMenu" class="menuTipoDocumento">
+                        <form class="p-8 mb-8" fxLayoutGap="8px" fxLayout="column" fxLayoutAlign="start"
+                              fxFlex="1 0 auto" name="form" [formGroup]="formTipoDocumento" (click)="$event.stopPropagation()">
+                            <mat-form-field fxFlex="100">
+                                <div fxLayout="row" fxLayoutAlign="start center">
+                                    <input mat-menu-item matInput placeholder="Tipo de Documento"
+                                           formControlName="tipoDocumentoMinutas"
+                                           [matAutocomplete]="tipoDocumentoMinuta.autocomplete"
+                                           (blur)="checkTipoDocumento()">
+                                </div>
+                                <cdk-tipo-documento-autocomplete
+                                    #tipoDocumentoMinuta="tipoDocumentoAutocomplete"
+                                    [control]="formTipoDocumento.get('tipoDocumentoMinutas')"
+                                    [pagination]="tipoDocumentoPagination">
+                                </cdk-tipo-documento-autocomplete>
+                                <mat-error *ngIf="formTipoDocumento.get('tipoDocumentoMinutas').hasError('formError')">
+                                    {{formTipoDocumento.get('tipoDocumentoMinuta').errors.formError}}
+                                </mat-error>
+                            </mat-form-field>
+                            <button mat-raised-button color="accent" [disabled]="!formTipoDocumentoValid" (click)="salvarTipoDocumento(vinculacaoEtiqueta.objectId)">
+                                SALVAR
+                            </button>
+                        </form>
+                    </mat-menu>
+                </div>
+                <div class="etiqueta-loading" *ngIf="savingComponentesDigitais">
+                    CARREGANDO
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+                <cdk-componente-digital-card-list class="componente-digital-card"
+                                                  #cdkUpload
+                                                  [tarefaOrigem]="tarefa"
+                                                  [mode]="'tarefas-list'"
+                                                  (completed)="onComplete($event)"
+                                                  (completedAll)="onCompleteAll()"
+                                                  (erroUpload)="onErroUpload($event)">
+                </cdk-componente-digital-card-list>
+            </div>
+
+            <div *ngIf="tarefa.observacao && displayedCampos.indexOf('observacao') > -1" class="mt-8 observacao"
+                 (click)="$event.stopPropagation()">
+                <span *ngIf="editandoObservacao === false">{{tarefa.observacao}}</span>
+                <mat-icon *ngIf="editandoObservacao === false" class="secondary-text" matTooltip="Editar observação"
+                          (click)="$event.stopPropagation(); doEditarObservacao()">
+                    edit
+                </mat-icon>
+            </div>
+            <div *ngIf="editandoObservacao === true" class="mt-8 edit-observacao">
+                <mat-form-field (click)="$event.stopPropagation()">
+                    <textarea #observacaoConteudo matInput placeholder="Observação" autofocus upperCase>{{tarefa.observacao}}</textarea>
+                </mat-form-field>
+                <div class="actions">
+                    <button *ngIf="!savingObservacao" mat-icon-button type="button" aria-label="Salvar Observação"
+                            matTooltip="Salvar Observação" class="accent"
+                            (click)="doSalvarObservacao(tarefa, observacaoConteudo.value); $event.stopPropagation();">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <div class="spinner-container m-8" *ngIf="savingObservacao">
+                        <mat-spinner diameter="24"></mat-spinner>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="drag-n-drop-ref">
+            <div dndDragImageRef class="accent">
+                <div *ngIf="countSelected > 1 && selected && dragging">
+                    {{countSelected}} tarefas selecionadas
+                </div>
+                <div *ngIf="dragging && (countSelected === 0 || countSelected === 1 && selected)">
+                    Movendo tarefa
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions" *ngIf="typeHandle !== 'concluidas' && typeHandle !== 'enviadas'">
+
+        <button style="display: none;" class="ferramentas" *ngIf="tarefa.apagadoEm && !undeleting" matTooltip="Restaurar tarefa"
+                mat-icon-button (click)="doRestauraTarefa(); $event.stopPropagation();"
+                aria-label="Restaurar tarefa" fxHide.xs>
+            <mat-icon class="secondary-text">undo</mat-icon>
+        </button>
+
+        <button style="display: none;" class="ferramentas" *ngIf="!tarefa.apagadoEm" matTooltip="Movimentar tarefa"
+                mat-icon-button (click)="doMovimentar(); $event.stopPropagation();"
+                aria-label="Movimentar tarefa" fxHide.xs>
+            <mat-icon class="secondary-text">send</mat-icon>
+        </button>
+
+        <button style="display: none;" class="ferramentas" *ngIf="!tarefa.apagadoEm" matTooltip="Editar tarefa"
+                mat-icon-button (click)="doEditTarefa(); $event.stopPropagation();"
+                aria-label="Editar tarefa" fxHide.xs>
+            <mat-icon class="secondary-text">edit</mat-icon>
+        </button>
+
+        <button *ngIf="(!togglingUrgente && !deleting && ! ciencia && ! pluginLoading && ! undeleting && ! assinando && !tarefa.apagadoEm) &&  displayedCampos.indexOf('urgente') > -1" mat-icon-button
+                (click)="doToggleUrgente(); $event.stopPropagation();"
+                aria-label="Alterar urgência" fxHide.xs matTooltip="Alterar urgência">
+            <mat-icon class="red-fg" *ngIf="tarefa.urgente">error</mat-icon>
+            <mat-icon class="secondary-text" *ngIf="!tarefa.urgente">error_outline</mat-icon>
+        </button>
+
+        <div class="spinner-container m-8" *ngIf="togglingUrgente || deleting || ciencia || pluginLoading || undeleting || assinando">
+            <mat-spinner diameter="24"></mat-spinner>
+        </div>
+
+        <button style="display: none;" class="ferramentas" *ngIf="!tarefa.apagadoEm" matTooltip="Redistribuir tarefa"
+                mat-icon-button (click)="doRedistribuirTarefa(); $event.stopPropagation();"
+                aria-label="Redistribuir tarefa" fxHide.xs>
+            <mat-icon class="secondary-text">forward</mat-icon>
+        </button>
+
+        <button style="display: none;" class="ferramentas" *ngIf="!tarefa.apagadoEm && !tarefa.observacao" matTooltip="Editar observação"
+                mat-icon-button (click)="doEditarObservacao(); $event.stopPropagation();"
+                aria-label="Editar observação" fxHide.xs>
+            <mat-icon class="secondary-text">sticky_note_2</mat-icon>
+        </button>
+
+        <button style="display: none;" *ngIf="!deleting && !ciencia && !pluginLoading && !tarefa.apagadoEm && !assinando" mat-icon-button
+                [matMenuTriggerFor]="moreMenu"
+                aria-label="Ferramentas"
+                (click)="$event.stopPropagation()">
+            <mat-icon class="secondary-text">more_vert</mat-icon>
+        </button>
+
+        <mat-menu #moreMenu="matMenu">
+
+            <button mat-menu-item aria-label="apagar" *ngIf="usuarioAtual?.id === tarefa?.usuarioResponsavel?.id"
+                    (click)="doDelete()">
+                <ng-container>
+                    <mat-icon>delete</mat-icon>
+                    <span>Apagar</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="movimentar"
+                    (click)="doMovimentar()">
+                <ng-container>
+                    <mat-icon>send</mat-icon>
+                    <span>Movimentar</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="editar tarefa"
+                    (click)="doEditTarefa()">
+                <ng-container>
+                    <mat-icon>edit</mat-icon>
+                    <span>Editar Tarefa</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="observação"
+                    *ngIf="!tarefa.observacao"
+                    (click)="doEditarObservacao()">
+                <ng-container>
+                    <span class="material-icons-outlined mat-icon mat-icon-no-color">edit_note</span>
+                    <span>Observação</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="editar processo"
+                    (click)="doEditProcesso()">
+                <ng-container>
+                    <mat-icon>book</mat-icon>
+                    <span>Editar Processo</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="redistribuir tarefa"
+                    (click)="doRedistribuirTarefa()">
+                <ng-container>
+                    <mat-icon>forward</mat-icon>
+                    <span>Redistribuir</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="dar ciencia"
+                    (click)="doCienciaTarefa()">
+                <ng-container>
+                    <mat-icon>check</mat-icon>
+                    <span>Dar Ciência</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="criar tarefa"
+                    (click)="doCreateTarefa()">
+                <ng-container>
+                    <mat-icon>check_box</mat-icon>
+                    <span>Criar Tarefa</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="enviar ofício"
+                    (click)="doCreateDocumentoAvulso()">
+                <ng-container>
+                    <mat-icon>mail</mat-icon>
+                    <span>Criar Ofício</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="compartilhar"
+                    (click)="doCompartilhar()">
+                <ng-container>
+                    <mat-icon>share</mat-icon>
+                    <span>Compartilhar</span>
+                </ng-container>
+            </button>
+
+            <ng-template #dynamicComponent></ng-template>
+
+        </mat-menu>
+    </div>
+</div>

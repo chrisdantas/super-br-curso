@@ -1,0 +1,21 @@
+<div class="header">
+    <path icone="insert_drive_file"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="especie-processo">
+    </path>
+</div>
+<cdk-especie-processo-grid
+    [loading]="(loading$ | async)"
+    [especieProcessos]="(especieProcessos$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [displayedColumns]="['select', 'id', 'nome', 'descricao', 'generoProcesso.nome', 'ativo', 'actions']"
+    [actions]="['edit', 'create', 'showInatived']"
+    (inatived)="inatived($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (create)="create()"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-especie-processo-grid>

@@ -1,0 +1,175 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="Unidade"
+               formControlName="unidade"
+               [readonly]="!!lotacao && !!lotacao.id"
+               [matAutocomplete]="unidade.autocomplete" required
+               (blur)="checkUnidade()">
+        <cdk-setor-autocomplete
+            #unidade="setorAutocomplete"
+            [control]="form.get('unidade')"
+            [pagination]="unidadePagination">
+        </cdk-setor-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showUnidadeGrid()"
+                [disabled]="!!lotacao && !!lotacao.id">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('unidade').hasError('formError')">
+            {{form.get('unidade').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="form.get('unidade').value">
+        <input matInput placeholder="Setor"
+               formControlName="setor"
+               [matAutocomplete]="setor.autocomplete"
+               [readonly]="inputSetor"
+               (blur)="checkSetor()" required>
+        <cdk-setor-autocomplete
+            #setor="setorAutocomplete"
+            [control]="form.get('setor')"
+            [pagination]="setorPagination">
+        </cdk-setor-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                [disabled]="inputSetor"
+                (click)="showSetorGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('setor').hasError('formError')">
+            {{form.get('setor').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="!this.usuario">
+        <input matInput placeholder="Usuario"
+               formControlName="colaborador"
+               [matAutocomplete]="colaborador.autocomplete"
+               (blur)="checkColaborador()" required>
+        <cdk-colaborador-autocomplete
+            #colaborador="colaboradorAutocomplete"
+            [control]="form.get('colaborador')"
+            [pagination]="colaboradorPagination">
+        </cdk-colaborador-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showColaboradorGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('colaborador').hasError('formError')">
+            {{form.get('colaborador').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="principal">
+        Principal
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                (click)="showLogEntryGrid('principal')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+    </mat-checkbox>
+
+    <mat-checkbox formControlName="distribuidor">
+        Distribuidor
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                (click)="showLogEntryGrid('distribuidor')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+    </mat-checkbox>
+
+    <div *ngIf="inputArquivista">
+        <mat-checkbox formControlName="arquivista">
+            Arquivista
+        </mat-checkbox>
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                (click)="showLogEntryGrid('arquivista')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+    </div>
+
+    <mat-form-field *ngIf="isCoordenador && !form.value.setor?.distribuicaoCentena">
+
+        <input matInput placeholder="Dígitos"
+               formControlName="digitosDistribuicao">
+
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                (click)="showLogEntryGrid('digitosDistribuicao')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+
+        <mat-error *ngIf="form.get('digitosDistribuicao').hasError('formError')">
+            {{form.get('digitosDistribuicao').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="isCoordenador && form.value.setor?.distribuicaoCentena">
+
+        <input matInput placeholder="Centenas"
+               formControlName="centenasDistribuicao">
+
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                (click)="showLogEntryGrid('centenasDistribuicao')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+
+        <mat-error *ngIf="form.get('centenasDistribuicao').hasError('formError')">
+            {{form.get('centenasDistribuicao').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+
+        <input matInput placeholder="Peso"
+               formControlName="peso" required>
+
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                (click)="showLogEntryGrid('peso')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+
+        <mat-error *ngIf="form.get('peso').hasError('formError')">
+            {{form.get('peso').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-colaborador-gridsearch
+    *ngIf="activeCard === 'colaborador-gridsearch'"
+    [pagination]="colaboradorPagination"
+    (selected)="selectColaborador($event)"
+    (cancel)="cancel()">
+</cdk-colaborador-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'setor-gridsearch'"
+    [pagination]="setorPagination"
+    (selected)="selectSetor($event)"
+    [displayedColumns]="displayedColumnsGridSetor"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-logentry-gridsearch
+    *ngIf="activeCard === 'logentry-gridsearch'"
+    [pagination]="logEntryPagination"
+    (cancel)="cancel()">
+</cdk-logentry-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'unidade-gridsearch'"
+    [pagination]="unidadePagination"
+    (selected)="selectUnidade($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>

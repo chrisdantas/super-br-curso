@@ -1,0 +1,42 @@
+@import "../../../scss/partials/cdk-form";
+
+cdk-tarefa-form {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    mat-slide-toggle {
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .align-icon {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .dias-uteis {
+        display: flex;
+        flex: 0 1 auto;
+        justify-content: space-between;
+    }
+
+    .bloco-responsaveis {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dias-input {
+        width: 115px;
+    }
+
+    .button-lotacao {
+        margin-left: auto;
+    }
+
+    .mat-form-field-infix{
+        flex: 1 1 auto;
+        display: flex;
+    }
+}

@@ -1,0 +1,16 @@
+<div class="header">
+    <path icone="folder"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="pastas">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-folder-form
+        [folder]="folder"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [modalidadeFolderPagination]="modalidadeFolderPagination"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-folder-form>
+</div>

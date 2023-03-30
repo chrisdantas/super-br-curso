@@ -1,0 +1,20 @@
+<div class="header">
+    <path icone="star_border"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="favoritos">
+    </path>
+</div>
+<cdk-favorito-grid
+        [loading]="(loading$ | async)"
+        [favoritos]="(favoritos$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [actions]="['create', 'edit']"
+        (reload)="reload($event)"
+        (edit)="edit($event)"
+        (create)="create()"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-favorito-grid>

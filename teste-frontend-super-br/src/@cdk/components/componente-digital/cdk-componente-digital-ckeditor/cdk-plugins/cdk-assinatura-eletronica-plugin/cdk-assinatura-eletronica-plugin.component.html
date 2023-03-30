@@ -1,0 +1,55 @@
+<h1 mat-dialog-title>Assinatura Eletrônica</h1>
+<form class="p-24 mr-24" fxLayoutGap="8px"
+      fxLayout="column"
+      fxLayoutAlign="start"
+      name="form" [formGroup]="form" (keyup.enter)="close()" >
+    <div fxFlex="1 0 auto" fxLayout="column">
+        <mat-form-field fxFlex="100" *ngIf="!form.get('certificadoDigital').value && labelLoginType !== 'govBr'">
+            <mat-label>Senha {{labelLoginType}}</mat-label>
+            <input type="password"
+                   matInput #plainPassword
+                   name="plainPassword"
+                   formControlName="plainPassword"
+                   minlength="8"
+                   maxlength="16">
+            <mat-error *ngIf="form.get('plainPassword').hasError('required')">
+                Campo obrigatório!
+            </mat-error>
+            <mat-error *ngIf="form.get('plainPassword').hasError('minlength')">
+                Campo deve ter no mínimo 8 dígitos!
+            </mat-error>
+            <mat-error *ngIf="form.get('plainPassword').hasError('maxlength')">
+                Campo deve ter no máximo 16 dígitos!
+            </mat-error>
+        </mat-form-field>
+        <button *ngIf="labelLoginType === 'govBr'" mat-raised-button
+            (click)="redirectRevalidaSenha()" class="mt-8 submit-button gov-br" aria-label="Revalidar senha no gov.br">
+            Revalidar senha no <strong style="color: #1351b4">gov.br</strong>
+        </button>
+        <div class="mt-20 red-fg" *ngIf="popupBloqueado">
+            <strong>É necessário autorizar o uso de PopUps em seu navegador</strong>
+        </div>
+        <mat-slide-toggle class="mt-8" formControlName="certificadoDigital" [disabled]="!temAssinador">
+            Usar Certificado Digital
+        </mat-slide-toggle>
+        <div class="mt-16" *ngIf="!temAssinador">
+            Instale ou atualize o assinador para usar Certificado Digital!
+        </div>
+        <div class="mt-8"  *ngIf="!temAssinador">
+            <a [href]="urlAssinadorWindows">Versão Windows</a>
+        </div>
+        <div class="mt-8"  *ngIf="!temAssinador">
+            <a [href]="urlAssinadorLinux">Versão Linux</a>
+        </div>
+    </div>
+    <div fxLayout="row" class="mr-sm-12 mt-8 mb-8" fxFlex
+         fxLayoutAlign="center center">
+        <button mat-raised-button color="accent" [disabled]="form.invalid" [mat-dialog-close]="{
+                certificadoDigital: this.form.get('certificadoDigital').value,
+                plainPassword: this.form.get('plainPassword').value
+            }">
+            Assinar
+        </button>
+        <button mat-raised-button class="warn ml-8" mat-dialog-close>Cancelar</button>
+    </div>
+</form>

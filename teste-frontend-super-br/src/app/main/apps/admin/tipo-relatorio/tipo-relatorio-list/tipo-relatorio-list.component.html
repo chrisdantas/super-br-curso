@@ -1,0 +1,22 @@
+<div class="header">
+    <path icone="assessment"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="tipos-relatorios">
+    </path>
+</div>
+<cdk-tipo-relatorio-grid
+    [loading]="(loading$ | async)"
+    [tiposRelatorios]="(tipoRelatorios$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [displayedColumns]="['select', 'id', 'nome', 'especieRelatorio.nome', 'ativo', 'actions']"
+    [actions]="['edit', 'create', 'visibilidade', 'showInatived']"
+    (inatived)="inatived($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (visibilidade)="editVisibilidade($event)"
+    (create)="create()"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-tipo-relatorio-grid>

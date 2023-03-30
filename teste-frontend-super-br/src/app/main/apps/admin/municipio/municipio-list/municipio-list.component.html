@@ -1,0 +1,16 @@
+<div class="header">
+    <path icone="location_on"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="municipios">
+    </path>
+</div>
+<cdk-municipio-grid
+    [loading]="(loading$ | async)"
+    [municipios]="(municipios$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [actions]="['edit', 'create', 'showInatived']"
+    (inatived)="inatived($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (create)="create()">
+</cdk-municipio-grid>

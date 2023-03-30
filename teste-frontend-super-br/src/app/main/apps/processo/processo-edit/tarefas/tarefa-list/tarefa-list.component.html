@@ -1,0 +1,23 @@
+<cdk-tarefa-grid
+        [loading]="(loading$ | async)"
+        [tarefas]="(tarefas$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [actions]="['create', 'edit', 'delete', 'showDeleted', 'atividades', 'compartilhamentos', 'redefinir_tabela']"
+        [displayedColumns]="['select', 'id', 'especieTarefa.nome', 'setorResponsavel.nome', 'usuarioResponsavel.nome', 'dataHoraInicioPrazo', 'dataHoraFinalPrazo', 'dataHoraConclusaoPrazo', 'observacao', 'actions']"
+        [resizableColumns]="['allTableColumns']"
+        [ordableColumns]="['allTableColumns']"
+        [tableDefinitions]="tableDefinitions"
+        (tableDefinitionsChange)="doTableDefinitionsChange($event)"
+        (reload)="reload($event)"
+        (excluded)="excluded($event)"
+        (edit)="edit($event)"
+        (listAtividades)="listAtividades($event)"
+        (listCompartilhamentos)="listCompartilhamentos($event)"
+        (create)="create()"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)"
+        (resetTableDefinitions)="doResetTableDefinitions()">
+</cdk-tarefa-grid>

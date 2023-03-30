@@ -1,0 +1,23 @@
+<div class="header">
+    <path icone="edit_location"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="repositorios">
+    </path>
+</div>
+<cdk-vinculacao-repositorio-grid
+    [loading]="(loading$ | async)"
+    [vinculacaoRepositorios]="(vinculacoesRepositorios$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [modalidadeOrgaoCentralPagination]="modalidadeOrgaoCentralPagination"
+    [repositorioPagination]="repositorioPagination"
+    [actions]="['edit', 'create', 'delete']"
+    [displayedColumns]="['id', 'repositorio.nome', 'especieSetor.nome', 'modalidadeOrgaoCentral.valor', 'actions']"
+    (reload)="reload($event)"
+    (create)="create()"
+    (edit)="edit($event)"
+    (delete)="delete($event)"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-vinculacao-repositorio-grid>

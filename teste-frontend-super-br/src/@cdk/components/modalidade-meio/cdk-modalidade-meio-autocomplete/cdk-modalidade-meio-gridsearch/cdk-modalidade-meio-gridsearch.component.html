@@ -1,0 +1,10 @@
+<cdk-modalidade-meio-grid
+        [loading]="loading"
+        [modalidademeios]="modalidademeios"
+        [displayedColumns]="['id', 'valor', 'descricao', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-modalidade-meio-grid>

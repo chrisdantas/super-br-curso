@@ -1,0 +1,47 @@
+cdk-componente-digital-ckeditor {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    height: 0;
+
+    ckeditor {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+
+        > div:first-of-type {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+
+            > .cke_inner {
+                display: flex;
+                flex-direction: column;
+                flex: 1 1 auto;
+                height: 0 !important;
+
+                > .cke_contents {
+                    display: flex;
+                    flex: 1 1 auto;
+                    flex-direction: column;
+                    height: 92% !important;
+
+                    > .cke_wysiwyg_frame {
+                        display: flex;
+                        flex: 1 1 auto;
+                        height: 0 !important;
+                        overflow-y: auto;
+                    }
+                }
+            }
+
+            > .cke_maximized {
+                height: 100% !important;
+
+                > .cke_contents {
+                    height: 96% !important;
+                }
+            }
+        }
+    }
+}

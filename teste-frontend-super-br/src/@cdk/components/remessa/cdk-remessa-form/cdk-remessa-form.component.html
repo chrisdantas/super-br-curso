@@ -1,0 +1,147 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" [hidden]="activeCard !== 'form'">
+
+    <mat-slide-toggle formControlName="urgente">
+        Urgente
+    </mat-slide-toggle>
+
+    <mat-form-field *ngIf="mode === 'regular'">
+        <input matInput placeholder="Processo"
+               formControlName="processo"
+               [matAutocomplete]="processo.autocomplete" required
+               (blur)="checkProcesso()">
+        <cdk-processo-autocomplete
+            #processo="processoAutocomplete"
+            [control]="form.get('processo')"
+            [pagination]="processoPagination">
+        </cdk-processo-autocomplete>
+        <button *ngIf="form.get('processo').enabled" matSuffix mat-button mat-icon-button
+                (click)="showProcessoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('processo').hasError('formError')">
+            {{form.get('processo').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Setor de Origem"
+               formControlName="setorOrigem"
+               [matAutocomplete]="setorOrigem.autocomplete" required
+               (blur)="checkSetorOrigem()">
+        <mat-option *ngIf="setorOrigemListIsLoading">
+            <mat-spinner diameter="16"></mat-spinner>
+        </mat-option>
+        <cdk-setor-autocomplete
+            #setorOrigem="setorAutocomplete"
+            [control]="form.get('setorOrigem')"
+            [pagination]="setorOrigemPagination">
+        </cdk-setor-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showSetorOrigemTree()">
+            <mat-icon matTooltip="Árvore de Setores">subdirectory_arrow_right</mat-icon>
+        </button>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showSetorOrigemGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('setorOrigem').hasError('formError')">
+            {{form.get('setorOrigem').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <div class="mecanismo-remessa" [hidden]="extensoes.length === 0">
+        <label id="minutas-rg">Selecione o mecanismo de remessa</label>
+
+        <mat-radio-group class="horizontal" formControlName="mecanismoRemessa" aria-labelledby="minutas-rg" required>
+            <mat-radio-button value="manual">
+                Manual
+            </mat-radio-button>
+            <mat-radio-button [value]="'barramento'" *ngIf="_cdkConfigService.barramento === '1'">
+                Barramento
+            </mat-radio-button>
+
+            <ng-template #dynamicComponent></ng-template>
+        </mat-radio-group>
+    </div>
+
+    <mat-form-field>
+        <input matInput placeholder="Pessoa"
+               formControlName="pessoaDestino"
+               [matAutocomplete]="pessoaDestino.autocomplete" required
+               (blur)="checkPessoaDestino()">
+        <cdk-pessoa-autocomplete
+            #pessoaDestino="pessoaAutocomplete"
+            [control]="form.get('pessoaDestino')"
+            [pagination]="pessoaDestinoPagination">
+        </cdk-pessoa-autocomplete>
+        <button *ngIf="form.get('pessoaDestino').value &&
+                form.get('pessoaDestino').value.id"
+                matSuffix mat-button
+                mat-icon-button
+                (click)="doEditPessoaDestino()">
+            <mat-icon matTooltip="Editar pessoa">edit</mat-icon>
+        </button>
+        <button matSuffix mat-button mat-icon-button
+                *ngIf="form.get('mecanismoRemessa').value !== 'barramento'"
+                (click)="doGerirPessoaDestino()">
+            <mat-icon matTooltip="Procurar ou incluir pessoa">person_add</mat-icon>
+        </button>
+        <button matSuffix mat-button mat-icon-button
+                *ngIf="form.get('mecanismoRemessa').value === 'barramento'"
+                (click)="showPessoaDestinoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('pessoaDestino').hasError('formError')">
+            {{form.get('pessoaDestino').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+            <textarea formControlName="observacao"
+                      matInput placeholder="Observação" upperCase></textarea>
+        <mat-error *ngIf="form.get('observacao').hasError('formError')">
+            {{form.get('observacao').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()" [disabled]="!valid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-processo-gridsearch
+    [hidden]="activeCard !== 'processo-gridsearch'"
+    [pagination]="processoPagination"
+    (selected)="selectProcesso($event)"
+    (cancel)="cancel()">
+</cdk-processo-gridsearch>
+
+<cdk-setor-gridsearch
+    [hidden]="activeCard !== 'setor-origem-gridsearch'"
+    [pagination]="setorOrigemPagination"
+    (selected)="selectSetorOrigem($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-setor-tree
+    *ngIf="activeCard === 'setor-origem-tree'"
+    [pagination]="setorOrigemPaginationTree"
+    (selected)="selectSetorOrigem($event)"
+    (cancel)="cancel()">
+</cdk-setor-tree>
+
+<cdk-pessoa-gridsearch
+    *ngIf="activeCard === 'pessoa-gridsearch'"
+    [pagination]="pessoaDestinoPagination"
+    (selected)="selectPessoaDestino($event)"
+    (cancel)="cancel()">
+</cdk-pessoa-gridsearch>

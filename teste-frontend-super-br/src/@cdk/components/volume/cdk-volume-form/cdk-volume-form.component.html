@@ -1,0 +1,63 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field *ngIf="form.get('id').value">
+        <input #numeracaoSequencial matInput placeholder="Númeração Sequencial"
+               formControlName="numeracaoSequencial" readonly>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Meio"
+               formControlName="modalidadeMeio"
+               [matAutocomplete]="modalidadeMeio.autocomplete"
+               (blur)="checkModalidadeMeio()" required>
+        <cdk-modalidade-meio-autocomplete
+            #modalidadeMeio="modalidadeMeioAutocomplete"
+            [control]="form.get('modalidadeMeio')"
+            [pagination]="modalidadeMeioPagination">
+        </cdk-modalidade-meio-autocomplete>
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                (click)="showLogEntryGrid('modalidadeMeio')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showModalidadeMeioGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('modalidadeMeio').hasError('formError')">
+            {{form.get('modalidadeMeio').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="encerrado" *ngIf="form.get('id').value" disabled="true">
+        Encerrado
+    </mat-checkbox>
+    <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+            (click)="showLogEntryGrid('encerrado')">
+        <mat-icon matTooltip="Histórico">history</mat-icon>
+    </button>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-modalidade-meio-gridsearch
+    *ngIf="activeCard === 'modalidade-meio-gridsearch'"
+    (selected)="selectModalidadeMeio($event)"
+    (cancel)="cancel()">
+</cdk-modalidade-meio-gridsearch>
+
+<cdk-logentry-gridsearch
+    *ngIf="activeCard === 'logentry-gridsearch'"
+    [pagination]="logEntryPagination"
+    (cancel)="cancel()">
+</cdk-logentry-gridsearch>

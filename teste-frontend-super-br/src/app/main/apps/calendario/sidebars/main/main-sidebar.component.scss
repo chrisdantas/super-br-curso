@@ -1,0 +1,72 @@
+calendario-main-sidebar {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+
+    > .side-header {
+        display: flex;
+        flex: 0 1 auto;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+
+        height: 64px !important;
+        min-height: 64px !important;
+        max-height: 64px !important;
+
+        > .logo {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+
+            .logo-text {
+                font-size: 24px;
+            }
+        }
+    }
+
+    > .content {
+
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        height: 0;
+        overflow-y: auto;
+    }
+
+    > .footer {
+        display: flex;
+        flex: 0 1 auto;
+        flex-direction: column;
+
+        > .actions {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: row;
+            justify-content: left;
+
+            > .class-toolbar {
+                display: flex;
+                justify-content: left;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                margin: 8px;
+                border-radius: 12px;
+            }
+        }
+    }
+
+    .nav-item {
+        .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            padding: 0px 10px 0px 10px !important;
+            border-radius: 0px 12px 12px 0px !important;
+            margin-right: 8px !important;
+            height: 40px !important;
+            min-height: 40px !important;
+            max-height: 64px !important;
+        }
+    }
+}

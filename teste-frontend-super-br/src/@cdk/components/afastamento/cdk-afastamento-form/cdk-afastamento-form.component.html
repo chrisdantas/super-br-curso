@@ -1,0 +1,83 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="Modalidade"
+               formControlName="modalidadeAfastamento"
+               [matAutocomplete]="modalidadeafastamento.autocomplete"
+               (blur)="checkModalidadeAfastamento()" required>
+        <cdk-modalidade-afastamento-autocomplete
+            #modalidadeafastamento="modalidadeAfastamentoAutocomplete"
+            [control]="form.get('modalidadeAfastamento')"
+            [pagination]="modalidadeAfastamentoPagination">
+        </cdk-modalidade-afastamento-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showModalidadeAfastamentoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('modalidadeAfastamento').hasError('formError')">
+            {{form.get('modalidadeAfastamento').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Início do Afastamento</mat-label>
+        <input matInput formControlName="dataInicio" [matDatepicker]="dataInicio" required>
+        <mat-datepicker-toggle matSuffix [for]="dataInicio"></mat-datepicker-toggle>
+        <mat-datepicker #dataInicio></mat-datepicker>
+        <mat-error *ngIf="form.get('dataInicio').hasError('formError')">
+            {{form.get('dataInicio').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Início do Bloqueio de Distribuição</mat-label>
+        <input matInput [matDatepicker]="dataInicioBloqueio"
+               formControlName="dataInicioBloqueio" required>
+        <mat-datepicker-toggle matSuffix [for]="dataInicioBloqueio"></mat-datepicker-toggle>
+        <mat-datepicker #dataInicioBloqueio></mat-datepicker>
+        <mat-error *ngIf="form.get('dataInicioBloqueio').hasError('formError')">
+            {{form.get('dataInicioBloqueio').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Final do Afastamento</mat-label>
+        <input matInput formControlName="dataFim" [matDatepicker]="dataFim" required>
+        <mat-datepicker-toggle matSuffix [for]="dataFim"></mat-datepicker-toggle>
+        <mat-datepicker #dataFim></mat-datepicker>
+        <mat-error *ngIf="form.get('dataFim').hasError('formError')">
+            {{form.get('dataFim').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Final do Bloqueio de Distribuição</mat-label>
+        <input matInput [matDatepicker]="dataFimBloqueio"
+               formControlName="dataFimBloqueio" required>
+        <mat-datepicker-toggle matSuffix [for]="dataFimBloqueio"></mat-datepicker-toggle>
+        <mat-datepicker #dataFimBloqueio></mat-datepicker>
+        <mat-error *ngIf="form.get('dataFimBloqueio').hasError('formError')">
+            {{form.get('dataFimBloqueio').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-modalidade-afastamento-gridsearch
+    *ngIf="activeCard === 'modalidade-afastamento-gridsearch'"
+    (selected)="selectModalidadeAfastamento($event)"
+    (cancel)="cancel()">
+</cdk-modalidade-afastamento-gridsearch>

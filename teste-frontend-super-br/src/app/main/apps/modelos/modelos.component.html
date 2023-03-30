@@ -1,0 +1,24 @@
+<div class="header">
+    <div class="left" *ngIf="this.routerState?.url.includes('/documento/') !== -1">
+        <button mat-icon-button aria-label="voltar" matTooltip="Voltar" (click)="goBack()">
+            <mat-icon class="black-fg">arrow_back</mat-icon>
+        </button>
+    </div>
+    <div class="actions">
+        <button mat-icon-button aria-label="pesquisar modelo" matTooltip="Pesquisar Modelo"
+                [routerLink]="'modelo'"
+                [routerLinkActive]="['active', 'accent']">
+            <mat-icon class="black-fg">file_copy</mat-icon>
+        </button>
+
+        <button mat-icon-button aria-label="pesquisar acervo" matTooltip="Pesquisar Acervo"
+                [routerLink]="['componente-digital']"
+                [routerLinkActive]="['active', 'accent']">
+            <mat-icon class="black-fg">content_paste_search</mat-icon>
+        </button>
+    </div>
+</div>
+
+<div class="content">
+    <router-outlet></router-outlet>
+</div>

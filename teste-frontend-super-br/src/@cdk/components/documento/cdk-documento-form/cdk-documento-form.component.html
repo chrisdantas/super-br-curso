@@ -1,0 +1,218 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="Tipo de Documento"
+               formControlName="tipoDocumento"
+               [matAutocomplete]="tipoDocumento.autocomplete"
+               (blur)="checkTipoDocumento()" required>
+        <cdk-tipo-documento-autocomplete
+            #tipoDocumento="tipoDocumentoAutocomplete"
+            [control]="form.get('tipoDocumento')"
+            [pagination]="tipoDocumentoPagination">
+        </cdk-tipo-documento-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showTipoDocumentoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('tipoDocumento').hasError('formError')">
+            {{form.get('tipoDocumento').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Outro Número</mat-label>
+        <input matInput #outroNumero
+               name="outroNumero"
+               formControlName="outroNumero"
+               maxlength="255">
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="copia">
+        Cópia/Digitalização
+    </mat-slide-toggle>
+
+    <mat-form-field *ngIf="form.get('copia').value">
+        <mat-label>Localizador do Original</mat-label>
+        <input matInput #localizadorOriginal
+               name="localizadorOriginal"
+               formControlName="localizadorOriginal"
+               maxlength="255" upperCase>
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                (click)="showLogEntryGrid('localizadorOriginal')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+    </mat-form-field>
+    <mat-form-field *ngIf="form.get('copia').value">
+        <input matInput placeholder="Tipo de Cópia"
+               formControlName="modalidadeCopia"
+               [matAutocomplete]="modalidadeCopia.autocomplete"
+               (blur)="checkModalidadeCopia()">
+        <cdk-modalidade-copia-autocomplete
+            #modalidadeCopia="modalidadeCopiaAutocomplete"
+            [control]="form.get('modalidadeCopia')"
+            [pagination]="modalidadeCopiaPagination">
+        </cdk-modalidade-copia-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showModalidadeCopiaGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                (click)="showLogEntryGrid('modalidadeCopia')">
+            <mat-icon matTooltip="Histórico">history</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('modalidadeCopia').hasError('formError')">
+            {{form.get('modalidadeCopia').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Número de Folhas</mat-label>
+        <input matInput #numeroFolhas
+               name="numeroFolhas"
+               type="number"
+               formControlName="numeroFolhas"
+               maxlength="255">
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Autor</mat-label>
+        <input matInput #autor
+               name="autor"
+               formControlName="autor"
+               maxlength="255" upperCase>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Redator</mat-label>
+        <input matInput #redator
+               name="redator"
+               formControlName="redator"
+               maxlength="255" upperCase>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Destinatário</mat-label>
+        <input matInput #destinatario
+               name="destinatario"
+               formControlName="destinatario"
+               maxlength="255" upperCase>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Procedência"
+               formControlName="procedencia"
+               [matAutocomplete]="procedencia.autocomplete"
+               (blur)="checkProcedencia()">
+        <cdk-pessoa-autocomplete
+            #procedencia="pessoaAutocomplete"
+            [control]="form.get('procedencia')"
+            [pagination]="procedenciaPagination">
+        </cdk-pessoa-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showProcedenciaGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('procedencia').hasError('formError')">
+            {{form.get('procedencia').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Data da Produção</mat-label>
+        <input matInput formControlName="dataHoraProducao" [matDatetimepicker]="dataHoraProducao">
+        <mat-datetimepicker-toggle matSuffix [for]="dataHoraProducao"></mat-datetimepicker-toggle>
+        <mat-datetimepicker #dataHoraProducao type="datetime" openOnFocus="true"
+                            timeInterval="5"></mat-datetimepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Setor de Origem"
+               formControlName="setorOrigem"
+               [matAutocomplete]="setorOrigem.autocomplete"
+               [readonly]="form.get('id').value"
+               (blur)="checkSetorOrigem()">
+        <cdk-setor-autocomplete
+            #setorOrigem="setorAutocomplete"
+            [control]="form.get('setorOrigem')"
+            [pagination]="setorOrigemPagination">
+        </cdk-setor-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                [disabled]="form.get('id').value"
+                (click)="showSetorOrigemGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('setorOrigem').hasError('formError')">
+            {{form.get('setorOrigem').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Dependências de Software</mat-label>
+        <input matInput #dependenciaSoftware
+               name="dependenciaSoftware"
+               formControlName="dependenciaSoftware"
+               maxlength="255" upperCase>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Dependências de Hardware</mat-label>
+        <input matInput #dependenciaHardware
+               name="dependenciaHardware"
+               formControlName="dependenciaHardware"
+               maxlength="255" upperCase>
+    </mat-form-field>
+
+    <!-- Observacao Column -->
+    <ng-container matColumnDef="observacao">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header
+            maxlength="255">
+            Observação
+        </th>
+    </ng-container>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving && actions.includes('save')">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving && actions.includes('abort')">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-tipo-documento-gridsearch
+    *ngIf="activeCard === 'tipo-documento-list-gridsearch'"
+    (selected)="selectTipoDocumento($event)"
+    (cancel)="cancel()">
+</cdk-tipo-documento-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'setor-origem-gridsearch'"
+    [pagination]="setorOrigemPagination"
+    (selected)="selectSetorOrigem($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-pessoa-gridsearch
+    *ngIf="activeCard === 'procedencia-gridsearch'"
+    [pagination]="procedenciaPagination"
+    (selected)="selectProcedencia($event)"
+    (cancel)="cancel()">
+</cdk-pessoa-gridsearch>
+
+<cdk-logentry-gridsearch
+    *ngIf="activeCard === 'logentry-gridsearch'"
+    [pagination]="logEntryPagination"
+    (cancel)="cancel()">
+</cdk-logentry-gridsearch>
+
+<cdk-modalidade-copia-gridsearch
+    *ngIf="activeCard === 'modalidade-copia-gridsearch'"
+    [pagination]="modalidadeCopiaPagination"
+    (selected)="selectModalidadeCopia($event)"
+    (cancel)="cancel()">
+</cdk-modalidade-copia-gridsearch>

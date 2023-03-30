@@ -1,0 +1,64 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+    <mat-form-field>
+        <input matInput placeholder="Nome" formControlName="nome" required maxlength="255" upperCase>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Descrição" formControlName="descricao" maxlength="255" required upperCase>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Gênero do Processo"
+               formControlName="generoProcesso"
+               [matAutocomplete]="generoProcesso.autocomplete">
+        <cdk-genero-processo-autocomplete
+            #generoProcesso="generoProcessoAutocomplete"
+            [control]="form.get('generoProcesso')">
+        </cdk-genero-processo-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showGeneroProcessoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Espécie Tarefa Inicial"
+               formControlName="especieTarefaInicial"
+               [matAutocomplete]="especieTarefa.autocomplete">
+        <cdk-especie-tarefa-autocomplete
+            #especieTarefa="especieTarefaAutocomplete"
+            [control]="form.get('especieTarefaInicial')">
+        </cdk-especie-tarefa-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showEspecieTarefaGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-especie-tarefa-gridsearch
+    *ngIf="activeCard === 'especie-tarefa-gridsearch'"
+    [pagination]="especieTarefaPagination"
+    (selected)="selectEspecieTarefa($event)"
+    (cancel)="cancel()">
+</cdk-especie-tarefa-gridsearch>
+
+<cdk-genero-processo-gridsearch
+    *ngIf="activeCard === 'genero-processo-gridsearch'"
+    [pagination]="generoProcessoPagination"
+    (selected)="selectGeneroProcesso($event)"
+    (cancel)="cancel()">
+</cdk-genero-processo-gridsearch>

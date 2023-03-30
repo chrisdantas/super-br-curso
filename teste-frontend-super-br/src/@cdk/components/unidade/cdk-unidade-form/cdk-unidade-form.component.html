@@ -1,0 +1,192 @@
+ <form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="Nome" formControlName="nome" required maxlength="255" upperCase>
+        <mat-error *ngIf="form.get('nome').hasError('formError')">
+            {{form.get('nome').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Sigla" formControlName="sigla" required maxlength="20" upperCase>
+        <mat-error *ngIf="form.get('sigla').hasError('formError')">
+            {{form.get('sigla').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Prefixo NUP" formControlName="prefixoNUP" >
+        <mat-error *ngIf="(form.get('prefixoNUP').invalid && (form.get('prefixoNUP').dirty
+            || form.get('prefixoNUP').touched ))">
+            <div *ngIf="form.get('prefixoNUP').errors?.['required']">
+                Prefixo NUP é Obrigatório
+            </div>
+            <div *ngIf="form.get('prefixoNUP').errors?.['pattern']">
+                Prefixo NUP aceita apenas Números e até 5 dígitos.
+            </div>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="NUP Inicial" formControlName="sequenciaInicialNUP" maxlength="11">
+        <mat-error *ngIf="form.get('sequenciaInicialNUP').hasError('formError')">
+            {{form.get('sequenciaInicialNUP').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Endereço" formControlName="endereco" maxlength="255" upperCase>
+        <mat-error *ngIf="form.get('endereco').hasError('formError')">
+            {{form.get('endereco').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput #email placeholder="Email" formControlName="email" maxlength="255" upperCase>
+        <mat-hint align="end">{{email.value.length}} / 255</mat-hint>
+        <mat-error>
+            <ng-container *ngIf="form.get('email').invalid && (form.get('email').dirty
+            || form.get('email').touched )">
+                <div *ngIf="form.get('email').errors?.['email']">
+                    Email inválido
+                </div>
+            </ng-container>
+            <ng-container *ngIf="form.get('email').hasError('formError')">
+                {{form.get('email').errors.formError}}
+            </ng-container>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Órgão Central"
+               formControlName="modalidadeOrgaoCentral"
+               [matAutocomplete]="modalidadeOrgaoCentral.autocomplete"
+               (blur)="checkModalidadeOrgaoCentral()" required>
+        <cdk-modalidade-orgao-central-autocomplete
+            #modalidadeOrgaoCentral="modalidadeOrgaoCentralAutocomplete"
+            [control]="form.get('modalidadeOrgaoCentral')"
+            [pagination]="modalidadeOrgaoCentralPagination">
+        </cdk-modalidade-orgao-central-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showModalidadeOrgaoCentralGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('modalidadeOrgaoCentral').hasError('formError')">
+            {{form.get('modalidadeOrgaoCentral').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Unidade Pai"
+               formControlName="unidadePai"
+               [matAutocomplete]="setor.autocomplete"
+               (blur)="checkSetor()">
+        <cdk-setor-autocomplete
+            #setor="setorAutocomplete"
+            [control]="form.get('unidadePai')"
+            [pagination]="setorPagination">
+        </cdk-setor-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showSetorGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('unidadePai').hasError('formError')">
+            {{form.get('unidadePai').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Gênero"
+               formControlName="generoSetor"
+               [matAutocomplete]="generoSetor.autocomplete"
+               (blur)="checkGeneroSetor()" required>
+        <cdk-genero-setor-autocomplete
+            #generoSetor="generoSetorAutocomplete"
+            [control]="form.get('generoSetor')"
+            [pagination]="generoSetorPagination">
+        </cdk-genero-setor-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showGeneroSetorGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('generoSetor').hasError('formError')">
+            {{form.get('generoSetor').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Município"
+               formControlName="municipio"
+               [matAutocomplete]="municipio.autocomplete"
+               (blur)="checkMunicipio()" required>
+        <cdk-municipio-autocomplete
+            #municipio="municipioAutocomplete"
+            [control]="form.get('municipio')"
+            [pagination]="municipioPagination">
+        </cdk-municipio-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showMunicipioGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('municipio').hasError('formError')">
+            {{form.get('municipio').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="ativo">
+        Ativo
+    </mat-checkbox>
+
+    <div class="legendaGrupo">Configuração:</div>
+
+    <mat-checkbox formControlName="apenasProtocolo"
+                  matTooltip="Esta unidade recebe tramitações apenas pelo seu Protocolo.">
+        Protocolo
+    </mat-checkbox>
+
+    <mat-checkbox formControlName="numeracaoDocumentoUnidade"
+                  matTooltip="Numeração de documentos por unidade.">
+        Numeração de Documentos por Unidade
+    </mat-checkbox>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid"
+                *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-modalidade-orgao-central-gridsearch
+    *ngIf="activeCard === 'modalidade-orgao-central-gridsearch'"
+    [pagination]="modalidadeOrgaoCentralPagination"
+    (selected)="selectModalidadeOrgaoCentral($event)"
+    (cancel)="cancel()">
+</cdk-modalidade-orgao-central-gridsearch>
+
+<cdk-genero-setor-gridsearch
+    *ngIf="activeCard === 'genero-setor-gridsearch'"
+    [pagination]="generoSetorPagination"
+    (selected)="selectGeneroSetor($event)"
+    (cancel)="cancel()">
+</cdk-genero-setor-gridsearch>
+
+<cdk-municipio-gridsearch
+    *ngIf="activeCard === 'municipio-gridsearch'"
+    (selected)="selectMunicipio($event)"
+    (cancel)="cancel()">
+</cdk-municipio-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'setor-gridsearch'"
+    [pagination]="setorPagination"
+    (selected)="selectSetor($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>

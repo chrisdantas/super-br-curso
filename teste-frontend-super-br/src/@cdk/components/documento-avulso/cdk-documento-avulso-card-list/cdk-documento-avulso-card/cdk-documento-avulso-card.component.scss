@@ -1,0 +1,19 @@
+@import '../../../../scss/cdk';
+
+cdk-documento-avulso-card {
+
+    border: 1px solid;
+
+    .more-vert {
+        height: 44px;
+    }
+
+    .file {
+        cursor: pointer;
+        border-right: 1px solid;
+    }
+
+    .space {
+        height: 4px;
+    }
+}

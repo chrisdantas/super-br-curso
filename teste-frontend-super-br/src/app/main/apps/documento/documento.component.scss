@@ -1,0 +1,188 @@
+documento {
+    display: flex;
+
+    .isDisabled {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 150000 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .full-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 100000 !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.5) !important;
+
+        > .modal {
+            &.disabled {
+                z-index: 1001 !important;
+            }
+
+            height: 95%;
+            width: 98%;
+            flex: 0 1 95%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            background: white;
+
+            > .modal-header {
+                flex: 0 1 auto;
+                justify-content: flex-end;
+                align-items: center;
+                display: flex;
+                flex-direction: row;
+                height: 60px;
+                min-height: 60px;
+                max-height: 60px;
+                background-color: #3949ab;
+                color: white;
+
+                .mat-tab-group {
+                    margin-left: 0px;
+                }
+
+                .mat-tab-label-content {
+                    color: white;
+                    opacity: 1 !important;
+                }
+
+                .mat-tab-label {
+                    color: white;
+                    opacity: 1 !important;
+                }
+
+                > .white-space {
+                    flex: 0.25 0 25%;
+                    padding-left: 40px;
+                }
+
+                > .acoes {
+                    flex: 0.50 0 auto;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-end;
+                    align-items: center;
+                    margin-left: 32px;
+                }
+            }
+
+            > .mobile-modal-header {
+                flex: 1 1 auto;
+                justify-content: space-between;
+                align-items: center;
+                display: flex;
+                flex-direction: row;
+                background: white;
+                height: 60px;
+                min-height: 60px;
+                max-height: 97px;
+
+                .mat-tab-group {
+                    margin-left: 0px;
+                }
+
+                .mat-tab-label-content {
+                    color: white;
+                    opacity: 1 !important;
+                }
+
+                .mat-tab-label {
+                    color: white;
+                    height: 30px;
+                    margin: 3px 9px 6px 3px;
+                    box-shadow: 2px 1px 4px 2px rgba(0, 0, 0, 0.4);
+                }
+
+                .mat-tab-labels {
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .mat-ink-bar {
+                    display: none;
+                }
+
+                > .acoes {
+                    flex: 0.50 0 auto;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-end;
+                    align-items: center;
+                }
+            }
+
+            > .content {
+                flex: 1 0 auto;
+                display: flex;
+                flex-direction: column;
+
+                > .actions {
+                    flex: 0 0 auto;
+                    justify-content: flex-start;
+                    align-items: center;
+                    display: flex;
+                }
+
+                > .header {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    > .componentes-digitais-navigation {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 100%;
+
+                        .previous {
+                            margin-right: auto;
+                        }
+
+                        .next,
+                        .done {
+                            margin-left: auto;
+                        }
+                    }
+                }
+
+                .documento-navegacao {
+                    display: flex;
+                    flex-direction: row;
+                    flex: 1 0 auto;
+
+                    > cdk-sidebar {
+                        display: flex;
+                        flex: 1 0 auto;
+                        min-width: 400px;
+                        max-width: 25%;
+
+                        > ng-component {
+                            display: flex;
+                            flex-direction: column;
+                            flex: 1 0 auto;
+                        }
+                    }
+
+                    > .documento-navegacao-content {
+                        display: flex;
+                        flex-direction: column;
+                        flex: 1 1 auto;
+                    }
+                }
+            }
+        }
+    }
+}

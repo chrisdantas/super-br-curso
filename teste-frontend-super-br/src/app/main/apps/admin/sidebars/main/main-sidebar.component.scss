@@ -1,0 +1,41 @@
+admin-main-sidebar {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+
+    > .header {
+        display: flex;
+        flex: 0 1 auto;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+
+        > .logo {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+        }
+    }
+
+    > .content {
+
+        .mat-expansion-panel-body {
+            padding: 0 0 8px !important;
+        }
+
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        height: 0;
+        overflow-y: auto;
+        padding-top: 8px;
+
+        .title-module {
+            border-bottom: 1px solid #dcdcdc;
+        }
+
+    }
+}
+

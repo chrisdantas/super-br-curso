@@ -1,0 +1,498 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-slide-toggle *ngIf="!tarefa.id && mode === 'regular' && !fromProcesso" formControlName="blocoProcessos">
+        Bloco de Processos
+    </mat-slide-toggle>
+
+    <mat-form-field *ngIf="mode === 'regular'">
+        <input matInput placeholder="Processo"
+               formControlName="processo"
+               [readonly]="inputProcesso"
+               [matAutocomplete]="processo.autocomplete" required
+               (blur)="checkProcesso()">
+        <cdk-processo-autocomplete
+            #processo="processoAutocomplete"
+            [control]="form.get('processo')"
+            [filter]="filterProcessoAutocomplete"
+            [pagination]="processoPagination">
+        </cdk-processo-autocomplete>
+        <div class="mat-form-field-suffix">
+            <button *ngIf="!inputProcesso" matSuffix mat-button mat-icon-button
+                    (click)="showProcessoGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <cdk-processo-autocomplete-action-filter
+                *ngIf="!inputProcesso"
+                (filterChange)="setFilterProcessoAutocomplete($event)">
+            </cdk-processo-autocomplete-action-filter>
+        </div>
+        <mat-error *ngIf="form.get('processo').hasError('formError')">
+            {{form.get('processo')?.errors?.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <div *ngIf="form.get('blocoProcessos').value" class="bloco-processos">
+        <cdk-processo-grid
+            [processos]="processos"
+            [total]="processos.length"
+            [actions]="['delete']"
+            (delete)="deleteProcessos($event)">
+        </cdk-processo-grid>
+    </div>
+
+    <mat-slide-toggle formControlName="tarefaWorkflow"
+      *ngIf="form.get('processo').value?.especieProcesso?.workflow">
+        Seguir Workflow
+    </mat-slide-toggle>
+
+    <mat-form-field
+            *ngIf="form.get('tarefaWorkflow')?.value">
+        <input matInput placeholder="Workflow"
+               formControlName="workflow"
+               [matAutocomplete]="workflow.autocomplete" required
+               (blur)="checkWorkflow()">
+        <cdk-workflow-autocomplete
+            #workflow="workflowAutocomplete"
+            [control]="form.get('workflow')"
+            [pagination]="workflowPagination">
+        </cdk-workflow-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                [disabled]="form.get('workflow').disabled"
+                (click)="showWorkflowGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('workflow').hasError('formError')">
+            {{form.get('workflow').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field
+        *ngIf="exibeEspecieTarefa()">
+        <input matInput placeholder="Espécie de Tarefa"
+               formControlName="especieTarefa"
+               [readonly]="desabilitaEspecieTarefa || !!tarefa.dataHoraConclusaoPrazo"
+               [matAutocomplete]="especieTarefa.autocomplete" required
+               (blur)="checkEspecieTarefa()">
+        <cdk-especie-tarefa-autocomplete
+            #especieTarefa="especieTarefaAutocomplete"
+            [especieTarefaList]="especieTarefaList"
+            [especieTarefaListIsLoading]="especieTarefaListIsLoading"
+            [control]="form.get('especieTarefa')"
+            [pagination]="especieTarefaPagination">
+        </cdk-especie-tarefa-autocomplete>
+        <button [disabled]="desabilitaFavoritoEspecieTarefa || !!tarefa.dataHoraConclusaoPrazo"
+                matSuffix mat-button mat-icon-button
+                (click)="getFavoritosEspecieTarefa()">
+            <mat-icon matTooltip="Favoritos">star</mat-icon>
+        </button>
+        <button matSuffix mat-button mat-icon-button
+                [disabled]="desabilitaEspecieTarefa || !!tarefa.dataHoraConclusaoPrazo"
+                (click)="showEspecieTarefaGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('especieTarefa').hasError('formError')">
+            {{form.get('especieTarefa').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-card
+        *ngIf="mode === 'regular' ||
+                      mode === 'bloco-create' ||
+                      blocoEdit.blocoEditDistribuicao">
+
+        <mat-card-subtitle *ngIf="mode === 'regular' || blocoEdit.blocoEditDistribuicao">
+            Responsável
+        </mat-card-subtitle>
+
+        <mat-slide-toggle formControlName="distribuicaoAutomatica"
+                          *ngIf="mode === 'regular' || mode === 'bloco-create' || blocoEdit.blocoEditDistribuicao"
+                          [disabled]="!!tarefa.dataHoraConclusaoPrazo">
+            Distribuição Automática
+        </mat-slide-toggle>
+
+        <div class="align-icon">
+            <div class="align-icon toggle-icon">
+                <mat-slide-toggle class="align-icon toggle-icon mr-8 mb-8"
+                                  *ngIf="!tarefa.id && mode === 'regular'"
+                                  formControlName="blocoResponsaveis">
+                    Bloco de Responsáveis
+                </mat-slide-toggle>
+            </div>
+
+            <button mat-mini-fab color="accent" class="button-lotacao"
+                    [matMenuTriggerFor]="lotacoesMenu"
+                    #menuTrigger="matMenuTrigger"
+                    *ngIf="!tarefa.dataHoraConclusaoPrazo">
+                <mat-icon matTooltip="Consultar lotações">person</mat-icon>
+            </button>
+        </div>
+        <mat-menu #lotacoesMenu="matMenu">
+            <h4 class="p-4 mt-4 mb-4">Consulta de Lotações</h4>
+            <div class="p-8 mb-4" style="width: 400px !important" fxLayoutGap="8px" fxLayout="column"
+                 fxLayoutAlign="start" fxFlex="1 0 auto" (click)="$event.stopPropagation()">
+                <mat-form-field fxFlex="100">
+                    <div fxLayout="row" fxLayoutAlign="start center" mat-menu-item>
+                        <input matInput placeholder="Nome do Colaborador"
+                               [formControl]="lotacaoControl"
+                               #autoCompleteLotacao
+                               [matAutocomplete]="lotacao.autocomplete"
+                               (blur)="checkLotacao()">
+                    </div>
+                    <cdk-lotacao-autocomplete
+                        #lotacao="lotacaoAutocomplete"
+                        [mode]="'search'"
+                        [control]="lotacaoControl"
+                        [pagination]="lotacaoPagination">
+                    </cdk-lotacao-autocomplete>
+                    <button matSuffix mat-button mat-icon-button type="button"
+                            (click)="$event.stopPropagation(); showLotacaoGrid()">
+                        <mat-icon matTooltip="Procurar em todas as lotações">search</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+        </mat-menu>
+
+        <mat-form-field
+            *ngIf="mode === 'regular' || mode === 'bloco-create' || blocoEdit.blocoEditDistribuicao">
+            <input matInput placeholder="Unidade Responsável"
+                   formControlName="unidadeResponsavel"
+                   [readonly]="!!tarefa.dataHoraConclusaoPrazo"
+                   [matAutocomplete]="unidadeResponsavel.autocomplete" required
+                   (blur)="checkUnidadeResponsavel()">
+            <cdk-setor-autocomplete
+                #unidadeResponsavel="setorAutocomplete"
+                [control]="form.get('unidadeResponsavel')"
+                [setorList]="unidadeResponsavelList"
+                [setorListIsLoading]="unidadeResponsavelListIsLoading"
+                [pagination]="unidadeResponsavelPagination">
+            </cdk-setor-autocomplete>
+            <button [disabled]="!form.get('processo').value || !!tarefa.dataHoraConclusaoPrazo" matSuffix mat-button mat-icon-button
+                    (click)="getFavoritosUnidadeResponsavel()">
+                <mat-icon matTooltip="Favoritos">star</mat-icon>
+            </button>
+            <button matSuffix mat-button mat-icon-button
+                    *ngIf="form.value.id && !blocoEdit.blocoEditDistribuicao"
+                    (click)="showLogEntryGrid('unidadeResponsavel')">
+                <mat-icon matTooltip="Histórico">history</mat-icon>
+            </button>
+            <button matSuffix mat-button mat-icon-button
+                    [disabled]="!!tarefa.dataHoraConclusaoPrazo"
+                    (click)="showUnidadeResponsavelGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('unidadeResponsavel').hasError('formError')">
+                {{form.get('unidadeResponsavel').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field
+            *ngIf="!form.get('setorResponsavel').disabled && (mode === 'regular' || mode === 'bloco-create' || blocoEdit.blocoEditDistribuicao)">
+            <input matInput placeholder="Setor Responsável"
+                   formControlName="setorResponsavel"
+                   [matAutocomplete]="setor.autocomplete" required
+                   [readonly]="!editable || !!tarefa.dataHoraConclusaoPrazo"
+                   (blur)="checkSetorResponsavel()">
+            <cdk-setor-autocomplete
+                #setor="setorAutocomplete"
+                [setorList]="setorResponsavelList"
+                [setorListIsLoading]="setorResponsavelListIsLoading"
+                [control]="form.get('setorResponsavel')"
+                [pagination]="setorResponsavelPagination">
+            </cdk-setor-autocomplete>
+            <button [disabled]="!form.get('processo').value || !form.get('unidadeResponsavel').value || !editable || !!tarefa.dataHoraConclusaoPrazo"
+                    matSuffix mat-button mat-icon-button
+                    (click)="getFavoritosSetorResponsavel()">
+                <mat-icon matTooltip="Favoritos">star</mat-icon>
+            </button>
+            <button matSuffix mat-button mat-icon-button [disabled]="!editable"
+                    *ngIf="form.value.id && !blocoEdit.blocoEditDistribuicao"
+                    (click)="showLogEntryGrid('setorResponsavel')">
+                <mat-icon matTooltip="Histórico">history</mat-icon>
+            </button>
+            <button matSuffix mat-button mat-icon-button [disabled]="!editable || !!tarefa.dataHoraConclusaoPrazo"
+                    (click)="showSetorTree()">
+                <mat-icon matTooltip="Árvore de Setores">subdirectory_arrow_right</mat-icon>
+            </button>
+            <button *ngIf="form.get('setorResponsavel').enabled" [disabled]="!editable || !!tarefa.dataHoraConclusaoPrazo"
+                    matSuffix mat-button mat-icon-button
+                    (click)="showSetorResponsavelGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('setorResponsavel').hasError('formError')">
+                {{form.get('setorResponsavel').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field
+            *ngIf="!form.get('usuarioResponsavel').disabled &&
+                                (mode === 'regular' || mode === 'bloco-create' ||
+                                (form.value.unidadeResponsavel && blocoEdit.blocoEditDistribuicao))">
+            <input matInput placeholder="Usuário Responsável"
+                   formControlName="usuarioResponsavel"
+                   [matAutocomplete]="usuario.autocomplete" required
+                   [readonly]="!!tarefa.dataHoraConclusaoPrazo"
+                   (blur)="checkUsuarioResponsavel()">
+            <cdk-usuario-autocomplete
+                #usuario="usuarioAutocomplete"
+                [control]="form.get('usuarioResponsavel')"
+                [usuarioList]="usuarioResponsavelList"
+                [usuarioListIsLoading]="usuarioResponsavelListIsLoading"
+                [pagination]="usuarioResponsavelPagination">
+            </cdk-usuario-autocomplete>
+            <button [disabled]="!form.get('processo').value || !form.get('setorResponsavel').value || !!tarefa.dataHoraConclusaoPrazo" matSuffix
+                    mat-button mat-icon-button
+                    (click)="getFavoritosUsuarioResponsavel()">
+                <mat-icon matTooltip="Favoritos">star</mat-icon>
+            </button>
+            <button matSuffix mat-button mat-icon-button *ngIf="tarefa.id && !blocoEdit.blocoEditDistribuicao"
+                    (click)="showLogEntryGrid('usuarioResponsavel')">
+                <mat-icon matTooltip="Histórico">history</mat-icon>
+            </button>
+            <button *ngIf="form.get('usuarioResponsavel').enabled" matSuffix mat-button mat-icon-button
+                    [disabled]="!!tarefa.dataHoraConclusaoPrazo"
+                    (click)="showUsuarioGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('usuarioResponsavel').hasError('formError')">
+                {{form.get('usuarioResponsavel').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="form.get('blocoResponsaveis').value">
+            <input matInput placeholder="Grupo de Contatos"
+                   formControlName="grupoContato"
+                   [matAutocomplete]="grupoContato.autocomplete"
+                   [readonly]="!!tarefa.dataHoraConclusaoPrazo"
+                   (blur)="checkGrupoContato()">
+            <cdk-grupo-contato-autocomplete
+                #grupoContato="grupoContatoAutocomplete"
+                [control]="form.get('grupoContato')"
+                [pagination]="grupoContatoPagination">
+            </cdk-grupo-contato-autocomplete>
+            <button matSuffix mat-button mat-icon-button
+                    [disabled]="!!tarefa.dataHoraConclusaoPrazo"
+                    (click)="showGrupoContatoGRID()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+        </mat-form-field>
+
+        <div *ngIf="form.get('blocoResponsaveis').value" class="bloco-responsaveis">
+            <cdk-bloco-responsaveis-grid
+                [(responsaveis)]="blocoResponsaveis"
+                [actions]="['delete']">
+            </cdk-bloco-responsaveis-grid>
+        </div>
+
+    </mat-card>
+
+    <mat-card class="dates mb-8"
+              *ngIf="mode === 'regular' || mode === 'bloco-create' || blocoEdit.blocoEditInicioPrazo || blocoEdit.blocoEditFinalPrazo">
+
+        <mat-card-subtitle>Prazo</mat-card-subtitle>
+
+        <div class="dias-uteis" [hidden]="evento">
+            <mat-form-field class="dias-input">
+                <input matInput type="number" class="prazoDias" min="0" max="180" [readonly]="!!tarefa.dataHoraConclusaoPrazo"
+                       formControlName="prazoDias" oninput="this.value = Math.abs(this.value) >= 0 ? Math.abs(this.value) : null" placeholder="Em dia(s)">
+            </mat-form-field>
+
+            <mat-slide-toggle formControlName="diasUteis" [disabled]="!!tarefa.dataHoraConclusaoPrazo">
+                Dias Úteis
+            </mat-slide-toggle>
+        </div>
+
+        <mat-form-field
+            *ngIf="mode === 'regular' || mode === 'bloco-create' || blocoEdit.blocoEditInicioPrazo">
+            <mat-label *ngIf="!evento">Início do Prazo</mat-label>
+            <mat-label *ngIf="evento">Início do Evento</mat-label>
+            <input matInput formControlName="dataHoraInicioPrazo" [matDatetimepicker]="dataHoraInicioPrazo"
+                   required [readonly]="!!tarefa.dataHoraConclusaoPrazo">
+            <button matSuffix mat-button mat-icon-button *ngIf="tarefa.id"
+                    (click)="showLogEntryGrid('dataHoraInicioPrazo')">
+                <mat-icon matTooltip="Histórico">history</mat-icon>
+            </button>
+            <mat-datetimepicker-toggle matSuffix [for]="dataHoraInicioPrazo"></mat-datetimepicker-toggle>
+            <mat-datetimepicker #dataHoraInicioPrazo type="datetime" openOnFocus="true" timeInterval="5"
+                                required [disabled]="!!tarefa.dataHoraConclusaoPrazo"></mat-datetimepicker>
+        </mat-form-field>
+
+        <mat-form-field
+            *ngIf="mode === 'regular' || mode === 'bloco-create' || blocoEdit.blocoEditFinalPrazo">
+            <mat-label *ngIf="!evento">Final do Prazo</mat-label>
+            <mat-label *ngIf="evento">Final do Evento</mat-label>
+            <input matInput formControlName="dataHoraFinalPrazo" [matDatetimepicker]="dataHoraFinalPrazo"
+            [min]="this.form.get('dataHoraInicioPrazo')?.value" [readonly]="!!tarefa.dataHoraConclusaoPrazo" required>
+            <button matSuffix mat-button mat-icon-button *ngIf="tarefa.id"
+                    (click)="showLogEntryGrid('dataHoraFinalPrazo')">
+                <mat-icon matTooltip="Histórico">history</mat-icon>
+            </button>
+            <mat-datetimepicker-toggle matSuffix [for]="dataHoraFinalPrazo"></mat-datetimepicker-toggle>
+            <mat-datetimepicker #dataHoraFinalPrazo type="datetime" openOnFocus="true" timeInterval="5"
+                                [disabled]="!!tarefa.dataHoraConclusaoPrazo" required></mat-datetimepicker>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="evento && (mode === 'regular' || mode === 'bloco-create')">
+            <input type="text" formControlName="localEvento"
+                   matInput placeholder="Local do Evento" maxlength="255" upperCase/>
+            <mat-error *ngIf="form.get('localEvento').hasError('formError')">
+                {{form.get('localEvento').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-error *ngIf="form.get('dataHoraInicioPrazo').hasError('formError')">
+            {{form.get('dataHoraInicioPrazo').errors.formError}}
+        </mat-error>
+
+        <mat-error *ngIf="form.get('dataHoraFinalPrazo').hasError('formError')">
+            {{form.get('dataHoraFinalPrazo').errors.formError}}
+        </mat-error>
+
+    </mat-card>
+
+    <mat-form-field *ngIf="mode === 'regular' || mode === 'bloco-create' || mode === 'bloco'">
+        <input matInput placeholder="Setor Origem"
+               formControlName="setorOrigem"
+               [matAutocomplete]="setorOrigem.autocomplete" required
+               (blur)="checkSetorOrigem()"
+               [readonly]="!!tarefa.dataHoraConclusaoPrazo">
+        <cdk-setor-autocomplete
+            #setorOrigem="setorAutocomplete"
+            [control]="form.get('setorOrigem')"
+            [pagination]="setorOrigemPagination">
+        </cdk-setor-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                [disabled]="!!tarefa.dataHoraConclusaoPrazo"
+                (click)="showSetorOrigemTree()">
+            <mat-icon matTooltip="Árvore de Setores">subdirectory_arrow_right</mat-icon>
+        </button>
+        <button matSuffix mat-button mat-icon-button
+                [disabled]="!!tarefa.dataHoraConclusaoPrazo"
+                (click)="showSetorOrigemGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('setorOrigem').hasError('formError')">
+            {{form.get('setorOrigem').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="urgente"
+                      *ngIf="mode === 'regular' || mode === 'bloco-create' || blocoEdit.blocoEditUrgente"
+                      [disabled]="!!tarefa.dataHoraConclusaoPrazo">
+        Urgente
+    </mat-slide-toggle>
+
+    <mat-form-field
+        *ngIf="mode === 'regular' || mode === 'bloco-create' || blocoEdit.blocoEditObservacao">
+            <textarea formControlName="observacao"
+                      matInput placeholder="Observação" maxlength="255" upperCase
+                      [readonly]="!!tarefa.dataHoraConclusaoPrazo"></textarea>
+        <mat-error *ngIf="form.get('observacao').hasError('formError')">
+            {{form.get('observacao').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions mb-8" *ngIf="!tarefa.dataHoraConclusaoPrazo">
+        <button type="submit" mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid || !valid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+    <div class="actions mb-8" *ngIf="tarefa.dataHoraConclusaoPrazo">
+        <button mat-raised-button color="accent" type="button" (click)="doAbort()" *ngIf="!saving">
+            VOLTAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-processo-gridsearch
+    *ngIf="activeCard === 'processo-gridsearch'"
+    [pagination]="processoPagination"
+    (selected)="selectProcesso($event)"
+    (cancel)="cancel()">
+</cdk-processo-gridsearch>
+
+<cdk-especie-tarefa-gridsearch
+    *ngIf="activeCard === 'especie-tarefa-gridsearch'"
+    [pagination]="especieTarefaPagination"
+    (selected)="selectEspecieTarefa($event)"
+    (cancel)="cancel()">
+</cdk-especie-tarefa-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'unidade-gridsearch'"
+    [pagination]="unidadeResponsavelPagination"
+    (selected)="selectUnidadeResponsavel($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'setor-gridsearch'"
+    [pagination]="setorResponsavelPagination"
+    (selected)="selectSetorResponsavel($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-usuario-gridsearch
+    *ngIf="activeCard === 'usuario-gridsearch'"
+    [pagination]="usuarioResponsavelPagination"
+    (selected)="selectUsuario($event)"
+    (cancel)="cancel()">
+</cdk-usuario-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'setor-origem-gridsearch'"
+    [pagination]="setorOrigemPagination"
+    (selected)="selectSetorOrigem($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-logentry-gridsearch
+    *ngIf="activeCard === 'logentry-gridsearch'"
+    [pagination]="logEntryPagination"
+    (cancel)="cancel()">
+</cdk-logentry-gridsearch>
+
+<cdk-setor-tree
+    *ngIf="activeCard === 'setor-tree'"
+    [pagination]="setorResponsavelPaginationTree"
+    (selected)="selectSetorResponsavel($event)"
+    (cancel)="cancel()">
+</cdk-setor-tree>
+
+<cdk-setor-tree
+    *ngIf="activeCard === 'setor-origem-tree'"
+    [pagination]="setorOrigemPaginationTree"
+    (selected)="selectSetorOrigem($event)"
+    (cancel)="cancel()">
+</cdk-setor-tree>
+
+<cdk-grupo-contato-gridsearch
+    *ngIf="activeCard === 'grupo-contato-gridsearch'"
+    [pagination]="grupoContatoPagination"
+    (selected)="selectGrupoContato($event)"
+    (cancel)="cancel()">
+</cdk-grupo-contato-gridsearch>
+
+<cdk-lotacao-gridsearch
+    *ngIf="activeCard === 'lotacao-gridsearch'"
+    [pagination]="lotacaoPagination"
+    [mode]="'search'"
+    (selected)="selectLotacao($event)"
+    (cancel)="cancel()">
+</cdk-lotacao-gridsearch>
+
+<cdk-workflow-gridsearch
+    *ngIf="activeCard === 'workflow-gridsearch'"
+    [pagination]="workflowPagination"
+    [mode]="'search'"
+    (selected)="selectWorkflow($event)"
+    (cancel)="cancel()">
+</cdk-workflow-gridsearch>

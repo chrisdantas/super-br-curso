@@ -1,0 +1,24 @@
+@mixin pessoa-theme($theme) {
+
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+
+    pessoa {
+        .header {
+            background: map-get($background, background);
+            border-bottom-color: map-get($foreground, divider);
+        }
+        .modal {
+            background: map-get($foreground, foreground);
+        }
+    }
+
+    pessoa-edit {
+        .header {
+            background: map-get($background, card);
+            border-bottom-color: map-get($foreground, divider);
+        }
+    }
+}

@@ -1,0 +1,41 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+            <input matInput placeholder="Município"
+                   formControlName="municipio"
+                   [matAutocomplete]="municipio.autocomplete" required
+                   (blur)="checkMunicipio()">
+        <cdk-municipio-autocomplete
+            #municipio="municipioAutocomplete"
+            [control]="form.get('municipio')"
+            [pagination]="municipioPagination">
+        </cdk-municipio-autocomplete>
+        <button *ngIf="form.get('municipio').enabled" matSuffix mat-button mat-icon-button
+                (click)="showMunicipioGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('municipio').hasError('formError')">
+            {{form.get('municipio').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+       <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-municipio-gridsearch
+    *ngIf="activeCard === 'municipio-gridsearch'"
+    [pagination]="municipioPagination"
+    (selected)="selectMunicipio($event)"
+    (cancel)="cancel()">
+</cdk-municipio-gridsearch>

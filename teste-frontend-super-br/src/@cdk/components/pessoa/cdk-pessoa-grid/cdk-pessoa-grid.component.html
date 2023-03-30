@@ -1,0 +1,330 @@
+<div class="page-layout left-sidebar">
+
+    <!-- SIDEBAR -->
+    <cdk-sidebar [lockedOpen]="(mode === 'search') ? 'gt-xs' : ''" class="sidebar" name="cdk-pessoa-filter"
+                 position="left">
+        <cdk-pessoa-filter (selected)="setFilter($event)" [mode]="this.mode"></cdk-pessoa-filter>
+    </cdk-sidebar>
+    <!-- / SIDEBAR -->
+
+    <div class="responsive-grid" [ngClass]="{'search': (this.mode === 'search')}">
+
+        <div class="actions">
+
+            <div class="back">
+                <button mat-icon-button *ngIf="actions.indexOf('cancel') > -1"
+                        (click)="doCancel()"
+                        aria-label="cancelar"
+                        matTooltip="Cancelar">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <button class="accent" mat-icon-button *ngIf="actions.indexOf('create') > -1"
+                        (click)="doCreate()"
+                        aria-label="novo"
+                        matTooltip="Novo">
+                    <mat-icon>person_add</mat-icon>
+                </button>
+            </div>
+
+            <button mat-icon-button *ngIf="selectedIds.length > 1 && actions.indexOf('delete') > -1"
+                    (click)="deleteBloco(selectedIds)"
+                    aria-label="remover"
+                    matTooltip="Remover">
+                <mat-icon>delete</mat-icon>
+            </button>
+
+            <ng-container *ngIf="getAllColumns().length">
+                <mat-form-field class="colunas mr-8" *showIfRole="'ROLE_COLABORADOR'">
+                    <mat-select [formControl]="columns" multiple>
+                        <div *ngFor="let column of getAllColumns()">
+                            <mat-option *ngIf="!column.fixed" [value]="column.id">{{ column.label }}</mat-option>
+                        </div>
+                    </mat-select>
+                </mat-form-field>
+            </ng-container>
+
+            <button *ngIf="mode === 'list'" class="refresh" mat-icon-button
+                    (click)="loadPage()"
+                    aria-label="recarregar"
+                    matTooltip="Recarregar">
+                <mat-icon>refresh</mat-icon>
+            </button>
+
+            <button class="toggle-filter" mat-icon-button
+                    [ngClass]="{'warn': !(gridFilter | json).includes('{}')}"
+                    (click)="toggleFilter()"
+                    *ngIf="mode === 'list'"
+                    aria-label="filtrar"
+                    matTooltip="Filtrar">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+
+            <button mat-icon-button [ngClass]="{'warn': hasExcluded}" *ngIf="actions.indexOf('showDeleted') > -1"
+                    (click)="loadExcluded()"
+                    aria-label="mostrar apagados"
+                    matTooltip="Mostrar Apagados">
+                <mat-icon>delete_sweep</mat-icon>
+            </button>
+        </div>
+
+        <div class="loading" *ngIf="loading">
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <div class="content" cdkPerfectScrollbar>
+
+            <table mat-table [dataSource]="dataSource" matSort [matSortDisabled]="mode === 'search' && (gridFilter | json).includes('{}')" [ngStyle]="loading ? {'display': 'none'} : {}">
+
+                <!-- Selection Column -->
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (click)="toggleSelectAll($event)"
+                                      [checked]="hasSelected"
+                                      [disabled]="hasExcluded"
+                                      [indeterminate]="isIndeterminate">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa">
+                        <mat-checkbox [checked]="selectedIds.indexOf(pessoa.id) > -1"
+                                      (change)="toggleInSelected(pessoa.id)"
+                                      (click)="$event.stopPropagation();"
+                                      [disabled]="deletedIds?.indexOf(pessoa.id) > -1 || hasExcluded">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- Id Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('id')"> &nbsp;Id
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Id: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> &nbsp;{{pessoa.id}} </td>
+                </ng-container>
+
+                <!-- Nome Column -->
+                <ng-container matColumnDef="nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('nome')">
+                        Nome
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Nome: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.nome | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- NumeroDocumentoPrincipal Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('numeroDocumentoPrincipal') > -1"
+                              matColumnDef="numeroDocumentoPrincipal">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('numeroDocumentoPrincipal')">
+                        Número do Documento Principal
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile'
+                        data-label='Número do Documento Principal: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.numeroDocumentoPrincipal}} </td>
+                </ng-container>
+
+                <!-- Contato Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('contato') > -1" matColumnDef="contato">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('contato')">
+                        Contato
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Contato: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.contato}} </td>
+                </ng-container>
+
+                <!-- PessoaValidada Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('pessoaValidada') > -1" matColumnDef="pessoaValidada">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('pessoaValidada')">
+                        Pessoa Validada
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Pessoa Validada: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.pessoaValidada | booleanoPipe | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- PessoaValidada Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('pessoaConveniada') > -1"
+                              matColumnDef="pessoaConveniada">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('pessoaConveniada')">
+                        Pessoa Conveniada
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile'
+                        data-label='Pessoa Conveniada: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.pessoaConveniada | booleanoPipe | titleCasePipe }} </td>
+                </ng-container>
+
+                <!-- DataNascimento Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('dataNascimento') > -1" matColumnDef="dataNascimento">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('dataNascimento')">
+                        Data do Nascimento
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile'
+                        data-label='Data do Nascimento: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.dataNascimento?.toDate() | date: 'dd/MM/yyyy'}} </td>
+                </ng-container>
+
+                <!-- dataObito Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('dataObito') > -1" matColumnDef="dataObito">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('dataObito')">
+                        Data do Obito
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Data do Obito: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.dataObito}} </td>
+                </ng-container>
+
+                <!-- NomeGenitor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('nomeGenitor') > -1" matColumnDef="nomeGenitor">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('nomeGenitor')">
+                        Nome do Genitor
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Nome do Genitor: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.nomeGenitor | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- NomeGenitora Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('nomeGenitora') > -1" matColumnDef="nomeGenitora">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('nomeGenitora')">
+                        Nome da Genitora
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile'
+                        data-label='Nome da Genitora: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.nomeGenitora | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- Profissao Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('profissao') > -1" matColumnDef="profissao">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('profissao')">
+                        Profissão
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Profissão: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.profissao | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- Nacionalidade Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('nacionalidade.nome') > -1"
+                              matColumnDef="nacionalidade.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('nacionalidade.nome')">
+                        Nacionalidade
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Nacionalidade: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.nacionalidade?.nome | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- ModalidadeGeneroPessoa.valor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('modalidadeGeneroPessoa.valor') > -1"
+                              matColumnDef="modalidadeGeneroPessoa.valor">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('modalidadeGeneroPessoa.valor')">
+                        Modalidade Genêro Pessoa
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile'
+                        data-label='Modalidade Genêro Pessoa: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.modalidadeGeneroPessoa?.valor | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- Naturalidade Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('naturalidade.nome') > -1"
+                              matColumnDef="naturalidade.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('naturalidade.nome')">
+                        Naturalidade
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Naturalidade: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.naturalidade?.nome | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- OrigemDados Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('origemDados') > -1"
+                              matColumnDef="origemDados">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('origemDados')">
+                        Origem de Dados
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Origem de Dados: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.origemDados?.fonteDados | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- CriadoPor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('criadoPor.nome') > -1" matColumnDef="criadoPor.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('criadoPor.nome')">
+                        Criado Por
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Criado Por: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.criadoPor?.nome | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- CriadoEm Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('criadoEm') > -1" matColumnDef="criadoEm">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('criadoEm')">
+                        Criado Em
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Criado Em: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.criadoEm?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}} </td>
+                </ng-container>
+
+                <!-- AtualizadoPor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('atualizadoPor.nome') > -1"
+                              matColumnDef="atualizadoPor.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('atualizadoPor.nome')">
+                        Atualizado Por
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Atualizado Por: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.atualizadoPor?.nome | titleCasePipe}} </td>
+                </ng-container>
+
+                <!-- AtualizadoEm Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('atualizadoEm') > -1" matColumnDef="atualizadoEm">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="getSort('atualizadoEm')">
+                        Atualizado Em
+                    </th>
+                    <td mat-cell *matCellDef="let pessoa" class='has_label_on_mobile' data-label='Atualizado Em: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(pessoa.id) > -1, 'error': getProp(deletingErrors, pessoa.id)}"> {{pessoa.atualizadoEm?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}} </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let pessoa">
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('select') > -1 && !hasExcluded"
+                                (click)="selectPessoa(pessoa)"
+                                aria-label="selecionar"
+                                matTooltip="Selecionar">
+                            <mat-icon>keyboard_return</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('edit') > -1 && !hasExcluded"
+                                [disabled]="deletedIds?.indexOf(pessoa.id) > -1"
+                                (click)="editPessoa(pessoa.id)"
+                                aria-label="editar"
+                                matTooltip="Editar">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+
+                        <div class="spinner-container m-8" *ngIf="deletingIds?.indexOf(pessoa.id) > -1">
+                            <mat-spinner diameter="24"></mat-spinner>
+                        </div>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('delete') > -1 && deletingIds?.indexOf(pessoa.id) === -1 && !hasExcluded"
+                                [disabled]="deletedIds?.indexOf(pessoa.id) > -1"
+                                (click)="deletePessoa(pessoa.id)"
+                                aria-label="remover"
+                                matTooltip="Remover">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+
+                        <mat-error *ngIf="getProp(deletingErrors, pessoa.id)">
+                            {{ getMessageError(getProp(deletingErrors, pessoa.id)) }}
+                        </mat-error>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+                <tr mat-row *matRowDef="let pessoa; columns: displayedColumns;">
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <mat-paginator [disabled]="loading" [pageSizeOptions]="[10, 25]" showFirstLastButtons="true"></mat-paginator>
+        </div>
+    </div>
+</div>

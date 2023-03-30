@@ -1,0 +1,22 @@
+<div class="header">
+    <path icone="insert_drive_file"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="tipo-validacao-workflow">
+    </path>
+</div>
+<cdk-tipo-validacao-workflow-grid
+    [loading]="(loading$ | async)"
+    [tipoValidacaoWorkflows]="(tipoValidacaoWorkflows$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [displayedColumns]="['select', 'id', 'valor', 'descricao', 'sigla', 'actions']"
+    [actions]="['edit', 'create', 'delete', 'showInatived']"
+    (inatived)="inatived($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (delete)="delete($event)"
+    (create)="create()"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-tipo-validacao-workflow-grid>

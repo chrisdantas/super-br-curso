@@ -1,0 +1,119 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-checkbox formControlName="principal">
+        Principal
+    </mat-checkbox>
+
+    <mat-form-field>
+        <mat-label>CEP</mat-label>
+        <input matInput #cep
+               name="cep"
+               formControlName="cep"
+               maxlength="255" required>
+        <button matSuffix mat-button mat-icon-button
+                [disabled]="!form.get('cep').value"
+                (click)="getEnderecoByCep()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('cep').hasError('formError')">
+            {{form.get('cep').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Logradouro</mat-label>
+        <input matInput #logradouro
+               name="logradouro"
+               formControlName="logradouro"
+               maxlength="255" required>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Número</mat-label>
+        <input matInput #numero
+               name="numero"
+               formControlName="numero"
+               maxlength="255">
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Complemento</mat-label>
+        <input matInput #complemento
+               name="complemento"
+               formControlName="complemento"
+               maxlength="255">
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Bairro</mat-label>
+        <input matInput #bairro
+               name="bairro"
+               formControlName="bairro"
+               maxlength="255" required>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Município"
+               formControlName="municipio"
+               [matAutocomplete]="municipio.autocomplete"
+               (blur)="checkMunicipio()"
+               required>
+        <cdk-municipio-autocomplete
+            #municipio="municipioAutocomplete"
+            [control]="form.get('municipio')"
+            [pagination]="municipioPagination">
+        </cdk-municipio-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showMunicipioGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('municipio').hasError('formError')">
+            {{form.get('municipio').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="País"
+               formControlName="pais"
+               [matAutocomplete]="pais.autocomplete"
+               (blur)="checkPais()"
+               required>
+        <cdk-pais-autocomplete
+            #pais="paisAutocomplete"
+            [control]="form.get('pais')"
+            [pagination]="paisPagination">
+        </cdk-pais-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showPaisGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('pais').hasError('formError')">
+            {{form.get('pais').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+</form>
+
+<cdk-municipio-gridsearch
+    *ngIf="activeCard === 'municipio-gridsearch'"
+    (selected)="selectMunicipio($event)"
+    (cancel)="cancel()">
+</cdk-municipio-gridsearch>
+
+<cdk-pais-gridsearch
+    *ngIf="activeCard === 'pais-gridsearch'"
+    (selected)="selectPais($event)"
+    (cancel)="cancel()">
+</cdk-pais-gridsearch>

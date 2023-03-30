@@ -1,0 +1,84 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+    <mat-form-field>
+        <input matInput placeholder="Documento Principal"
+               formControlName="documento"
+               [matAutocomplete]="documento.autocomplete"
+               [readonly]="!!vinculacaoDocumento.documento">
+        <cdk-documento-autocomplete
+            #documento="documentoAutocomplete"
+            [control]="form.get('documento')"
+            [pagination]="documentoPagination">
+        </cdk-documento-autocomplete>
+        <mat-error *ngIf="form.get('documento').hasError('formError')">
+            {{form.get('documento').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Documento Vinculado"
+               formControlName="documentoVinculado"
+               [readonly]="!form.get('documento').value?.id"
+               [matAutocomplete]="documentoVinculado.autocomplete" required
+               (blur)="checkDocumentoVinculado()">
+        <cdk-documento-autocomplete
+            #documentoVinculado="documentoAutocomplete"
+            [control]="form.get('documentoVinculado')"
+            [pagination]="documentoVinculadoPagination">
+        </cdk-documento-autocomplete>
+        <button *ngIf="form.get('documentoVinculado').enabled" matSuffix mat-button mat-icon-button
+                [disabled]="!form.get('documento').value"
+                (click)="showDocumentoVinculadoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('documentoVinculado').hasError('formError')">
+            {{form.get('documentoVinculado').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Modalidade da Vinculação"
+               formControlName="modalidadeVinculacaoDocumento"
+               [matAutocomplete]="modalidadeVinculacaoDocumento.autocomplete" required
+               (blur)="checkModalidadeVinculacaoDocumento()">
+        <cdk-modalidade-vinculacao-documento-autocomplete
+            #modalidadeVinculacaoDocumento="modalidadeVinculacaoDocumentoAutocomplete"
+            [control]="form.get('modalidadeVinculacaoDocumento')"
+            [pagination]="modalidadeVinculacaoDocumentoPagination">
+        </cdk-modalidade-vinculacao-documento-autocomplete>
+        <button *ngIf="form.get('modalidadeVinculacaoDocumento').enabled" matSuffix mat-button mat-icon-button
+                (click)="showModalidadeVinculacaoDocumentoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('modalidadeVinculacaoDocumento').hasError('formError')">
+            {{form.get('modalidadeVinculacaoDocumento').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid || !form.get('modalidadeVinculacaoDocumento').value?.id" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-documento-gridsearch
+    *ngIf="activeCard === 'documento-vinculado-gridsearch'"
+    [displayedColumns]="displayedColumns"
+    [pagination]="documentoVinculadoPagination"
+    (selected)="selectDocumentoVinculado($event)"
+    (cancel)="cancel()">
+</cdk-documento-gridsearch>
+
+<cdk-modalidade-vinculacao-documento-gridsearch
+    *ngIf="activeCard === 'modalidade-vinculacao-documento-gridsearch'"
+    [pagination]="modalidadeVinculacaoDocumentoPagination"
+    (selected)="selectModalidadeVinculacaoDocumento($event)"
+    (cancel)="cancel()">
+</cdk-modalidade-vinculacao-documento-gridsearch>

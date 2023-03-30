@@ -1,0 +1,148 @@
+@import 'src/@cdk/scss/cdk';
+
+tarefas {
+
+    flex: 1 1 auto;
+    display: flex;
+
+    > .page-layout {
+
+        flex: 1 1 auto;
+        display: flex;
+
+        > .center {
+
+            flex: 1 1 auto;
+            display: flex;
+            margin-left: 4px !important;
+            margin-right: 4px !important;
+
+            > .header {
+
+                flex: 0 1 auto;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+
+                height: 56px !important;
+                min-height: 56px !important;
+                max-height: 56px !important;
+
+                .hideToolbar {
+                    display: none !important;
+                }
+
+                > .search-wrapper {
+                    flex: 1 1 auto;
+                    display: none;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    border-radius: 28px;
+                    overflow: hidden;
+                    @include mat-elevation(1);
+
+                    > .sidebar-toggle {
+                        margin: 0 0 0 6px;
+                        width: 56px;
+                        height: 56px;
+                        border-radius: 0;
+                        border-right: 1px solid;
+                    }
+
+                    > .search {
+                        flex: 1 1 auto;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-start;
+                        align-items: center;
+
+                        height: 46px;
+                        padding: 0 8px;
+                    }
+                }
+
+                &.current-tarefa-selected {
+                    .search-wrapper {
+                        display: none !important;
+                    }
+                }
+
+            }
+
+            > .content-card {
+
+                flex: 1 1 auto;
+                display: flex;
+
+                .toolbar {
+
+                    .toolbar-separator {
+                        height: 32px;
+                        width: 1px;
+                        margin: 0 12px;
+                    }
+
+                    .tarefa-list-control {
+                        margin-left: auto;
+                    }
+                }
+
+                > .content {
+
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: row;
+
+                    .tarefa-list {
+                        display: flex;
+                        flex-direction: column;
+
+                        .loading {
+                            flex: 0 1 auto;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: center;
+                            align-items: center;
+                        }
+
+                        &.maximizado {
+                            display: none !important;
+                        }
+
+                        &.mobile-mode {
+
+                            &.current-tarefa {
+                                display: none !important;
+                            }
+
+                            &.no-current-tarefa {
+                                max-width: 100% !important;
+                            }
+                        }
+                    }
+
+                    .tarefa-detail {
+
+                        display: flex;
+
+                        &.mobile-mode {
+
+                            &.no-current-tarefa {
+                                display: none !important;
+                            }
+
+                            &.current-tarefa {
+                                max-width: 100% !important;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+

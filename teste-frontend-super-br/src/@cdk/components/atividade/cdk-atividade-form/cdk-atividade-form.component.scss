@@ -1,0 +1,40 @@
+@import "../../../scss/partials/cdk-form";
+
+cdk-atividade-form {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    .encerrar-tarefa {
+        display: flex;
+        flex-direction: row;
+        flex: 1 1 auto;
+        align-items: center;
+        margin-bottom: 8px;
+
+        > mat-slide-toggle {
+            margin-bottom: 0 !important;
+        }
+
+        > span {
+            margin-left: 8px;
+        }
+    }
+
+    mat-radio-group {
+        padding: 8px;
+        display: flex;
+
+        &.horizontal {
+            flex-direction: row;
+        }
+
+        &.vertical {
+            flex-direction: column;
+        }
+    }
+
+    mat-radio-button {
+        margin-right: 10px;
+    }
+}

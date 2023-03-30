@@ -1,0 +1,50 @@
+@import "src/@cdk/scss/cdk";
+
+arquivista-list {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: row;
+
+    .maximizado {
+        display: none !important;
+    }
+
+    > .processo-list {
+        display: flex;
+        flex-direction: column;
+
+        > .loading {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &.maximizado {
+            display: none !important;
+        }
+
+        &.mobile-mode {
+
+            &.current-processo {
+                display: none !important;
+            }
+        }
+    }
+
+    > .processo-detail {
+
+        display: flex;
+
+        &.mobile-mode {
+
+            &.no-current-processo {
+                display: none !important;
+            }
+        }
+    }
+
+}
+
+

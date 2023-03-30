@@ -1,0 +1,10 @@
+d<cdk-sigilo-grid
+        [loading]="loading"
+        [sigilos]="sigilos"
+        [total]="total"
+        [displayedColumns]="['id', 'desclassificado', 'dataHoraValidadeSigilo', 'dataHoraExpiracao', 'modalidadeCategoriaSigilo.valor', 'tipoSigilo.nome',  'actions']"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-sigilo-grid>

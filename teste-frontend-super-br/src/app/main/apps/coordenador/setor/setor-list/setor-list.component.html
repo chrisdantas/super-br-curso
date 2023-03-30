@@ -1,0 +1,26 @@
+<div class="header">
+    <path icone="domain"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="setor">
+    </path>
+</div>
+<cdk-setor-grid
+        [loading]="(loading$ | async)"
+        [setores]="(setores$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [displayedColumns]="['select', 'id', 'nome', 'sigla', 'especieSetor.nome', 'parent.nome', 'apenasDistribuidor', 'ativo', 'actions']"
+        [actions]="['edit', 'create', 'lotacoes', 'localizadores', 'coordenadores', 'select', 'showInatived']"
+        (inatived)="inatived($event)"
+        (reload)="reload($event)"
+        (create)="create()"
+        (edit)="edit($event)"
+        (selected)="select($event)"
+        (lotacoes)="lotacoes($event)"
+        (localizadores)="localizadores($event)"
+        (coordenadores)="coordenadores($event)"
+        (numerosUnicosDocumentos)="numerosUnicosDocumentos($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-setor-grid>

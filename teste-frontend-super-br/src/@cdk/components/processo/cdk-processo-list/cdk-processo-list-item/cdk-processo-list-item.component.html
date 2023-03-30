@@ -1,0 +1,144 @@
+<div fxLayout="row" fxLayoutAlign="start center">
+
+    <mat-checkbox class="mr-8" [checked]="selected" (change)="onSelectedChange()"
+                  (click)="$event.stopPropagation();">
+    </mat-checkbox>
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxFlex>
+
+        <div class="info" fxFlex>
+            <div class="title" fxLayout="row">
+                <mat-icon *ngIf="processo?.acessoNegado" matTooltip="Acesso negado!" class="red-fg">block
+                </mat-icon>
+                <mat-icon *ngIf="processo?.acessoRestrito" matTooltip="Acesso restrito!" class="red-fg">lock
+                </mat-icon>
+                <span>PROCESSO {{processo?.NUP | formatNup}}</span>
+                <mat-icon (click)="doTogglePanel(); $event.stopPropagation();"
+                          *ngIf="!processo?.acessoNegado && !isOpen">keyboard_arrow_down
+                </mat-icon>
+                <mat-icon class="s-14 mt-8" [matTooltip]="'Copiar NUP para o clipboard'" (click)="copiarParaAreaTrabalho(processo?.NUP); $event.stopPropagation();">file_copy
+                </mat-icon>
+                <mat-icon (click)="doTogglePanel(); $event.stopPropagation();"
+                          *ngIf="!processo?.acessoNegado && isOpen">keyboard_arrow_up
+                </mat-icon>
+            </div>
+
+            <div class="subtitle transicao-arquivistica" *ngIf="!processo?.acessoNegado">
+                <span>{{processo.especieProcesso?.nome}} / {{processo.modalidadeMeio?.valor}}
+                    / {{!transicionando ? processo.modalidadeFase?.valor : ''}}</span>
+                <mat-spinner diameter=16 *ngIf="transicionando"></mat-spinner>
+            </div>
+
+            <div class="subtitle" *ngIf="processo?.acessoNegado">
+                <span>Usuário com acesso negado ao processo</span>
+            </div>
+
+            <div class="subtitle" fxLayout="row" *ngIf="isOpen">
+                <div *ngIf="loadingAssuntosProcessosId?.indexOf(processo.id) !== -1">
+                    <mat-spinner diameter=16></mat-spinner>
+                </div>
+                <div *ngIf="processo?.assuntos?.length > 0">
+                    <span>ASSUNTO: {{processo?.assuntos[0]?.assuntoAdministrativo?.nome}}</span>
+                </div>
+            </div>
+
+            <div class="body mt-4" *ngIf="!processo?.acessoNegado">
+                <div>
+                    Data Abertura:  {{processo.dataHoraAbertura?.toDate() | date: 'dd/MM/yyyy'}}
+                </div>
+
+                <div *showIfRole="'ROLE_COLABORADOR'">
+                    <div *ngIf="!transicionando">
+                        Data Temporalidade e Destinação: {{processo?.dataHoraProximaTransicao?.toDate() | date: 'dd/MM/yyyy'}}
+                    </div>
+
+                    <div *ngIf="transicionando" class="transicao-arquivistica">
+                        Data Temporalidade e Destinação: <mat-spinner diameter=16></mat-spinner>
+                    </div>
+
+                    <div *ngIf="processo.classificacao">
+                        Classificação: {{processo?.classificacao?.codigo}} - {{processo?.classificacao?.nome}}
+                    </div>
+
+                    <div *ngIf="processo.classificacao">
+                        Destinação: {{processo?.classificacao?.modalidadeDestinacao?.valor}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="etiquetas" fxLayout="row wrap" fxHide fxShow.gt-sm>
+                <div class="etiqueta" *ngFor="let vinculacaoEtiqueta of processo.vinculacoesEtiquetas"
+                     fxLayout="row" fxLayoutAlign="start center" [matTooltip]="vinculacaoEtiqueta.conteudo">
+                    <div class="etiqueta-color"
+                         [ngStyle]="{'background-color': (vinculacaoEtiqueta.etiqueta?.corHexadecimal)}"></div>
+                    <div class="etiqueta-title">{{vinculacaoEtiqueta.etiqueta?.nome}}</div>
+                </div>
+            </div>
+
+            <mat-expansion-panel *ngIf="processo?.lembreteArquivista" (opened)="this.panelOpenState = true"
+                                 (closed)="this.panelOpenState = false"
+                                 (click)="$event.stopPropagation();">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Lembrete
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <p *ngIf="editantoLembrete === false" (click)="doEditarLembrete()"
+                   class="lembrete">{{processo?.lembreteArquivista}}</p>
+                <mat-form-field *ngIf="editantoLembrete === true">
+                    <input #lembreteConteudo matInput placeholder="Lembrete" [value]="processo?.lembreteArquivista"
+                           upperCase (blur)="doSalvarLembrete(processo, lembreteConteudo.value)"/>
+                </mat-form-field>
+            </mat-expansion-panel>
+        </div>
+
+        <div class="actions" fxLayout="row" fxLayoutAlign="start center" *showIfRole="'ROLE_COLABORADOR'">
+
+            <div class="spinner-container m-8" *ngIf="deleting">
+                <mat-spinner diameter="24"></mat-spinner>
+            </div>
+
+            <button *ngIf="!deleting" mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="Ferramentas"
+                    (click)="$event.stopPropagation()">
+                <mat-icon class="secondary-text">more_vert</mat-icon>
+            </button>
+
+            <mat-menu #moreMenu="matMenu">
+
+                <button mat-menu-item aria-label="editar"
+                        (click)="doEditar(processo)">
+                    <ng-container>
+                        <mat-icon>edit</mat-icon>
+                        <span>Editar</span>
+                    </ng-container>
+                </button>
+
+                <button *ngIf="modalidadeTransicao" mat-menu-item aria-label="realizar temporalidade e destinação"
+                        (click)="doRealizarTransicao(processo)">
+                    <ng-container>
+                        <mat-icon>check</mat-icon>
+                        <span>Realizar {{this.modalidadeTransicao.valor | titleCasePipe}}</span>
+                    </ng-container>
+                </button>
+
+                <button *ngIf="processo?.modalidadeFase?.valor === 'INTERMEDIÁRIA'" mat-menu-item aria-label="desarquivar"
+                        (click)="doDesarquivar(processo)">
+                    <ng-container>
+                        <mat-icon>check</mat-icon>
+                        <span>Desarquivar</span>
+                    </ng-container>
+                </button>
+
+                <button mat-menu-item aria-label="registrar extravio"
+                        (click)="doRegistrarExtravio(processo)">
+                    <ng-container>
+                        <mat-icon>check</mat-icon>
+                        <span>Registrar Extravio</span>
+                    </ng-container>
+                </button>
+
+            </mat-menu>
+        </div>
+
+    </div>
+</div>

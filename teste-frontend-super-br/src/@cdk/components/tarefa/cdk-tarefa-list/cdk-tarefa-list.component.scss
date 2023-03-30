@@ -1,0 +1,325 @@
+@import "../../../scss/partials/cdk-table-resizable";
+
+cdk-tarefa-list {
+
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+    > .page-layout {
+
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+
+        > .header {
+
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            padding-left: 8px;
+            padding-right: 8px;
+
+            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+            .drag-n-drop-ref {
+                display: flex;
+                flex: 1 1 auto;
+                flex-direction: row;
+                background-color: transparent;
+
+                > div {
+                    border-radius: 6px;
+                    padding-top: 6px;
+                    padding-bottom: 6px;
+
+                    > span {
+                        margin: 10px;
+                        font-weight: normal;
+                    }
+                }
+            }
+
+            > .toolbar-separator {
+                height: 32px;
+                width: 1px;
+                margin: 0 12px;
+            }
+
+            > .tarefa-list-control {
+                margin-left: auto;
+
+                .colunas {
+                    width: 20px !important;
+                    .mat-select-value {
+                        display: none !important;
+                    }
+                }
+            }
+
+            > .botao-novo {
+                margin-left: 15px;
+            }
+        }
+
+        > .content {
+
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            height: 0;
+            overflow-y: auto;
+
+            > .loading-wrapper {
+                flex: 0 1 auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                > .loading {
+                    z-index: 9999;
+                    margin-top: 355px;
+                    display: flex;
+                    position: fixed;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            > .nova-tarefa {
+                cursor: pointer;
+            }
+
+            > .no-tarefas-text {
+                flex: 1 1 auto;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                > .hint-text {
+                    font-size: 13px;
+                    font-weight: 300;
+                }
+            }
+
+            .view-mode-grid {
+                flex: 1 1 auto;
+            }
+
+            .view-mode-list {
+
+                .list {
+                    .card-title {
+                        display: none;
+                    }
+                }
+
+                .card {
+
+                    .card-title {
+                        display: inline-flex;
+                        flex-direction: row;
+                        padding: 5px 5px 5px 5px;
+                        cursor: pointer;
+                        border-bottom-width: 1px;
+                        border-bottom-style: solid;
+                        width: 100%;
+
+                        .title-label {
+                            font-weight: bolder;
+                            margin-left: 10px;
+                        }
+
+                        mat-icon {
+                            display: flex;
+                            align-self: center;
+                            transform: rotate(0);
+                            transition: transform 0.3s ease-in-out, opacity 0.25s ease-in-out 0.1s;
+
+                            &.expanded {
+                                transform: rotate(90deg);
+                            }
+                        }
+                    }
+
+                    .card-content {
+                        border-left: solid 2px;
+
+                        &.collapsed {
+                            display: none;
+                        }
+                    }
+                }
+
+            }
+
+            table {
+
+                tr {
+                    cursor: pointer;
+
+                    &.nao-lido {
+                        font-weight: bold;
+                    }
+
+                    td {
+                        .prazo-vence-hoje {
+                            color: red;
+                        }
+
+                        .prazo-venceu {
+                            font-weight: bold;
+                        }
+
+                        .etiquetas {
+                            flex: 1 1 auto;
+                            display: flex;
+                            flex-direction: row;
+                            flex-wrap: wrap;
+                            margin-top: 2px;
+                            //vertical-align: baseline;
+
+                            .etiqueta-minuta {
+                                display: flex;
+                                align-items: center;
+                                font-size: 11px;
+                                border: 1px solid;
+                                margin-right: 2px;
+                                padding: 3px 8px;
+                                cursor: pointer;
+                                max-height: 32px;
+                                align-self: center;
+                                margin-bottom: 2px;
+                                min-width: 90px;
+                                border-radius: 3px;
+
+                                > mat-icon.small {
+                                    font-size: 16px;
+                                    height: 16px;
+                                    width: 16px;
+                                    line-height: 22px;
+                                    min-width: 16px;
+                                }
+
+                                > .mat-icon-button {
+                                    width: 16px;
+                                    max-width: 16px;
+                                    font-size: 16px;
+
+                                    mat-icon.small {
+                                        font-size: 16px;
+                                        height: 16px;
+                                        width: 16px;
+                                        line-height: 22px;
+                                        min-width: 16px;
+                                    }
+                                }
+
+                                .etiqueta-color {
+                                    width: 8px;
+                                    height: 8px;
+                                    margin-right: 8px;
+                                    border-radius: 50%;
+                                }
+                            }
+                        }
+
+                        &.observacao {
+                            margin-left: 10px;
+                            align-items: center;
+
+                            > span {
+                                white-space: pre-wrap;
+                            }
+
+                            > mat-icon {
+                                margin-left: 4px;
+                                font-size: 18px;
+                                align-items: center;
+                                line-height: 18px;
+                                min-width: 18px;
+                                min-height: 18px;
+                                width: 18px;
+                                height: 18px;
+                            }
+
+                            > mat-form-field {
+                                display: flex;
+                                flex: 1 1 auto;
+
+                                > div.mat-form-field-wrapper {
+                                    display: flex;
+                                    flex: 1 1 auto;
+                                }
+                            }
+
+                            > .actions {
+                                margin-left: 4px;
+                            }
+
+                            .edit-observacao {
+                                display: flex;
+                                flex-direction: row;
+                                align-items: center;
+
+                                > span {
+                                    font-style: italic;
+                                    font-size: smaller;
+                                    white-space: pre-wrap;
+                                }
+
+                                > mat-icon {
+                                    margin-left: 4px;
+                                    font-size: 18px;
+                                    align-items: center;
+                                    line-height: 18px;
+                                    min-width: 18px;
+                                    min-height: 18px;
+                                    width: 18px;
+                                    height: 18px;
+                                }
+
+                                > mat-form-field {
+                                    display: flex;
+                                    flex: 1 1 auto;
+
+                                    > div.mat-form-field-wrapper {
+                                        display: flex;
+                                        flex: 1 1 auto;
+                                    }
+                                }
+
+                                > .actions {
+                                    margin-left: 4px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            cdk-tarefa-list-item {
+                > .content {
+                    min-height: 160px;
+                }
+            }
+
+            .footer {
+                flex: 0 1 auto;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
+}
+
+.cdk-white-bg {
+    background: white !important;
+    color: black !important;
+}

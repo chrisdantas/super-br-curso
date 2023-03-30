@@ -1,0 +1,41 @@
+desentranhamento-create {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+
+    > .header {
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 8px;
+        padding-bottom: 4px;
+    }
+
+    > mat-horizontal-stepper {
+        flex: 1 1 auto;
+        display: flex !important;
+        flex-direction: column;
+        > .mat-horizontal-content-container {
+            overflow-y: auto !important;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            > .mat-horizontal-stepper-content[aria-expanded=true] {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+            }
+            > .mat-horizontal-stepper-content[aria-expanded=false] {
+                display: none !important;
+            }
+        }
+    }
+}
+
+.cdk-white-bg {
+    background: white !important;
+    color: black !important;
+}
+

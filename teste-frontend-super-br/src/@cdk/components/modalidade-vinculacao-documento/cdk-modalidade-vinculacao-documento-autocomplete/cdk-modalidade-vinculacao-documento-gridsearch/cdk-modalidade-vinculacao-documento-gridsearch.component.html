@@ -1,0 +1,10 @@
+<cdk-modalidade-vinculacao-documento-grid
+        [loading]="loading"
+        [modalidadevinculacaoDocumentos]="modalidadevinculacaoDocumentos"
+        [displayedColumns]="['id', 'valor', 'descricao', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-modalidade-vinculacao-documento-grid>

@@ -1,0 +1,27 @@
+<div class="header">
+    <div class="actions">
+        <button *ngIf="mobileMode" mat-icon-button (click)="deselectCurrentRelatorio()">
+            <mat-icon class="secondary-text">arrow_back</mat-icon>
+        </button>
+
+        <button *ngIf="!mobileMode && !(maximizado$ | async)" mat-icon-button (click)="doToggleMaximizado(true)">
+            <mat-icon class="secondary-text">fullscreen</mat-icon>
+        </button>
+
+        <button *ngIf="!mobileMode && (maximizado$ | async)" mat-icon-button (click)="doToggleMaximizado(false)">
+            <mat-icon class="secondary-text">fullscreen_exit</mat-icon>
+        </button>
+
+        <cdk-vinculacao-etiqueta-chips [vinculacoesEtiquetas]="(relatorio$ | async).vinculacoesEtiquetas"
+                                       (create)="onEtiquetaCreate($event)"
+                                       (edit)="onEtiquetaEdit($event)"
+                                       [savingVinculacaoEtiquetaId]="(savingVincEtiquetaId$ | async)"
+                                       [errors]="(errors$ | async)"
+                                       [pagination]="vinculacaoEtiquetaPagination"
+                                       (delete)="onEtiquetaDelete($event)"></cdk-vinculacao-etiqueta-chips>
+
+    </div>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <router-outlet></router-outlet>
+</div>

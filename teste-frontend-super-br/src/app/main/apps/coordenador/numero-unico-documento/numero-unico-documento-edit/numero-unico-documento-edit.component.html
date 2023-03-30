@@ -1,0 +1,17 @@
+<div class="header">
+    <path icone="subject"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="numeros-unicos-documento">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-numero-unico-documento-form
+        [numeroUnicoDocumento]="numeroUnicoDocumento"
+        [setor]="(setor$ | async)"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [tipoDocumentoPagination]="tipoDocumentoPagination"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-numero-unico-documento-form>
+</div>

@@ -1,0 +1,33 @@
+<ckeditor [config]="config" [(ngModel)]="src" (change)="onChangeContent($event)" debounce="500" (ready)="onReady($event)"
+          [disabled]="true">
+        <ckbutton [name]="'saveButton'"
+                  [command]="'saveCmd'"
+                  (click)="doSave()"
+                  [icon]="'save'"
+                  [label]="'Salvar'">
+        </ckbutton>
+        <ckbutton [name]="'assinarButton'"
+                  [command]="'assinarCmd'"
+                  (click)="doAssinar()"
+                  [icon]="'/assets/icons/assinar.png'"
+                  [label]="'Assinar'">
+        </ckbutton>
+        <ckbutton [name]="'pdfButton'"
+                  [command]="'pdfCmd'"
+                  (click)="doPdf()"
+                  [icon]="'/assets/icons/pdf.png'"
+                  [label]="'Exportar em PDF'">
+        </ckbutton>
+        <ckbutton [name]="'campoButton'"
+                  [command]="'campoCmd'"
+                  (click)="doCampo()"
+                  [icon]="'source'"
+                  [label]="'Campos'">
+        </ckbutton>
+        <ckbutton [name]="'repositorioButton'"
+                  [command]="'repositorioCmd'"
+                  (click)="doRepositorio()"
+                  [icon]="'/assets/icons/grid.png'"
+                  [label]="'Teses'">
+        </ckbutton>
+</ckeditor>

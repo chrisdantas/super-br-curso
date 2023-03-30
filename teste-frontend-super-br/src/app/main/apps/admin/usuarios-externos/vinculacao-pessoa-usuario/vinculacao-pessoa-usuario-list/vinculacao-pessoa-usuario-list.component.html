@@ -1,0 +1,23 @@
+<div class="header">
+    <path icone="person"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="vinculacao-pessoa-usuario">
+    </path>
+</div>
+<cdk-vinculacao-pessoa-usuario-grid
+    [mode]="'search'"
+    [loading]="(loading$ | async)"
+    [pessoas]="(pessoas$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [pageSize]="(pagination$ | async)?.limit"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [actions]="['delete', 'select', 'create']"
+    (reload)="reload($event)"
+    (selected)="doSelect($event)"
+    (delete)="delete($event)"
+    (create)="create()"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-vinculacao-pessoa-usuario-grid>
+

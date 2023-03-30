@@ -1,0 +1,10 @@
+<cdk-afastamento-grid
+        [loading]="loading"
+        [afastamentos]="afastamentos"
+        [displayedColumns]="['id', 'colaborador.usuario.nome', 'dataInicio', 'dataInicioBloqueio', 'dataFim', 'dataFimBloqueio', 'modalidadeAfastamento.valor', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-afastamento-grid>

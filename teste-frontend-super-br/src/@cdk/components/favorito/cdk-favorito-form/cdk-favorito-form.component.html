@@ -1,0 +1,183 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-card>
+
+        <mat-card-subtitle>Campo</mat-card-subtitle>
+
+        <h3 *ngIf="form.value.id && form.value.campo === 1">ESPÉCIE ATIVIDADE</h3>
+        <h3 *ngIf="form.value.id && form.value.campo === 2">ESPÉCIE TAREFA</h3>
+        <h3 *ngIf="form.value.id && form.value.campo === 3">SETOR</h3>
+
+        <div class="start" *ngIf="!form.value.id">
+            <label id="campo-rg3"></label>
+            <mat-radio-group class="poderes-rg"
+                             formControlName="campo"
+                             aria-labelledby="campo-rg3">
+                <mat-radio-button [value]=1>
+                    Espécie Atividade
+                </mat-radio-button>
+                <mat-radio-button [value]=2>
+                    Espécie Tarefa
+                </mat-radio-button>
+                <mat-radio-button [value]=3>
+                    Setor
+                </mat-radio-button>
+            </mat-radio-group>
+        </div>
+    </mat-card>
+
+    <div *ngIf="form.value.campo === 1">
+
+        <mat-form-field>
+            <input matInput placeholder="Espécie de Atividade"
+                   formControlName="especieAtividade"
+                   [matAutocomplete]="especieAtividade.autocomplete" required
+                   (blur)="checkEspecieAtividade()">
+            <cdk-especie-atividade-autocomplete
+                #especieAtividade="especieAtividadeAutocomplete"
+                [control]="form.get('especieAtividade')"
+                [pagination]="templatePagination">
+            </cdk-especie-atividade-autocomplete>
+            <button matSuffix mat-button mat-icon-button *ngIf="!favorito.id"
+                    (click)="showEspecieAtividadeGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('especieAtividade').hasError('formError')">
+                {{form.get('especieAtividade').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+    </div>
+
+    <div *ngIf="form.value.campo === 2">
+
+        <mat-form-field>
+            <input matInput placeholder="Espécie Tarefa"
+                   formControlName="especieTarefa"
+                   [matAutocomplete]="especieTarefa.autocomplete" required
+                   (blur)="checkEspecieTarefa()">
+            <cdk-especie-tarefa-autocomplete
+                #especieTarefa="especieTarefaAutocomplete"
+                [control]="form.get('especieTarefa')"
+                [pagination]="templatePagination">
+            </cdk-especie-tarefa-autocomplete>
+            <button matSuffix mat-button mat-icon-button *ngIf="!favorito.id"
+                    (click)="showEspecieTarefaGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('especieTarefa').hasError('formError')">
+                {{form.get('especieTarefa').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+    </div>
+
+    <div *ngIf="form.value.campo === 3 && !favorito.id">
+
+        <mat-form-field>
+            <input matInput placeholder="Unidade Responsável"
+                   formControlName="unidadeResponsavel"
+                   [matAutocomplete]="unidadeResponsavel.autocomplete" required
+                   (blur)="checkUnidadeResponsavel()">
+            <cdk-setor-autocomplete
+                #unidadeResponsavel="setorAutocomplete"
+                [control]="form.get('unidadeResponsavel')"
+                [pagination]="unidadeResponsavelPagination">
+            </cdk-setor-autocomplete>
+            <button matSuffix mat-button mat-icon-button
+                    (click)="showUnidadeResponsavelGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('unidadeResponsavel').hasError('formError')">
+                {{form.get('unidadeResponsavel').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+    </div>
+
+    <div *ngIf="form.value.campo === 3">
+
+        <mat-form-field>
+            <input matInput placeholder="Setor Responsável"
+                   formControlName="setorResponsavel"
+                   [matAutocomplete]="setor.autocomplete" required
+                   (blur)="checkSetorResponsavel()">
+            <cdk-setor-autocomplete
+                #setor="setorAutocomplete"
+                [control]="form.get('setorResponsavel')"
+                [pagination]="templatePagination">
+            </cdk-setor-autocomplete>
+            <button *ngIf="form.get('setorResponsavel').enabled && !favorito.id" matSuffix mat-button
+                    mat-icon-button
+                    (click)="showSetorResponsavelGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('setorResponsavel').hasError('formError')">
+                {{form.get('setorResponsavel').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+    </div>
+
+    <div *ngIf="form.value.campo">
+
+        <mat-form-field>
+            <mat-label>Nome do campo</mat-label>
+            <input matInput #label
+                   name="label"
+                   formControlName="label"
+                   required
+                   maxlength="255" upperCase>
+            <mat-hint align="end">{{label.value.length}} / 255</mat-hint>
+            <mat-error>Campo obrigatório!</mat-error>
+        </mat-form-field>
+
+    </div>
+
+    <div *ngIf="form.value.campo">
+        <mat-checkbox formControlName="prioritario">
+            Prioritário
+        </mat-checkbox>
+    </div>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+</form>
+
+<cdk-especie-atividade-gridsearch
+    *ngIf="activeCard === 'especie-atividade-gridsearch'"
+    [displayedColumns]="displayedColumns"
+    (selected)="selectEspecieAtividade($event)"
+    (cancel)="cancel()">
+</cdk-especie-atividade-gridsearch>
+
+<cdk-especie-tarefa-gridsearch
+    *ngIf="activeCard === 'especie-tarefa-gridsearch'"
+    [displayedColumns]="displayedColumns"
+    (selected)="selectEspecieTarefa($event)"
+    (cancel)="cancel()">
+</cdk-especie-tarefa-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'setor-gridsearch'"
+    [pagination]="templatePagination"
+    (selected)="selectSetorResponsavel($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'unidade-gridsearch'"
+    [pagination]="unidadeResponsavelPagination"
+    (selected)="selectUnidadeResponsavel($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>

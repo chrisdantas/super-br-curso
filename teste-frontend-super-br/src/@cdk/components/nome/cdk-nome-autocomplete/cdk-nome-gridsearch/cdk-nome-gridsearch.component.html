@@ -1,0 +1,10 @@
+<cdk-nome-grid
+        [loading]="loading"
+        [nomes]="nomes"
+        [displayedColumns]="['id', 'valor', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-nome-grid>

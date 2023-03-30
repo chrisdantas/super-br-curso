@@ -1,0 +1,16 @@
+<div class="header">
+    <path icone="edit_location"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="modelos">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-vinculacao-modelo-especie-setor-form
+        [vinculacaoModelo]="vinculacaoModelo"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [especieSetorPagination]="especieSetorPagination"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-vinculacao-modelo-especie-setor-form>
+</div>

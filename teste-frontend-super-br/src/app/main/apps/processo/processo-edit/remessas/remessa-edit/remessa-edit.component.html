@@ -1,0 +1,15 @@
+<div class="content" cdkPerfectScrollbar>
+    <cdk-remessa-form
+        [tramitacao]="tramitacao"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        (gerirPessoaDestino)="gerirPessoaDestino()"
+        (editPessoaDestino)="editPessoaDestino($event)"
+        [pessoaDestino]="pessoaDestino"
+        (save)="submit($event)"
+        (abort)="doAbort()"
+        [setorOrigemPagination]="setorOrigemPagination"
+        [setorOrigemPaginationTree]="setorOrigemPaginationTree">
+    </cdk-remessa-form>
+</div>
+<router-outlet (activate)="onActivate($event)" (deactivate)="onDeactivate($event)"></router-outlet>

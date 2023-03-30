@@ -1,0 +1,14 @@
+<cdk-relacionamento-pessoal-grid
+        [loading]="(loading$ | async)"
+        [relacionamentoPessoals]="(relacionamentos$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [actions]="['create', 'edit', 'delete']"
+        (reload)="reload($event)"
+        (create)="create()"
+        (edit)="edit($event)"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-relacionamento-pessoal-grid>

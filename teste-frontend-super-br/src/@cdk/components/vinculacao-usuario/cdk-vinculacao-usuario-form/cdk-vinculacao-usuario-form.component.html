@@ -1,0 +1,93 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-card>
+
+        <mat-card-subtitle>Permissões</mat-card-subtitle>
+
+        <div>
+            <mat-slide-toggle formControlName="encerraTarefa">
+                Encerra Tarefa
+            </mat-slide-toggle>
+            <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                    (click)="showLogEntryGrid('encerraTarefa')">
+                <mat-icon matTooltip="Histórico">history</mat-icon>
+            </button>
+        </div>
+
+        <div>
+            <mat-slide-toggle formControlName="criaOficio">
+                Cria Ofício
+            </mat-slide-toggle>
+            <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                    (click)="showLogEntryGrid('criaOficio')">
+                <mat-icon matTooltip="Histórico">history</mat-icon>
+            </button>
+        </div>
+
+        <div>
+            <mat-slide-toggle formControlName="criaMinuta">
+                Cria Minuta
+            </mat-slide-toggle>
+            <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                    (click)="showLogEntryGrid('criaMinuta')">
+                <mat-icon matTooltip="Histórico">history</mat-icon>
+            </button>
+        </div>
+
+        <div>
+            <mat-slide-toggle formControlName="compartilhaTarefa">
+                Compartilha Tarefa
+            </mat-slide-toggle>
+            <button matSuffix mat-button mat-icon-button *ngIf="form.value.id"
+                    (click)="showLogEntryGrid('compartilhaTarefa')">
+                <mat-icon matTooltip="Histórico">history</mat-icon>
+            </button>
+        </div>
+
+    </mat-card>
+
+    <mat-form-field>
+        <input matInput placeholder="Assessor"
+               formControlName="usuarioVinculado"
+               [matAutocomplete]="usuarioVinculado.autocomplete" required
+               (blur)="checkUsuarioVinculado()">
+        <cdk-usuario-autocomplete
+            #usuarioVinculado="usuarioAutocomplete"
+            [control]="form.get('usuarioVinculado')"
+            [pagination]="usuarioVinculadoPagination">
+        </cdk-usuario-autocomplete>
+        <button *ngIf="form.get('usuarioVinculado').enabled" matSuffix mat-button mat-icon-button
+                (click)="showUsuarioVinculadoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('usuarioVinculado').hasError('formError')">
+            {{form.get('usuarioVinculado').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+       <button mat-raised-button color="accent" (click)="submit()" [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-usuario-gridsearch
+    *ngIf="activeCard === 'usuario-vinculado-gridsearch'"
+    [pagination]="usuarioVinculadoPagination"
+    (selected)="selectUsuarioVinculado($event)"
+    (cancel)="cancel()">
+</cdk-usuario-gridsearch>
+
+<cdk-logentry-gridsearch
+    *ngIf="activeCard === 'logentry-gridsearch'"
+    [pagination]="logEntryPagination"
+    (cancel)="cancel()">
+</cdk-logentry-gridsearch>

@@ -1,0 +1,12 @@
+cdk-setor-autocomplete {
+
+}
+
+.mat-option {
+    &.multiline {
+        height: auto !important;
+        .strong {
+            font-weight: bold;
+        }
+    };
+}

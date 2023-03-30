@@ -1,0 +1,24 @@
+<div class="header">
+    <path icone="low_priority"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="workflows">
+    </path>
+</div>
+<cdk-workflow-grid
+    [loading]="(loading$ | async)"
+    [workflows]="(workflows$ | async)"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [displayedColumns]="['id', 'nome', 'descricao', 'generoProcesso.nome', 'especieTarefaInicial.nome', 'actions']"
+    [actions]="['especies' ,'view', 'transicoes', 'edit', 'create', 'delete']"
+    (editTransicoesWorflow)="editTransicoesWorkflow($event)"
+    (especies)="especies($event)"
+    (view)="view($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (create)="create()"
+    (delete)="delete($event)"
+    (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-workflow-grid>

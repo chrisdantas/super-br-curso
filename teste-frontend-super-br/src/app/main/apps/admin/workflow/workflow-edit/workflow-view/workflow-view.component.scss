@@ -1,0 +1,58 @@
+@import "../../../../../../../@cdk/scss/cdk";
+
+workflow-view {
+
+    flex: 1 1 auto;
+    display: flex;
+
+    > .page-layout {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: row;
+
+        > .center {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+
+            > .header {
+                flex: 0 1 auto !important;
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: flex-start !important;
+                align-items: center !important;
+                height: 40px !important;
+                min-height: 40px !important;
+                max-height: 40px !important;
+                padding-left: 6px !important;
+            }
+
+            > .content {
+                flex: 1 1 auto;
+                display: flex;
+                padding: 3px 2px 0px 2px;
+
+                > .loading {
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                > .workflow-view-content {
+                    flex: 1 1 auto;
+                    display: flex;
+                    border-radius: 12px 12px 0px 0px;
+                    @include mat-elevation(1);
+
+                    > iframe {
+                        flex: 1 1 auto;
+                        display: flex;
+                        border: none;
+                    }
+                }
+            }
+        }
+    }
+}

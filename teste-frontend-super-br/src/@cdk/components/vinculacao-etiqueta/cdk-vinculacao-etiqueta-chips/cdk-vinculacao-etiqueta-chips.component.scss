@@ -1,0 +1,38 @@
+cdk-vinculacao-etiqueta-chips {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+
+    > div.campo {
+        display: flex;
+        flex-direction: row;
+        flex: 1 1 auto;
+
+        .mat-standard-chip {
+            min-height: auto !important;
+        }
+
+        .mat-form-field-wrapper {
+            padding-bottom: 0 !important;
+
+            .mat-form-field-infix {
+                padding-top: 0 !important;
+                border-top: 0.5em solid transparent;
+            }
+        }
+
+        mat-form-field {
+            flex: 1 1 auto;
+        }
+
+        .mat-focused .placeholder {
+            color: transparent;
+        }
+
+
+    }
+
+    > div.add-etiqueta-error {
+        margin-top: -19px;
+    }
+}

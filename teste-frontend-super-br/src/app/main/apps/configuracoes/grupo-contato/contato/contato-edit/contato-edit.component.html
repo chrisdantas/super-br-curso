@@ -1,0 +1,16 @@
+<div class="header">
+    <path icone="contacts"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="contato">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-contato-form
+        [contato]="contato"
+        [saving]="(isSaving$ | async)"
+        [unidadePagination]="unidadePagination"
+        [errors]="(errors$ | async)"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-contato-form>
+</div>

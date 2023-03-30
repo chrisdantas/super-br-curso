@@ -1,0 +1,15 @@
+<cdk-sigilo-grid
+        [loading]="(loading$ | async)"
+        [sigilos]="(sigilos$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [actions]="['create', 'edit', 'showDeleted']"
+        (reload)="reload($event)"
+        (excluded)="excluded($event)"
+        (create)="create()"
+        (edit)="edit($event)"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-sigilo-grid>

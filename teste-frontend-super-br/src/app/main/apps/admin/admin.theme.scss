@@ -1,0 +1,36 @@
+@mixin admin-theme($theme) {
+
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    $accent: map-get($theme, accent);
+    $is-dark: map-get($theme, is-dark);
+
+    // Admin
+    admin {
+
+        .logo-text {
+            font-size: 20px;
+        }
+
+        .center {
+
+            .header {
+                height: 30px;
+                min-height: 30px;
+                max-height: 30px;
+
+                .title {
+                    color: white;
+                    font-size: 24px;
+                }
+
+            }
+
+            .content-card {
+                .content {
+                    background: map-get($background, card);
+                }
+            }
+        }
+    }
+}

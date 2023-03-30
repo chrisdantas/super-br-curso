@@ -1,0 +1,17 @@
+<div class="header">
+    <path icone="new_releases"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="especie-relevancias">
+    </path>
+</div>
+<cdk-especie-relevancia-grid
+    [loading]="(loading$ | async)"
+    [especieRelevancias]="(especieRelevancias$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [displayedColumns]="['id', 'nome', 'descricao', 'generoRelevancia.nome', 'ativo', 'actions']"
+    [actions]="['edit', 'create', 'showInatived']"
+    (inatived)="inatived($event)"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (create)="create()">
+</cdk-especie-relevancia-grid>

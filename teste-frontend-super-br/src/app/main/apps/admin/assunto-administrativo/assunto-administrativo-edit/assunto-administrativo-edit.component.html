@@ -1,0 +1,17 @@
+<div class="header">
+    <path icone="subject"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="assuntos">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-assunto-administrativo-form
+        [assuntoAdministrativo]="(assuntoAdministrativo$ | async)"
+        [form]="formAssuntoAdministrativo"
+        [assuntoAdministrativoPagination]="assuntoAdministrativoPagination"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        (save)="submitAssuntoAdministrativo($event)"
+        (abort)="doAbort()">
+    </cdk-assunto-administrativo-form>
+</div>

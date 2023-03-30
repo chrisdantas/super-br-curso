@@ -1,0 +1,10 @@
+<cdk-vinculacao-usuario-grid
+        [loading]="loading"
+        [vinculacoesUsuarios]="vinculacoesUsuarios"
+        [displayedColumns]="['id', 'usuarioVinculado.nome', 'encerraTarefa', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-vinculacao-usuario-grid>

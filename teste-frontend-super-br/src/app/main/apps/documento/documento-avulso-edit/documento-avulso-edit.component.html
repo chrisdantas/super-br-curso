@@ -1,0 +1,47 @@
+<div class="documento-avulso-edit page-layout full-width inner-scroll">
+    <!-- CENTER -->
+    <div class="center">
+        <div class="actions p-8">
+            <button mat-icon-button aria-label="editar o documento"
+                    matTooltip="Editar o Documento" routerLink="dados-basicos"
+                    [routerLinkActive]="['active', 'accent']">
+                <mat-icon class="black-fg">edit</mat-icon>
+            </button>
+
+            <button mat-icon-button aria-label="inteligência jurídica"
+                    matTooltip="Inteligência Jurídica" routerLink="inteligencia"
+                    [routerLinkActive]="['active', 'accent']">
+                <mat-icon class="black-fg">gavel</mat-icon>
+            </button>
+
+            <button mat-icon-button [matMenuTriggerFor]="moreMenu"
+                    aria-label="Ferramentas" (click)="$event.stopPropagation()"
+                    fxHide.xs>
+                <mat-icon class="secondary-text">more_vert</mat-icon>
+            </button>
+
+            <mat-menu #moreMenu="matMenu">
+                <button mat-menu-item aria-label="modelos"
+                        matTooltip="Modelos" routerLink="modelos"
+                        [routerLinkActive]="['active', 'accent']">
+                    <ng-container>
+                        <mat-icon class="black-fg">file_copy</mat-icon>
+                        <span>Modelos</span>
+                    </ng-container>
+                </button>
+
+                <button mat-menu-item aria-label="versões"
+                        matTooltip="Versões" routerLink="versoes"
+                        [routerLinkActive]="['active', 'accent']">
+                    <ng-container>
+                        <mat-icon class="black-fg">folder</mat-icon>
+                        <span>Versões</span>
+                    </ng-container>
+                </button>
+            </mat-menu>
+        </div>
+        <div class="content" cdkPerfectScrollbar>
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

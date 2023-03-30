@@ -1,0 +1,18 @@
+<h3 style="font-weight: bold">Assinaturas</h3>
+
+<cdk-assinatura-grid
+    *ngIf="!formAssinaturas"
+    [loading]="(assinaturaLoading$ | async)"
+    [assinaturas]="(assinaturas$ | async)"
+    [total]="(paginationAssinatura$ | async)?.total"
+    [actions]="['create','delete']"
+    [mode]="'documento'"
+    [displayedColumns]="['id', 'dataHoraAssinatura', 'assinadoPor', 'actions']"
+    [deletingIds]="(deletingAssinaturaIds$ | async)"
+    [deletedIds]="(deletedAssinaturaIds$ | async)"
+    [deletingErrors]="(deletingAssinaturaErrors$ | async)"
+    (create)="doAssinaDocumento()"
+    (delete)="delete($event)"
+    (deleteBlocoEmmitter)="deleteBloco($event)"
+    (reload)="reloadAssinaturas($event)">
+</cdk-assinatura-grid>

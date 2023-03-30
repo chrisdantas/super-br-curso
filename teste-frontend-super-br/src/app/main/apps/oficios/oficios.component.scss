@@ -1,0 +1,165 @@
+@import "src/@cdk/scss/cdk";
+
+oficios {
+
+    flex: 1 1 auto;
+    display: flex;
+
+    > .page-layout {
+
+        flex: 1 1 auto;
+        display: flex;
+
+        > .center {
+
+            flex: 1 1 auto;
+            display: flex;
+
+            > .header {
+
+                flex: 0 1 auto;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+
+                height: 72px !important;
+                min-height: 72px !important;
+                max-height: 72px !important;
+
+                > .search-wrapper {
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    border-radius: 28px;
+                    overflow: hidden;
+                    @include mat-elevation(1);
+
+                    > .sidebar-toggle {
+                        margin: 0 0 0 6px;
+                        width: 56px;
+                        height: 56px;
+                        border-radius: 0;
+                        border-right: 1px solid;
+                    }
+
+                    > .search {
+                        flex: 1 1 auto;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-start;
+                        align-items: center;
+
+                        height: 46px;
+                        padding: 0 8px;
+
+                        > cdk-etiqueta-chips {
+                            margin-left: 8px;
+                            margin-right: 8px;
+                        }
+                    }
+                }
+
+                &.current-documento-avulso-selected {
+                    .search-wrapper {
+                        display: none !important;
+                    }
+                }
+
+            }
+
+            > .content-card {
+
+                flex: 1 1 auto;
+                display: flex;
+
+                .toolbar {
+
+                    .toolbar-separator {
+                        height: 32px;
+                        width: 1px;
+                        margin: 0 12px;
+                    }
+
+                    .documento-avulso-list-control {
+                        margin-left: auto;
+                    }
+                }
+
+                > .content {
+
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: row;
+
+                    > .documento-avulso-list {
+                        display: flex;
+                        flex-direction: column;
+
+                        border-right: 1px solid;
+
+                        .loading {
+                            flex: 0 1 auto;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: center;
+                            align-items: center;
+
+                            .documento-avulso-list-loading {
+                                z-index: 9999;
+                                margin-top: 260px;
+                                display: flex;
+                                position: fixed;
+                                transform: translate(-50%, -50%);
+                            }
+                        }
+
+                        &.maximizado {
+                            display: none !important;
+                        }
+
+                        &.mobile-mode {
+
+                            &.current-documento-avulso {
+                                display: none !important;
+                            }
+
+                            &.no-current-documento-avulso {
+                                max-width: 100% !important;
+                            }
+
+                        }
+                        cdk-documento-avulso-list {
+                            min-height: 100%;
+                        }
+
+                    }
+
+                    .oficio-detail {
+
+                        flex: 1 1 auto;
+                        display: flex;
+                        flex-direction: column;
+
+                        &.mobile-mode {
+
+                            &.no-current-documento-avulso {
+                                display: none !important;
+                            }
+
+                            &.current-documento-avulso {
+                                max-width: 100% !important;
+                            }
+
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+

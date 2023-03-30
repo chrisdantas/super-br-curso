@@ -1,0 +1,152 @@
+<div class="page-layout left-sidebar">
+
+    <!-- SIDEBAR -->
+    <cdk-sidebar class="sidebar" name="cdk-processo-list-filter" position="left">
+        <cdk-processo-filter (selected)="setListFilter($event)" [mode]="this.mode"></cdk-processo-filter>
+    </cdk-sidebar>
+    <!-- / SIDEBAR -->
+
+    <div class="header">
+
+        <mat-checkbox (click)="toggleSelectAll($event)" class="ml-8"
+                      [checked]="!!selectedIds.length"
+                      [indeterminate]="isIndeterminate">
+        </mat-checkbox>
+
+        <div class="toolbar-separator" *ngIf="selectedIds.length"></div>
+
+        <div *ngIf="selectedIds?.length">
+            {{selectedIds?.length}}
+        </div>
+
+        <button mat-icon-button [matMenuTriggerFor]="moreMenu"
+                aria-label="Ferramentas" (click)="$event.stopPropagation()"
+                *ngIf="selectedIds?.length > 1">
+            <mat-icon class="secondary-text">more_vert</mat-icon>
+        </button>
+
+        <mat-menu #moreMenu="matMenu">
+
+            <button mat-menu-item aria-label="realizar temporalidade e destinação"
+                    *ngIf="modalidadeTransicao"
+                    (click)="doRealizarTransicaoBloco()">
+                <ng-container>
+                    <mat-icon>check</mat-icon>
+                    <span>Realizar {{modalidadeTransicao?.valor | titleCasePipe}}</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="registrar extravio"
+                    (click)="doRegistrarExtravioBloco()">
+                <ng-container>
+                    <mat-icon>check</mat-icon>
+                    <span>Registrar Extravio</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="desarquivar"
+                    *ngIf="!modalidadeTransicao || modalidadeTransicao?.valor !== 'TRANSFERÊNCIA'"
+                    (click)="doDesarquivarBloco()">
+                <ng-container>
+                    <mat-icon>check</mat-icon>
+                    <span>Desarquivar</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="editar"
+                    (click)="doEditarBloco()">
+                <ng-container>
+                    <mat-icon>edit</mat-icon>
+                    <span>Editar</span>
+                </ng-container>
+            </button>
+
+            <button mat-menu-item aria-label="etiquetar"
+                    (click)="doEtiquetarBloco()">
+                <ng-container>
+                    <mat-icon>label</mat-icon>
+                    <span>Etiquetar</span>
+                </ng-container>
+            </button>
+
+        </mat-menu>
+
+        <div class="processo-list-control" fxLayout="row" fxLayoutAlign="start center">
+            <button class="refresh" mat-icon-button
+                    (click)="loadPage()"
+                    aria-label="recarregar"
+                    matTooltip="Recarregar">
+                <mat-icon>refresh</mat-icon>
+            </button>
+
+            <button class="toggle-filter" [ngClass]="{'warn': !(listFilter | json).includes('{}')}" mat-icon-button
+                    (click)="toggleFilter()"
+                    aria-label="filtrar"
+                    matTooltip="Filtrar">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+
+            <button mat-icon-button [matMenuTriggerFor]="selectMenu">
+                <mat-icon>sort</mat-icon>
+            </button>
+            <mat-menu fxHide #selectMenu="matMenu" class="menu-sort">
+                <button mat-menu-item class="sort-button"
+                        [ngClass]="{'selected': sortFields.includes('dataHoraProximaTransicao') && sortFields.includes('dataHoraAbertura')}"
+                        (click)="doSort({'dataHoraProximaTransicao': sortFields.includes('dataHoraProximaTransicao') && sortOrders[0] === 'ASC' ? 'DESC' : 'ASC', 'dataHoraAbertura': sortFields.includes('dataHoraAbertura') && sortOrders[1] === 'ASC' ? 'DESC' : 'ASC'})">
+                    <span>Abertura</span>
+                    <mat-icon color="accent" *ngIf="sortFields.includes('dataHoraProximaTransicao') && sortFields.includes('dataHoraAbertura')">{{sortOrders[0] === 'ASC' ? 'arrow_upward' : 'arrow_downward'}}</mat-icon>
+                </button>
+                <button mat-menu-item class="sort-button"
+                        [ngClass]="{'selected': sortFields.includes('id')}"
+                        (click)="doSort({'id': sortFields.includes('id') && sortOrders[0] === 'DESC' ? 'ASC' : 'DESC'})">
+                    <span>Data/hora criação</span>
+                    <mat-icon color="accent" *ngIf="sortFields.includes('id')">{{sortOrders[0] === 'ASC' ? 'arrow_upward' : 'arrow_downward'}}</mat-icon>
+                </button>
+            </mat-menu>
+
+            <div class="toolbar-separator" *ngIf="pagination.total"></div>
+
+            <div>
+                {{processos.length}}/{{pagination.total}}
+            </div>
+        </div>
+    </div>
+
+    <div class="content"
+         cdkPerfectScrollbar
+         infiniteScroll
+         [scrollWindow]="false"
+         [infiniteScrollDistance]="5"
+         [infiniteScrollThrottle]="150"
+         (scrolled)="onScroll()">
+
+        <div class="loading-wrapper" *ngIf="loading">
+            <mat-spinner class="loading" diameter="24"></mat-spinner>
+        </div>
+
+        <div class="no-processos-text" *ngIf="processos?.length === 0 && !loading">
+            <span class="hint-text">{{ 'PROCESSO.NO_MESSAGES' | translate }}</span>
+        </div>
+
+        <div *ngIf="processos?.length > 0 && !loading">
+            <cdk-processo-list-item matRipple *ngFor="let processo of processos; index as i; trackBy: processoTrackBy" [processo]="processo"
+                                    [ngClass]="{'selected': (processo.id === currentProcessoId), 'deleted': (deletedIds?.indexOf(processo.id) > -1)}"
+                                    (click)="selectProcesso(processo)"
+                                    [selected]="selectedIds.length > 0 && selectedIds.indexOf(processo.id) > -1"
+                                    [deleting]="deletingIds.length > 0 && deletingIds.indexOf(processo.id) > -1"
+                                    (salvarLembrete)="doSalvarLembrete($event)"
+                                    (editar)="doEditar($event)"
+                                    (realizarTransicao)="doRealizarTransicao($event)"
+                                    (desarquivar)="doDesarquivar($event)"
+                                    (registrarExtravio)="doRegistrarExtravio($event)"
+                                    [transicionando]="transicionandoIds.indexOf(processo.id) > -1"
+                                    (toggleInSelectedProcessos)="toggleInSelected($event)"
+                                    (loadInteressados)="doLoadInteressados($event)"
+                                    [loadingInteressadosProcessosId]="loadingInteressadosProcessosId"
+                                    (loadAssuntos)="doLoadAssuntos($event)"
+                                    [modalidadeTransicao]="modalidadeTransicao"
+                                    [loadingAssuntosProcessosId]="loadingAssuntosProcessosId">
+            </cdk-processo-list-item>
+        </div>
+    </div>
+</div>

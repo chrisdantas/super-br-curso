@@ -1,0 +1,178 @@
+<div class="page-layout left-sidebar">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-container"
+         [ngClass]="{'hide': !sidebarElement.opened}"
+         mwlResizable
+         [enableGhostResize]="true"
+         [resizeEdges]="{bottom: false, right: true, top: false, left: true}"
+         (resizeEnd)="onResizingSidebar($event)"
+         [fxFlex]="sidebarSize">
+        <cdk-sidebar #sidebarElement class="sidebar" [name]="this.sidebarName" position="left" lockedOpen="gt-md">
+            <processo-view-main-sidebar [@animate]="{value:'*'}" [capaProcesso]="capaProcesso" [capa]="capa"
+                                        (scrolled)="onScroll()" (sorted)="onSort($event)" [name]="sidebarName"></processo-view-main-sidebar>
+        </cdk-sidebar>
+    </div>
+
+    <!-- / SIDEBAR -->
+
+    <div class="center"
+         mwlResizable
+         [enableGhostResize]="true"
+         [fxFlex]="100"
+         [resizeEdges]="{bottom: false, right: false, top: false, left: false}">
+
+        <!-- HEADER -->
+        <div class="header">
+
+            <button mat-icon-button class="sidebar-toggle mr-8 cdk-black-fg" fxHide.gt-md
+                    (click)="toggleSidebar(this.sidebarName)">
+                <mat-icon>menu</mat-icon>
+            </button>
+
+            <div *ngIf="!capa && !vinculacao && !desentranhamento && !documentoAvulso" class="juntada-navigation">
+                <div>
+                    <button mat-mini-fab class="previous accent cdk-white-fg"
+                            *ngIf="activeCard !== 'bookmark'"
+                            (click)="gotoPreviousStep()"
+                            [disabled]="disabledBack()">
+                        <mat-icon>chevron_left</mat-icon>
+                    </button>
+                    <ng-container *showIfRole="'ROLE_COLABORADOR'">
+                        <button mat-mini-fab [matTooltip]="'Criar marcador de página'"
+                                class="previous accent cdk-white-fg ml-8"
+                                *ngIf="this.componenteDigital?.mimetype === 'application/pdf' && activeCard !== 'bookmark'"
+                                (click)="criarBookmark(this.componenteDigital.id)">
+                            <mat-icon>bookmark</mat-icon>
+                        </button>
+                    </ng-container>
+                </div>
+
+                <div>
+                    <span [matTooltip]="fileName" fxHide.lt-sm
+                          [ngClass]="{'warn' : unsafe}" *ngIf="(loading$ | async) === false">
+                        {{currentJuntada?.numeracaoSequencial}} -
+                        {{ (fileName.length > 25) ?
+                            (fileName | slice:0:25)+'...' :
+                            (fileName)
+                        }}
+                    </span>
+                </div>
+
+                <div class="right">
+                    <button mat-mini-fab *ngIf="componenteDigital?.id && !componenteDigital.assinado" #btnAssinaturas (click)="doLoadAssinaturas()">
+                        <mat-icon class="mat-18">lock_open</mat-icon>
+                    </button>
+                    <button mat-mini-fab *ngIf="componenteDigital?.id && componenteDigital.assinado" #btnAssinaturas (click)="doLoadAssinaturas()">
+                        <mat-icon class="mat-18">lock</mat-icon>
+                    </button>
+                    <button mat-mini-fab (click)="print()" *ngIf="isHtml(fileName)">
+                        <mat-icon class="mat-18">print</mat-icon>
+                    </button>
+                    <button mat-mini-fab (click)="zoomOut()" *ngIf="isHtml(fileName)">
+                        <mat-icon class="mat-18">zoom_out</mat-icon>
+                    </button>
+                    <button mat-mini-fab (click)="zoomIn()"  *ngIf="isHtml(fileName)">
+                        <mat-icon class="mat-18">zoom_in</mat-icon>
+                    </button>
+                    <button mat-mini-fab class="next accent cdk-white-fg"
+                            *ngIf="activeCard !== 'bookmark'"
+                            (click)="gotoNextStep()"
+                            [disabled]="disabledNext()">
+                        <mat-icon>chevron_right</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <ng-template #assinaturasTemplate class="cdk-processo-view-assinatura-list">
+                <cdk-assinatura-grid cdkPerfectScrollbar
+                                     (click)="$event.preventDefault()"
+                                     [loading]="(assinaturasIsLoading$ | async)"
+                                     [assinaturas]="(assinaturas$ | async)"
+                                     [total]="(assinaturasPagination$ | async)?.total"
+                                     [actions]="['create']"
+                                     (reload)="doReloadAssinaturas($event)"
+                                     (create)="doAssinaDocumento()">
+                </cdk-assinatura-grid>
+            </ng-template>
+        </div>
+
+        <div class="m-8" *ngIf="capa && this.processo?.id && this.processo?.origemDados">
+            <mat-card *showIfRole="'ROLE_COLABORADOR'">
+                <mat-card-subtitle>Integração</mat-card-subtitle>
+                <div>ORIGEM DE DADOS: {{this.processo?.origemDados.fonteDados}}</div>
+                <div>ÚLTIMA
+                    SINCRONIZAÇÃO:
+                    {{this.processo?.origemDados.dataHoraUltimaConsulta?.toDate() | date: 'dd/MM/yyyy HH:mm'}}</div>
+                <div *ngIf="this.processo?.origemDados.status === 1">STATUS: SUCESSO</div>
+                <div *ngIf="this.processo?.origemDados.status >= 2">STATUS: ERRO!</div>
+                <div *ngIf="this.processo?.origemDados.status === 0" class="spinner-wrapper">
+                    <span>STATUS: </span>
+                    <mat-spinner diameter="14"></mat-spinner>
+                </div>
+            </mat-card>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+
+            <div class="loading-capa" *ngIf="capa && loading">
+                <mat-spinner diameter="24"></mat-spinner>
+            </div>
+
+            <div *ngIf="!capa && !vinculacao && !desentranhamento && !documentoAvulso && !modelos" class="processo-view-juntada">
+
+                <div class="loading" *ngIf="loading">
+                    <mat-spinner diameter="24"></mat-spinner>
+                </div>
+
+                <div class="sem-juntadas" *ngIf="!loading && (index?.length === 0 && this.routerState?.params['stepHandle'] !== 'latest')">
+                    <span class="no-juntadas-text hint-text">Não há documentos juntados</span>
+                </div>
+
+                <div class="processo-view-juntada-content {{getZoomClass(fileName)}} {{getLayoutClass(fileName)}}"
+                     [ngStyle]="{'display': loading === true || (loading === false && index?.length === 0) ? 'none' : 'flex'}">
+                    <iframe id="iframe-juntadas" name="iframe-juntadas" *ngIf="src && this.componenteDigital?.mimetype !== 'application/pdf'"
+                            [src]="src">
+                    </iframe>
+                    <div class="pdf-viewer"
+                         [ngStyle]="{'display': loading || index?.length === 0 || !!this.srcMessage || this.componenteDigital?.mimetype !== 'application/pdf' ? 'none' : 'flex'}">
+                        <ng2-pdfjs-viewer #pdfViewer
+                                          [viewerId]="'processo-view'"
+                                          [pdfSrc]="null"
+                                          [zoom]="zoomSetting"
+                                          [openFile]="false"
+                                          [viewBookmark]="false"
+                                          [download]="true"
+                                          (onDocumentLoad)="onPageRendered($event)"
+                                          (onPageChange)="onPagesLoaded('pageChange', $event)">
+                        </ng2-pdfjs-viewer>
+                    </div>
+                    <div class="div-about-blank" *ngIf="(loading === false) && src === false && !!this.srcMessage && !downloadUrl">
+                        <span class="no-juntadas-text" *ngIf="!currentJuntada?.documento?.acessoNegado">{{this.srcMessage}}</span>
+                        <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;" *ngIf="!!currentJuntada?.documento?.acessoNegado">
+                            <mat-icon class="s-60 mb-12 red-fg hint-text"
+                                      [@animate]="{value:'*',params:{delay:'300ms',scale:'0.2'}}">block
+                            </mat-icon>
+                            <span class="hint-text mat-h1 no-juntadas-text"
+                                  [@animate]="{value:'*',params:{delay:'400ms'}}">Acesso Negado</span>
+                        </div>
+                        <mat-card class="no-componentes" *ngIf="this.currentJuntada && !this.currentJuntada.documento?.acessoNegado && this.currentJuntada.documento?.componentesDigitais.length === 0">
+                            <mat-card-subtitle>MOVIMENTO</mat-card-subtitle>
+                            <mat-card-content>
+                                <span>{{this.currentJuntada?.descricao}}</span>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    <div class="div-about-blank" *ngIf="downloadUrl">
+                        <button mat-raised-button color="accent" (click)="doDownload()">
+                            DOWNLOAD
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <router-outlet></router-outlet>
+        </div>
+        <!-- / CONTENT -->
+    </div>
+</div>

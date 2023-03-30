@@ -1,0 +1,68 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="Pessoa Relacionada"
+               formControlName="pessoaRelacionada"
+               [matAutocomplete]="pessoaRelacionada.autocomplete"
+               (blur)="checkPessoaRelacionada()"
+               autofocus required>
+        <cdk-pessoa-autocomplete
+            #pessoaRelacionada="pessoaAutocomplete"
+            [control]="form.get('pessoaRelacionada')"
+            [pagination]="pessoaPagination">
+        </cdk-pessoa-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showPessoaRelacionadaGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('pessoaRelacionada').hasError('formError')">
+            {{form.get('pessoaRelacionada').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Modalidade"
+               formControlName="modalidadeRelacionamentoPessoal"
+               [matAutocomplete]="modalidadeRelacionamentoPessoal.autocomplete"
+               (blur)="checkModalidadeRelacionamentoPessoal()"
+               required>
+        <cdk-modalidade-relacionamento-pessoal-autocomplete
+            #modalidadeRelacionamentoPessoal="modalidadeRelacionamentoPessoalAutocomplete"
+            [control]="form.get('modalidadeRelacionamentoPessoal')"
+            [pagination]="modalidadeRelacionamentoPessoalPagination">
+        </cdk-modalidade-relacionamento-pessoal-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showModalidadeRelacionamentoPessoalGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('modalidadeRelacionamentoPessoal').hasError('formError')">
+            {{form.get('modalidadeRelacionamentoPessoal').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+</form>
+
+<cdk-pessoa-gridsearch
+    *ngIf="activeCard === 'pessoa-gridsearch'"
+    (selected)="selectPessoaRelacionada($event)"
+    (cancel)="cancel()">
+</cdk-pessoa-gridsearch>
+
+<cdk-modalidade-relacionamento-pessoal-gridsearch
+    *ngIf="activeCard === 'relacionamento-pessoal-gridsearch'"
+    (selected)="selectModalidadeRelacionamentoPessoal($event)"
+    (cancel)="cancel()">
+</cdk-modalidade-relacionamento-pessoal-gridsearch>
+

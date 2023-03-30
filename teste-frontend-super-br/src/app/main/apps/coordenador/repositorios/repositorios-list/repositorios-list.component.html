@@ -1,0 +1,27 @@
+<div class="header">
+    <path icone="add_comment"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="repositorios">
+    </path>
+</div>
+<cdk-repositorio-grid
+        [loading]="(loading$ | async)"
+        [repositorios]="(repositorios$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [displayedColumns]="colunas"
+        [actions]="['create', 'edit', 'editConteudo', 'delete', 'showInatived', 'especie']"
+        [mode]="'search'"
+        (inatived)="inatived($event)"
+        (reload)="reload($event)"
+        (create)="create()"
+        (edit)="edit($event)"
+        (especie)="especieSetores($event)"
+        (editConteudo)="editConteudo($event)"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-repositorio-grid>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,93 @@
+<div id="register" fxLayout="column">
+
+    <div id="register-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
+
+        <div id="register-form" [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+
+            <div class="logo">
+                <img [src]="cdkConfigService.logo">
+            </div>
+
+            <div class="title">REGISTRE-SE</div>
+
+            <form name="form" [formGroup]="form" novalidate *ngIf="!(isRegistred$ | async)">
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Nome</mat-label>
+                    <input matInput formControlName="nome" upperCase required>
+                    <mat-icon matSuffix class="secondary-text">person</mat-icon>
+                    <mat-error *ngIf="form.get('nome').hasError('formError')">
+                        {{form.get('nome').errors.formError}}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>E-mail</mat-label>
+                    <input matInput formControlName="email" required>
+                    <mat-icon matSuffix class="secondary-text">mail</mat-icon>
+                    <mat-error *ngIf="form.get('email').hasError('formError')">
+                        {{form.get('email').errors.formError}}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>CPF</mat-label>
+                    <input matInput ui-mask="999.999.999-99" formControlName="username" required>
+                    <mat-icon matSuffix class="secondary-text">lock</mat-icon>
+                    <mat-error *ngIf="form.get('username').hasError('formError')">
+                        {{form.get('username').errors.formError}}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Senha</mat-label>
+                    <input matInput type="password" formControlName="plainPassword" required>
+                    <mat-icon matSuffix class="secondary-text">vpn_key</mat-icon>
+                    <mat-error *ngIf="form.get('plainPassword').hasError('formError')">
+                        {{form.get('plainPassword').errors.formError}}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Confirmar Senha</mat-label>
+                    <input matInput type="password" formControlName="confirmPassword" required>
+                    <mat-icon matSuffix class="secondary-text">done_all</mat-icon>
+                    <mat-error *ngIf="form.get('confirmPassword').hasError('mustMatch')">
+                        Senhas não conferem
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+                <button *ngIf="!isSaving" (click)="onSubmit()" mat-raised-button color="accent" class="submit-button" aria-label="Registrar"
+                        [disabled]="form.invalid">
+                    REGISTRAR
+                </button>
+
+                <div fxLayout="row" fxLayout.xs="column"
+                     fxLayoutAlign="center" *ngIf="isSaving">
+                    <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+                </div>
+            </form>
+
+            <div class="registred-success" *ngIf="isRegistred$ | async">
+                <p class="sub-title">
+                    <mat-icon matSuffix class="secondary-text">done</mat-icon> Cadastro realizado com sucesso!<br>
+                    Uma solicitação de confirmação foi enviado para o e-mail cadastrado.
+                </p>
+            </div>
+
+            <div class="separator">
+                <span class="text">OU</span>
+            </div>
+
+            <div class="login" fxLayout="column" fxLayoutAlign="center center">
+                <span class="text">Já tem uma conta?</span>
+                <a class="link" [routerLink]="'/auth/login'">Voltar ao login</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

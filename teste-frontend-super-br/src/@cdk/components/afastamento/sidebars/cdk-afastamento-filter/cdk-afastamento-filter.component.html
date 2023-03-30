@@ -1,0 +1,143 @@
+<div class="header">
+    <mat-icon [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+        search
+    </mat-icon>
+    <span [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}"
+          *ngIf="this.mode === 'list'">Filtro</span>
+</div>
+
+<div class="content" cdkPerfectScrollbar>
+   <form fxLayoutGap="8px" name="form" [formGroup]="form" (keyup.enter)="buscar()">
+
+        <mat-form-field>
+            <input matInput placeholder="Modalidade de Afastamento"
+                   formControlName="modalidadeAfastamento"
+                   [matAutocomplete]="modalidadeAfastamento.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-modalidade-afastamento-autocomplete #modalidadeAfastamento="modalidadeAfastamentoAutocomplete"
+                                                     [control]="form.get('modalidadeAfastamento')">
+            </cdk-modalidade-afastamento-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Colaborador"
+                   formControlName="colaborador"
+                   [matAutocomplete]="colaborador.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-colaborador-autocomplete #colaborador="colaboradorAutocomplete" [control]="form.get('colaborador')"
+                                          [pagination]="colaboradorPagination">
+            </cdk-colaborador-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Criado Por"
+                   formControlName="criadoPor"
+                   [matAutocomplete]="usuarioCriadoPor.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-usuario-autocomplete #usuarioCriadoPor="usuarioAutocomplete" [control]="form.get('criadoPor')">
+            </cdk-usuario-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Atualizado Por"
+                   formControlName="atualizadoPor"
+                   [matAutocomplete]="usuario.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-usuario-autocomplete #usuario="usuarioAutocomplete" [control]="form.get('atualizadoPor')">
+            </cdk-usuario-autocomplete>
+        </mat-form-field>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterDataInicio?.length}">Data de Início</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataInicio"
+                    [ngClass]="{'filtrado': filterDataInicio?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroDataInicio="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="false" campo="dataInicio"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraDataInicio($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterDataInicioBloqueio?.length}">Data de Início do Bloqueio</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataInicioBloqueio"
+                    [ngClass]="{'filtrado': filterDataInicioBloqueio?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroDataInicioBloqueio="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="false" campo="dataInicioBloqueio"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraDataInicioBloqueio($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterFim?.length}">Data Fim</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroFim"
+                    [ngClass]="{'filtrado': filterFim?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroFim="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="false" campo="dataFim"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraFim($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterFimBloqueio?.length}">Data Fim do Bloqueio</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroFimBloqueio"
+                    [ngClass]="{'filtrado': filterFimBloqueio?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroFimBloqueio="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="false" campo="dataFimBloqueio"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraFimBloqueio($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterCriadoEm?.length}">Criado Em</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroCriadoEm"
+                    [ngClass]="{'filtrado': filterCriadoEm?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroCriadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="true" campo="criadoEm"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraCriadoEm($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterAtualizadoEm?.length}">Atualizado Em</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroAtualizadoEm"
+                    [ngClass]="{'filtrado': filterAtualizadoEm?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroAtualizadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="true" campo="atualizadoEm"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraAtualizadoEm($event)">
+            </cdk-date-filter>
+        </mat-menu>
+    </form>
+</div>
+
+<div class="footer">
+    <button mat-raised-button color="accent" (click)="buscar()">
+        Buscar
+    </button>
+    <button mat-raised-button color="warn" (click)="limpar()">
+        Limpar
+    </button>
+</div>

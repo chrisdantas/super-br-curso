@@ -1,0 +1,17 @@
+<div class="header">
+    <path icone="person"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="externos">
+    </path>
+</div>
+<cdk-usuario-grid
+    [loading]="(loading$ | async)"
+    [usuarios]="(usuarios$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [displayedColumns]="['id','nome','username','email','enabled','actions']"
+    [externo]="this.externo"
+    [actions]="['edit', 'vincularPessoa']"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (vincular)="vincularPessoa($event)">
+</cdk-usuario-grid>

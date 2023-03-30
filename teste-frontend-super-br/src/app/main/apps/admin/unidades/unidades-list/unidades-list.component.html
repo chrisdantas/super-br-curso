@@ -1,0 +1,21 @@
+<div class="header">
+    <path icone="location_city"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="unidades">
+    </path>
+</div>
+<cdk-setor-grid
+    [loading]="(loading$ | async)"
+    [setores]="(unidades$ | async)"
+    [total]="(pagination$ | async)?.total"
+    [deletingIds]="(deletingIds$ | async)"
+    [deletingErrors]="(deletingErrors$ | async)"
+    [deletedIds]="(deletedIds$ | async)"
+    [displayedColumns]="['id', 'nome', 'sigla', 'modalidadeOrgaoCentral.valor', 'ativo', 'actions']"
+    [actions]="['create', 'edit', 'setores']"
+    (reload)="reload($event)"
+    (edit)="edit($event)"
+    (create)="create()"
+    (setoresEvent)="setores($event)"
+    (competencias)="competencias($event)">
+</cdk-setor-grid>

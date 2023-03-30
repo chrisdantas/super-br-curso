@@ -1,0 +1,105 @@
+@import "../../scss/cdk";
+
+:host {
+
+    .cdk-search-bar {
+        display: flex;
+        flex: 0 1 auto;
+        font-size: 13px;
+
+        @include media-breakpoint('xs') {
+            height: 56px;
+        }
+
+        .cdk-search-bar-content {
+            display: flex;
+            flex: 1 1 auto;
+            align-items: center;
+            justify-content: flex-start;
+
+            .form-field-flex {
+                display: flex;
+                flex-direction: row;
+                flex: 1 1 auto;
+                justify-content: flex-start;
+                align-items: center;
+                border-radius: 28px;
+                background: white;
+                margin: 0px 13px;
+                padding-left: 8px;
+                height: 45px;
+                @include mat-elevation(1);
+
+                .input-field {
+                    font: 400 13px/1.125 Muli, Helvetica Neue, Arial, sans-serif;
+                    margin-left: 13px;
+                }
+            }
+
+            .cdk-search-bar-expander,
+            .cdk-search-bar-collapser {
+                cursor: pointer;
+                margin: 0;
+            }
+
+            .cdk-search-bar-loader {
+                width: 64px !important;
+                height: 64px !important;
+                line-height: 64px !important;
+
+                @include media-breakpoint('xs') {
+                    height: 56px !important;
+                    line-height: 56px !important;
+                }
+            }
+
+            .cdk-search-bar-collapser {
+                display: none;
+            }
+
+            .cdk-search-bar-expand {
+                display: flex;
+                align-items: center;
+            }
+
+            #cdk-search-bar-input {
+                display: none;
+                flex: 1 0 auto;
+                min-height: 64px;
+                font-size: 13px;
+                background-color: transparent;
+                color: currentColor;
+            }
+        }
+
+        &.expanded {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+
+            .cdk-search-bar-content {
+
+                #cdk-search-bar-input {
+                    display: flex;
+                }
+
+                .cdk-search-bar-collapser {
+                    display: flex;
+                }
+            }
+        }
+    }
+
+    body {
+
+        &.cdk-search-bar-expanded {
+
+            #toolbar {
+                z-index: 999 !important;
+            }
+        }
+    }
+}

@@ -1,0 +1,68 @@
+<!-- CONTENT -->
+<div class="content" cdkPerfectScrollbar>
+
+    <h2>Edição de tarefas em bloco</h2>
+
+    <h3>{{(tarefas$ | async)?.length}} tarefa(s) selecionada(s) </h3>
+
+    <div class="bloco-edit p-8 mb-8" fxLayout="column" *ngIf="operacoes.length === 0">
+        <mat-slide-toggle [(ngModel)]="blocoEditEspecie"
+                          class="mr-8 mb-8" fxFlex="0 1 auto">
+            Espécie de Tarefa
+        </mat-slide-toggle>
+
+        <mat-slide-toggle [(ngModel)]="blocoEditDistribuicao"
+                          class="mr-8 mb-8" fxFlex="0 1 auto">
+            Distribuição
+        </mat-slide-toggle>
+
+        <mat-slide-toggle [(ngModel)]="blocoEditUrgente"
+                          class="mr-8 mb-8" fxFlex="0 1 auto">
+            Urgência
+        </mat-slide-toggle>
+
+        <mat-slide-toggle [(ngModel)]="blocoEditInicioPrazo" [disabled]="prazoDesabilitado"
+                          class="mr-8 mb-8" fxFlex="0 1 auto">
+            Início do Prazo
+        </mat-slide-toggle>
+
+        <mat-slide-toggle [(ngModel)]="blocoEditFinalPrazo" [disabled]="prazoDesabilitado"
+                          class="mr-8 mb-8" fxFlex="0 1 auto">
+            Final do Prazo
+        </mat-slide-toggle>
+
+        <mat-slide-toggle [(ngModel)]="blocoEditObservacao"
+                          class="mr-8 mb-8" fxFlex="0 1 auto">
+            Observação
+        </mat-slide-toggle>
+
+    </div>
+
+    <cdk-tarefa-form
+            [hidden]="operacoes.length > 0"
+            [tarefa]="tarefa"
+            [valid]="(tarefas$ | async)?.length > 0 && (blocoEditEspecie || blocoEditDistribuicao || blocoEditUrgente || blocoEditInicioPrazo || blocoEditFinalPrazo || blocoEditObservacao)"
+            [saving]="(isSaving$ | async)"
+            [mode]="'bloco-edit'"
+            [blocoEdit]="{blocoEditEspecie: blocoEditEspecie, blocoEditDistribuicao: blocoEditDistribuicao, blocoEditUrgente: blocoEditUrgente, blocoEditInicioPrazo: blocoEditInicioPrazo, blocoEditFinalPrazo: blocoEditFinalPrazo, blocoEditObservacao: blocoEditObservacao}"
+            (save)="submit($event)"
+            (abort)="doAbort()">
+    </cdk-tarefa-form>
+
+    <mat-list *ngIf="operacoes.length > 0">
+        <h3 matSubheader>
+            <span>Resultado do Bloco</span>
+        </h3>
+
+        <mat-list-item *ngFor="let operacao of operacoes">
+            <p matLine class="mb-4 p-8 secondary-text"
+               [ngClass]="{'grey-50': operacao.status === 0, 'light-green-50': operacao.status === 1, 'pink-50': operacao.status > 1}">{{operacao.content}}</p>
+        </mat-list-item>
+    </mat-list>
+
+    <div class="actions" *ngIf="operacoes.length > 0 && operacoesPendentes.length === 0">
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()">
+            VOLTAR
+        </button>
+    </div>
+</div>

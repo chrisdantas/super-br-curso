@@ -1,0 +1,59 @@
+<div id="login" fxLayout="column">
+
+    <div class="loading-config" *ngIf="(loadingConfig$ | async)">
+        <mat-spinner color="accent" diameter="36"></mat-spinner>
+    </div>
+
+    <div class="login-form-wrapper" fxLayout="column" fxLayoutAlign="center center" *ngIf="!(loadingConfig$ | async) && config && config.error">
+        <div class="login-form" [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+            <div class="logo">
+                <img [src]="config.logo">
+            </div>
+
+            <div class="subtitle">Sistema encontra-se indisponível no momento. Tente novamente mais tarde.</div>
+            <div class="separator">
+                <span class="text">OU</span>
+            </div>
+            <div class="register mb-8" fxLayout="column" fxLayoutAlign="center center">
+                <a class="link" [routerLink]="'/auth/login'" (click)="reloadConfig()">Recarregar</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-gov-br" *ngIf="!!config && this.routerState.queryParams['code']">
+        <div class="gov-br-wrapper" [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+            <div class="logo">
+                <img [src]="config.logo">
+            </div>
+
+            <div class="subtitle" *ngIf="this.routerState.queryParams['code'] &&
+                    !this.routerState.queryParams['state'] ">
+                Realizando o login através do <strong style="color: #1351b4">gov.br</strong>
+            </div>
+            <div class="subtitle" *ngIf="this.routerState.queryParams['state'] &&
+                    this.routerState.queryParams['code']">
+                Efetuando assinatura dos documentos, por favor aguarde...
+            </div>
+            <div  *ngIf="this.routerState.queryParams['error']" class="title">
+                {{this.routerState.queryParams['error']}}
+            </div>
+            <div class="loading-gov-br">
+                <mat-icon ngclass  *ngIf="this.routerState.queryParams['state'] && this.routerState.queryParams['code'] " class="s-60 mb-12 select-processo-icon hint-text"
+                        [@animate]="{value:'*',params:{delay:'300ms',scale:'0.2'}}">lock
+                </mat-icon>
+                <mat-icon  *ngIf="this.routerState.queryParams['error']" class="s-60 mb-12 red-fg select-processo-icon hint-text"
+                        [@animate]="{value:'*',params:{delay:'300ms',scale:'0.2'}}">block
+                </mat-icon>
+                <mat-spinner *ngIf="!this.routerState.queryParams['error']"  color="accent" diameter="36"></mat-spinner>
+            </div>
+        </div>
+    </div>
+
+    <cdk-login-form *ngIf="!this.routerState.queryParams['code'] && !this.routerState.queryParams['error']"
+                    (save)="this.onSubmit($event)"
+                    [config]="(config$ | async)"
+                    [version]="version"
+                    [errorMessage]="errorMessage$ | async"
+                    [loading]="loading$ | async"
+                    [loadingConfig]="loadingConfig$ | async"></cdk-login-form>
+</div>

@@ -1,0 +1,58 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <input matInput placeholder="Número" formControlName="codigoDocumento" maxlength="255" required>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Modalidade"
+               formControlName="modalidadeDocumentoIdentificador"
+               [matAutocomplete]="modalidadeDocumentoIdentificador.autocomplete"
+               (blur)="checkModalidadeDocumentoIdentificador()"
+               required>
+        <cdk-modalidade-documento-identificador-autocomplete
+            #modalidadeDocumentoIdentificador="modalidadeDocumentoIdentificadorAutocomplete"
+            [control]="form.get('modalidadeDocumentoIdentificador')"
+            [pagination]="modalidadeDocumentoIdentificadorPagination">
+        </cdk-modalidade-documento-identificador-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showModalidadeDocumentoIdentificadorGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('modalidadeDocumentoIdentificador').hasError('formError')">
+            {{form.get('modalidadeDocumentoIdentificador').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+            <input matInput placeholder="Emissor" formControlName="emissorDocumento" maxlength="255" required>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Data Emissão</mat-label>
+        <input matInput [matDatepicker]="dataEmissao" placeholder="Data Emissão"
+               formControlName="dataEmissao" required>
+        <mat-datepicker-toggle matSuffix [for]="dataEmissao"></mat-datepicker-toggle>
+        <mat-datepicker #dataEmissao></mat-datepicker>
+    </mat-form-field>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+</form>
+
+<cdk-modalidade-documento-identificador-gridsearch
+    *ngIf="activeCard === 'documento-identificador-gridsearch'"
+    (selected)="selectModalidadeDocumentoIdentificador($event)"
+    (cancel)="cancel()">
+</cdk-modalidade-documento-identificador-gridsearch>
+

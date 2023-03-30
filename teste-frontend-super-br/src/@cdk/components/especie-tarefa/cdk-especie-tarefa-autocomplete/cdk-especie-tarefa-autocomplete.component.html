@@ -1,0 +1,10 @@
+<mat-autocomplete (closed)="fechado()" [displayWith]="displayEspecieTarefaFn">
+    <mat-option *ngFor="let especieTarefa of especieTarefaList" [disabled]="(isWorkflow && !especieTarefa.valida)"
+                [value]="especieTarefa">
+        <span [innerHTML]="displayEspecieTarefaFn(especieTarefa) | highlightOption: this.control.value"
+              [ngStyle]="isWorkflow && !especieTarefa.valida ? {'text-decoration': 'line-through'} : {}"></span>
+    </mat-option>
+    <mat-option *ngIf="especieTarefaListIsLoading">
+        <mat-spinner diameter="16"></mat-spinner>
+    </mat-option>
+</mat-autocomplete>

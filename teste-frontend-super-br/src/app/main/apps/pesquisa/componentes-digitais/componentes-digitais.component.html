@@ -1,0 +1,15 @@
+<cdk-componente-digital-grid
+        [loading]="(loading$ | async)"
+        [componentesDigitais]="(componentesDigitais$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [mode]="'search'"
+        [mobileMode]="mobileMode"
+        [displayedColumns]="['select', 'documento.id', 'documento.juntadaAtual.volume.processo.NUP', 'documento.tipoDocumento', 'actions']"
+        [isColaborador]="_loginService.isGranted('ROLE_COLABORADOR')"
+        [actions]="['edit', 'abrirOutraAba']"
+        (reload)="reload($event)"
+        (edit)="edit($event)"
+        [unidadePagination]="unidadePagination"
+        [setorPagination]="setorPagination">
+</cdk-componente-digital-grid>
+<router-outlet></router-outlet>

@@ -1,0 +1,12 @@
+<div class="content">
+    <cdk-tarefa-form
+            [tarefa]="(tarefa$ | async)"
+            [saving]="(isSaving$ | async)"
+            [errors]="(errors$ | async)"
+            [especieTarefaPagination]="especieTarefaPagination"
+            [setorOrigemPagination]="setorOrigemPagination"
+            [logEntryPagination]="logEntryPagination"
+            (abort)="cancel()"
+            (save)="submit($event)">
+    </cdk-tarefa-form>
+</div>

@@ -1,0 +1,137 @@
+<div class="documento-edit page-layout full-width inner-scroll" *showIfRole="'ROLE_COLABORADOR'">
+    <!-- CENTER -->
+    <div class="center">
+        <!-- CONTENT HEADER -->
+        <div class="actions p-8" *ngIf="!routerState.url.includes('visualizar-processo')">
+            <button *ngIf="(tarefa$ | async) && !(documento$ | async)?.juntadaAtual && !(documento$ | async)?.apagadoEm && !(documento$ | async)?.estaVinculada && !routerState.url.includes('anexar-copia') && !routerState.url.includes('/minutas')"
+                    mat-icon-button aria-label="movimentar"
+                    matTooltip="Movimentar" [routerLink]="routeAtividade"
+                    [routerLinkActive]="['active', 'accent']">
+                <mat-icon class="black-fg">send</mat-icon>
+            </button>
+
+            <button mat-icon-button aria-label="editar o documento"
+                    *ngIf="!(documento$ | async)?.apagadoEm"
+                    matTooltip="Editar o Documento" routerLink="dados-basicos"
+                    [routerLinkActive]="['active', 'accent']">
+                <mat-icon class="black-fg">edit</mat-icon>
+            </button>
+
+            <button *ngIf="!juntadaRoute && routerState.url.indexOf('/editor')  > -1 && !(documento$ | async)?.apagadoEm" mat-icon-button
+                    aria-label="inteligência jurídica"
+                    matTooltip="Inteligência Jurídica" routerLink="inteligencia"
+                    [routerLinkActive]="['active', 'accent']">
+                <mat-icon class="black-fg">gavel</mat-icon>
+            </button>
+
+            <button *ngIf="!(documento$ | async)?.apagadoEm" mat-icon-button
+                    aria-label="assinaturas"
+                    matTooltip="Assinaturas" routerLink="assinaturas"
+                    [routerLinkActive]="['active', 'accent']">
+                <mat-icon class="black-fg">lock</mat-icon>
+            </button>
+
+            <div class="documento-edit-buttons" *ngIf="!(documento$ | async)?.apagadoEm">
+
+                <button mat-icon-button [matMenuTriggerFor]="moreMenu"
+                        aria-label="Ferramentas" (click)="$event.stopPropagation()"
+                        fxHide.xs>
+                    <mat-icon class="secondary-text">more_vert</mat-icon>
+                </button>
+
+                <mat-menu #moreMenu="matMenu">
+
+                    <button mat-menu-item aria-label="acesso restrito"
+                            matTooltip="Restrições de Acesso" routerLink="acesso-restrito"
+                            [routerLinkActive]="['active', 'accent']">
+                        <ng-container>
+                            <mat-icon class="black-fg">block</mat-icon>
+                            <span>Acesso Restrito</span>
+                        </ng-container>
+                    </button>
+
+                    <button mat-menu-item aria-label="sigilos"
+                            matTooltip="Sigilos" routerLink="sigilos"
+                            [routerLinkActive]="['active', 'accent']">
+                        <ng-container>
+                            <mat-icon class="black-fg">remove_red_eye</mat-icon>
+                            <span>Sigilos</span>
+                        </ng-container>
+                    </button>
+
+                    <button mat-menu-item aria-label="componentes digitais"
+                            matTooltip="Componentes Digitais" routerLink="componentes-digitais"
+                            [routerLinkActive]="['active', 'accent']">
+                        <ng-container>
+                            <mat-icon class="black-fg">picture_as_pdf</mat-icon>
+                            <span>Componentes Digitais</span>
+                        </ng-container>
+                    </button>
+
+                    <button mat-menu-item aria-label="juntada" *ngIf="(documento$ | async)?.minuta === false"
+                            matTooltip="Juntada" routerLink="juntada"
+                            [routerLinkActive]="['active', 'accent']">
+                        <ng-container>
+                            <mat-icon class="black-fg">layers</mat-icon>
+                            <span>Juntada</span>
+                        </ng-container>
+                    </button>
+
+                    <button mat-menu-item aria-label="modelos"
+                            matTooltip="Modelos" routerLink="modelos"
+                            *ngIf="this.currentComponenteDigital?.editavel && (documento$ | async).assinado === false && (documento$ | async)?.minuta"
+                            [routerLinkActive]="['active', 'accent']">
+                        <ng-container>
+                            <mat-icon class="black-fg">file_copy</mat-icon>
+                            <span>Modelos</span>
+                        </ng-container>
+                    </button>
+
+                    <button mat-menu-item aria-label="versões"
+                            matTooltip="Versões" routerLink="versoes"
+                            *ngIf="this.currentComponenteDigital?.editavel && (documento$ | async).assinado === false && (documento$ | async)?.minuta"
+                            [routerLinkActive]="['active', 'accent']">
+                        <ng-container>
+                            <mat-icon class="black-fg">folder</mat-icon>
+                            <span>Versões</span>
+                        </ng-container>
+                    </button>
+
+                    <ng-template #dynamicComponent></ng-template>
+                </mat-menu>
+            </div>
+        </div>
+
+        <div *ngIf="(documento$ | async)?.estaVinculada">
+            <button class="back" mat-icon-button
+                    (click)="onClickedDocumentoVinculado(documentoPrincipal)"
+                    aria-label="cancelar"
+                    matTooltip="Cancelar">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+        </div>
+
+        <div class="search-wrapper" (click)="$event.stopPropagation();">
+            <mat-icon class="secondary-text mr-8">label</mat-icon>
+            <cdk-vinculacao-etiqueta-chips
+                class="m-8"
+                *ngIf="this._loginService.isGranted('ROLE_COLABORADOR') && (documento$ | async)?.id && !(documento$ | async)?.apagadoEm"
+                [vinculacoesEtiquetas]="(documento$ | async)?.vinculacoesEtiquetas"
+                (create)="onEtiquetaCreate($event)"
+                (edit)="onEtiquetaEdit($event)"
+                [savingVinculacaoEtiquetaId]="(savingVinculacaoEtiquetaId$ | async)"
+                [errors]="(vinculacaoEtiquetaErrors$ | async)"
+                [pagination]="vinculacaoEtiquetaPagination"
+                [placeholder]="'Adicionar etiquetas...'"
+                (delete)="onEtiquetaDelete($event)"></cdk-vinculacao-etiqueta-chips>
+        </div>
+
+        <div class="dynamic-form">
+            <ng-template #dynamicForm></ng-template>
+        </div>
+
+        <div class="content" cdkPerfectScrollbar>
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

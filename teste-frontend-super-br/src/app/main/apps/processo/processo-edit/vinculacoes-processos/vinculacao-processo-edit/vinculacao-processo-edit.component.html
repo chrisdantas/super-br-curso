@@ -1,0 +1,10 @@
+<div class="content" cdkPerfectScrollbar>
+    <cdk-vinculacao-processo-form
+        [vinculacaoProcesso]="vinculacaoProcesso"
+        [processoVinculadoPagination]="processoVinculadoPagination"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-vinculacao-processo-form>
+</div>

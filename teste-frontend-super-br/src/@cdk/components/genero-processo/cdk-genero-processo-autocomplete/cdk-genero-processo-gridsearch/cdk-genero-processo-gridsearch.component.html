@@ -1,0 +1,10 @@
+<cdk-genero-processo-grid
+        [loading]="loading"
+        [generoProcessos]="generoProcessos"
+        [displayedColumns]="['id', 'nome', 'descricao', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-genero-processo-grid>

@@ -1,0 +1,22 @@
+<div class="header">
+    <path icone="subject"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="localizadores">
+    </path>
+</div>
+<cdk-localizador-grid
+        [loading]="(loading$ | async)"
+        [localizadors]="(localizadors$ | async)"
+        [total]="(pagination$ | async)?.total"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [setorPagination]="setorPagination"
+        [actions]="['edit','create','delete', 'showInatived']"
+        (inatived)="inatived($event)"
+        (create)="create()"
+        (reload)="reload($event)"
+        (edit)="edit($event)"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-localizador-grid>

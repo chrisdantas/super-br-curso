@@ -1,0 +1,15 @@
+<div class="header">
+    <path icone="subject"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="assuntos">
+    </path>
+</div>
+<cdk-assunto-administrativo-tree
+    [assuntoAdministrativo]="(assuntoAdministrativo$ | async)"
+    [assuntoAdministrativoPagination]="assuntoAdministrativoPagination"
+    [saving]="(isSaving$ | async)"
+    [errors]="(errors$ | async)"
+    (save)="submitAssuntoAdministrativo($event)"
+    (abort)="doAbort()"
+>
+</cdk-assunto-administrativo-tree>

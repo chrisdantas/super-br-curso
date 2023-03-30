@@ -1,0 +1,232 @@
+<div class="header">
+    <mat-icon [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+        search
+    </mat-icon>
+    <span [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">Filtro</span>
+</div>
+
+<div class="content" cdkPerfectScrollbar>
+    <form fxLayoutGap="8px" name="form" [formGroup]="form" (keyup.enter)="buscar()">
+        <div class="search-wrapper" *showIfRole="'ROLE_COLABORADOR'">
+            <div class="search">
+                <cdk-search-bar-etiquetas [etiquetas]="etiquetas"
+                                          [entidades]="''"
+                                          [arraySearchTypes]="arrayFiltrosEtiquetas"
+                                          (create)="addEtiqueta($event)"
+                                          (changeFilter)="changeEtiquetaFilter($event)"
+                                          (delete)="deleteEtiqueta($event)">
+                </cdk-search-bar-etiquetas>
+            </div>
+        </div>
+
+        <mat-expansion-panel expanded="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Dados Administrativos
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-form-field *showIfRole="'ROLE_USER'">
+                <input matInput placeholder="Processo"
+                       formControlName="NUP"
+                       [matAutocomplete]="processo.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-processo-autocomplete
+                    #processo="processoAutocomplete"
+                    [control]="form.get('NUP')">
+                </cdk-processo-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_COLABORADOR'">
+                <mat-label>Outro Número</mat-label>
+                <input matInput #outroNumero
+                       name="outroNumero"
+                       formControlName="outroNumero"
+                       maxlength="255">
+                <mat-hint align="end">{{outroNumero.value.length}} / 255</mat-hint>
+            </mat-form-field>
+
+            <div class="filtro-data" *showIfRole="'ROLE_COLABORADOR'">
+                <span [ngClass]="{'filtrado': filterDataHoraAbertura?.length}">Data da Abertura</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataHoraAbertura"
+                        [ngClass]="{'filtrado': filterDataHoraAbertura?.length}">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroDataHoraAbertura="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="dataHoraAbertura"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraDataHoraAbertura($event)">
+                </cdk-date-filter>
+            </mat-menu>
+
+            <div class="filtro-data" *ngIf="showDataTransicao()">
+                <span [ngClass]="{'filtrado': filterDataHoraProximaTransicao?.length}">Data/Hora da Próxima Temporalidade</span>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataHoraProximaTransicao"
+                        [ngClass]="{'filtrado': filterDataHoraProximaTransicao?.length}">
+                    <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+            <mat-menu #filtroDataHoraProximaTransicao="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+                <cdk-date-filter [datetime]="true" campo="dataHoraProximaTransicao"
+                                 [limparForm]="this.limparFormFiltroDatas$"
+                                 (filtra)="this.filtraDataHoraProximaTransicao($event)">
+                </cdk-date-filter>
+            </mat-menu>
+
+            <mat-form-field *showIfRole="'ROLE_COLABORADOR'">
+                <input matInput placeholder="Assunto"
+                       formControlName="assunto"
+                       [matAutocomplete]="assuntoAdministrativo.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-assunto-administrativo-autocomplete #assuntoAdministrativo="assuntoAdministrativoAutocomplete"
+                                                         [pagination]="assuntoAdministrativoPagination"
+                                                         [control]="form.get('assunto')">
+                </cdk-assunto-administrativo-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_COLABORADOR'">
+                <input matInput placeholder="Processo de Trabalho"
+                       formControlName="especieProcesso"
+                       [matAutocomplete]="especieProcesso.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-especie-processo-autocomplete #especieProcesso="especieProcessoAutocomplete"
+                                                   [control]="form.get('especieProcesso')">
+                </cdk-especie-processo-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_PESSOA_VINCULADA'">
+                <mat-label>Nome do Interessado</mat-label>
+                <input matInput #nome
+                       name="nome"
+                       formControlName="nome"
+                       maxlength="255">
+                <mat-hint align="end">{{nome.value.length}} / 255</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_COLABORADOR'">
+                <mat-label>Nome do Interessado</mat-label>
+                <input matInput #nome
+                       name="nome"
+                       formControlName="nome"
+                       maxlength="255">
+                <mat-hint align="end">{{nome.value.length}} / 255</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_PESSOA_VINCULADA'">
+                <mat-label>CPF/CNPJ do Interessado</mat-label>
+                <input matInput #cpfCnpj
+                       name="cpfCnpj"
+                       formControlName="cpfCnpj"
+                       maxlength="255">
+                <mat-hint align="end">{{cpfCnpj.value.length}} / 19</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_COLABORADOR'">
+                <mat-label>CPF/CNPJ do Interessado</mat-label>
+                <input matInput #cpfCnpj
+                       name="cpfCnpj"
+                       formControlName="cpfCnpj"
+                       maxlength="255">
+                <mat-hint align="end">{{cpfCnpj.value.length}} / 19</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_COLABORADOR'">
+                <mat-label>Título</mat-label>
+                <input matInput #titulo
+                       name="titulo"
+                       formControlName="titulo"
+                       maxlength="255">
+                <mat-hint align="end">{{titulo.value.length}} / 255</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_COLABORADOR'">
+                <mat-label>Descrição</mat-label>
+                <input matInput #descricao
+                       name="descricao"
+                       formControlName="descricao"
+                       maxlength="255">
+                <mat-hint align="end">{{descricao.value.length}} / 255</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="showClassificacao()">
+                <input matInput placeholder="Classificação"
+                       formControlName="classificacao"
+                       [matAutocomplete]="classificacao.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-classificacao-autocomplete #classificacao="classificacaoAutocomplete"
+                                                [control]="form.get('classificacao')">
+                </cdk-classificacao-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_COLABORADOR'">
+                <input matInput placeholder="Procedência"
+                       formControlName="procedencia"
+                       [matAutocomplete]="pessoa.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-pessoa-autocomplete #pessoa="pessoaAutocomplete" [control]="form.get('procedencia')">
+                </cdk-pessoa-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="showModalidadeFase()">
+                <input matInput placeholder="Idade"
+                       formControlName="modalidadeFase"
+                       [matAutocomplete]="modalidadeFase.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-modalidade-fase-autocomplete #modalidadeFase="modalidadeFaseAutocomplete"
+                                                  [control]="form.get('modalidadeFase')">
+                </cdk-modalidade-fase-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *showIfRole="'ROLE_COLABORADOR'">
+                <input matInput placeholder="Modalidade Meio"
+                       formControlName="modalidadeMeio"
+                       [matAutocomplete]="modalidadeMeio.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-modalidade-meio-autocomplete #modalidadeMeio="modalidadeMeioAutocomplete"
+                                                  [control]="form.get('modalidadeMeio')">
+                </cdk-modalidade-meio-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="showUnidade()">
+                <input matInput placeholder="Unidade Responsável"
+                       formControlName="unidade"
+                       [matAutocomplete]="setor.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-setor-autocomplete #setor="setorAutocomplete" [control]="form.get('unidade')"
+                                        [pagination]="unidadePagination">
+                </cdk-setor-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="form.get('unidade').value && form.get('unidade').value.id">
+                <input matInput placeholder="Setor Responsável"
+                       formControlName="setorAtual"
+                       [matAutocomplete]="setor.autocomplete"
+                       (change)="verificarValor($event)">
+                <cdk-setor-autocomplete #setor="setorAutocomplete" [control]="form.get('setorAtual')" [extraFilter]="'unidade'"
+                                        [pagination]="setorPagination">
+                </cdk-setor-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="showLembrete()">
+                <mat-label>Lembrete</mat-label>
+                <input matInput #lembreteArquivista
+                       name="lembreteArquivista"
+                       formControlName="lembreteArquivista">
+            </mat-form-field>
+
+        </mat-expansion-panel>
+
+    </form>
+    <ng-template #dynamicComponent></ng-template>
+
+</div>
+
+<div class="footer">
+    <button mat-raised-button color="accent" (click)="buscar()">
+        Buscar
+    </button>
+    <button mat-raised-button color="warn" type="button" (click)="limpar()">
+        Limpar
+    </button>
+</div>

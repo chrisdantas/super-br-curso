@@ -1,0 +1,18 @@
+<div class="header">
+    <path icone="person"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="externos">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-usuario-form
+        [usuario]="usuario"
+        [form]="formUsuario"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        (save)="submitUsuario($event)"
+        [usuarioExterno]="true"
+        (abort)="doAbort()"
+        class="form-user">
+    </cdk-usuario-form>
+</div>

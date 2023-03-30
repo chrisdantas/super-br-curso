@@ -1,0 +1,19 @@
+componente-digital-ckeditor {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    height: 0;
+
+    > .space {
+        height: 4px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    > .loading {
+        display: flex;
+        flex: 0 0 auto;
+        justify-content: center;
+        align-items: center;
+    }
+}

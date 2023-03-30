@@ -1,0 +1,59 @@
+<div fxLayout="row" [dndDraggable]="draggable.data" fxLayoutAlign="start center">
+
+    <mat-checkbox class="mr-8" [checked]="selected" (change)="onSelectedChange()"
+                  (click)="$event.stopPropagation();">
+    </mat-checkbox>
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxFlex>
+
+        <div class="info" [ngClass]="{'nao-lido': !documentoAvulso.dataHoraLeitura}">
+
+            <div class="title">
+                <mat-icon *ngIf="documentoAvulso.processo?.documentoAvulsoOrigem">mail</mat-icon>
+                <button disabled mat-icon-button
+                        *ngIf="documentoAvulso.processo?.acessoNegado">
+                    <mat-icon matTooltip="Acesso restrito!" class="s-15 red-fg">
+                        block
+                    </mat-icon>
+                </button>
+                <span>PROCESSO {{documentoAvulso.processo?.NUP | formatNup}}</span>
+                <mat-icon class="s-12 mt-4" (click)="copiarParaAreaTrabalho(documentoAvulso.processo?.NUP); $event.stopPropagation();">file_copy
+                </mat-icon>
+            </div>
+
+            <div class="subtitle">
+                <span>{{documentoAvulso.processo?.modalidadeMeio?.valor }}
+                    {{documentoAvulso.processo?.especieProcesso?.nome }}</span>
+            </div>
+
+            <div class="subtitle">
+                <span *ngIf="!documentoAvulso.dataHoraResposta">
+                    Ofício vinculado pendente de resposta</span>
+                <span *ngIf="documentoAvulso.dataHoraResposta">
+                    Ofício vinculado respondido em
+                    {{documentoAvulso.dataHoraResposta?.toDate() | date: 'dd/MM/yyyy H:mm'}}</span>
+            </div>
+
+            <div class="body mt-4">
+                <div>
+                    {{documentoAvulso.setorResponsavel?.nome}} ({{documentoAvulso.setorResponsavel?.unidade?.sigla}})
+                </div>
+
+                <div>
+                    {{documentoAvulso.dataHoraInicioPrazo?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}}
+                    ATÉ {{documentoAvulso.dataHoraFinalPrazo?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}}
+                </div>
+            </div>
+
+            <div class="etiquetas" fxLayout="row wrap" fxHide fxShow.gt-sm>
+                <div class="etiqueta" *ngFor="let vinculacaoEtiqueta of documentoAvulso.vinculacoesEtiquetas"
+                     fxLayout="row" fxLayoutAlign="start center" [matTooltip]="vinculacaoEtiqueta.conteudo">
+                    <div class="etiqueta-color"
+                         [ngStyle]="{'background-color': (vinculacaoEtiqueta.etiqueta?.corHexadecimal)}"></div>
+                    <div class="etiqueta-title">{{vinculacaoEtiqueta.etiqueta?.nome}}</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

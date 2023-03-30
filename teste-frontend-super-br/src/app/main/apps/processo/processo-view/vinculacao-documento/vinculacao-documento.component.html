@@ -1,0 +1,17 @@
+<div class="content" cdkPerfectScrollbar>
+    <h2>Vincular Juntadas</h2>
+
+    <cdk-vinculacao-documento-form
+        [vinculacaoDocumento]="vinculacaoDocumento"
+        [documentoVinculado]="(juntadaVinculada$ | async)?.documento"
+        [processo]="processo$ | async"
+        [displayedColumns]="displayedColumns"
+        [documentoVinculadoPagination]="documentoVinculadoPagination"
+        [modalidadeVinculacaoDocumentoPagination]="modalidadeVinculacaoDocumentoPagination"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        (changeDocumentoVinculado)="changeDocumentoVinculado($event)"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-vinculacao-documento-form>
+</div>

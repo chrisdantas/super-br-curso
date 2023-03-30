@@ -1,0 +1,20 @@
+<div class="header" *ngIf="routerState.url.includes('regras')">
+    <path icone="assignment"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="etiquetas">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-regra-etiqueta-form
+        [regraEtiqueta]="regraEtiqueta"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [especieCriteriaList]="especieCriteriaList"
+        [setorRecebidoPagination]="setorPagination"
+        [unidadeRecebidaPagination]="unidadePagination"
+        [usuarioRecebidoPagination]="usuarioPagination"
+        [assuntoAdministrativoPagination]="assuntoAdministrativoPagination"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-regra-etiqueta-form>
+</div>

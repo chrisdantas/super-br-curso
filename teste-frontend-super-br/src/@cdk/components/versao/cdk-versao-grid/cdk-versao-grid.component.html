@@ -1,0 +1,149 @@
+<div class="page-layout left-sidebar">
+
+    <div class="responsive-grid"
+         [ngClass]="{
+            'search': (this.mode === 'search'),
+            'documento-edit': (this.mode === 'documento')
+         }">
+
+        <div class="actions">
+
+            <div class="back">
+                <button mat-icon-button *ngIf="actions.indexOf('cancel') > -1"
+                        (click)="doCancel()"
+                        aria-label="cancelar"
+                        matTooltip="Cancelar">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <button class="accent" mat-icon-button *ngIf="actions.indexOf('create') > -1"
+                        (click)="doCreate()"
+                        aria-label="novo"
+                        matTooltip="Novo">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+
+            <button class="refresh" mat-icon-button
+                    (click)="loadPage()"
+                    aria-label="recarregar"
+                    matTooltip="Recarregar">
+                <mat-icon>refresh</mat-icon>
+            </button>
+
+            <!-- <button class="toggle-filter" mat-icon-button
+                    [ngClass]="{'warn': !(gridFilter | json).includes('{}')}"
+                    (click)="toggleFilter()"
+                    aria-label="filtrar"
+                    matTooltip="Filtrar">
+                <mat-icon>filter_list</mat-icon>
+            </button> -->
+        </div>
+
+        <div class="loading" *ngIf="loading">
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <div class="content" cdkPerfectScrollbar>
+
+            <table mat-table [dataSource]="dataSource" matSort [ngStyle]="loading ? {'display': 'none'} : {}">
+
+                <!-- Selection Column -->
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (click)="toggleSelectAll($event)"
+                                      [checked]="hasSelected"
+                                      [indeterminate]="isIndeterminate">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let logEntry">
+                        <mat-checkbox [checked]="selectedIds.indexOf(logEntry.id) > -1"
+                                      (change)="toggleInSelected(logEntry.id)"
+                                      (click)="$event.stopPropagation();"
+                                      [disabled]="deletedIds?.indexOf(logEntry.id) > -1">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- Id Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Id
+                    </th>
+                    <td mat-cell *matCellDef="let logEntry" class='has_label_on_mobile' data-label='Id: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(logEntry.logId) > -1, 'error': getProp(deletingErrors, logEntry.id)}"> {{logEntry.logId}} </td>
+                </ng-container>
+
+                <!-- loggedAt Column -->
+                <ng-container matColumnDef="loggedAt">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Alterado em
+                    </th>
+                    <td mat-cell *matCellDef="let logEntry" class='has_label_on_mobile' data-label='Alterado Em: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(logEntry.logId) > -1, 'error': getProp(deletingErrors, logEntry.id)}"> {{logEntry.loggedAt?.toDate() | date:'dd/MM/yyyy HH:mm:ss'}} </td>
+                </ng-container>
+
+                <!-- username Column -->
+                <ng-container matColumnDef="username">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Alterado por
+                    </th>
+                    <td mat-cell *matCellDef="let logEntry" class='has_label_on_mobile' data-label='Alterado Por: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(logEntry.logId) > -1, 'error': getProp(deletingErrors, logEntry.id)}"> {{logEntry.username}} </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>
+                        Reverter
+                    </th>
+                    <td mat-cell *matCellDef="let logEntry">
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('visualizar') > -1"
+                                [disabled]="deletedIds?.indexOf(logEntry.id) > -1"
+                                (click)="doVisualizar(logEntry.valor)"
+                                aria-label="visualizar"
+                                matTooltip="Visualizar">
+                            <mat-icon>remove_red_eye</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('comparar') > -1"
+                                [disabled]="deletedIds?.indexOf(logEntry.id) > -1"
+                                (click)="doComparar(logEntry.valor)"
+                                aria-label="comparar"
+                                matTooltip="Comparar">
+                            <mat-icon>compare_arrows</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('reverter') > -1"
+                                [disabled]="deletedIds?.indexOf(logEntry.id) > -1"
+                                (click)="doReverter(logEntry.valor)"
+                                aria-label="reverter"
+                                matTooltip="Reverter">
+                            <mat-icon>cached</mat-icon>
+                        </button>
+
+                        <div class="spinner-container m-8" *ngIf="deletingIds?.indexOf(logEntry.id) > -1">
+                            <mat-spinner diameter="24"></mat-spinner>
+                        </div>
+
+                        <mat-error *ngIf="getProp(deletingErrors, logEntry.id)">
+                            {{ getMessageError(getProp(deletingErrors, logEntry.id)) }}
+                        </mat-error>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+                <tr mat-row *matRowDef="let logEntry; columns: displayedColumns;">
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <mat-paginator [pageSizeOptions]="[10, 25]"></mat-paginator>
+        </div>
+
+    </div>
+</div>

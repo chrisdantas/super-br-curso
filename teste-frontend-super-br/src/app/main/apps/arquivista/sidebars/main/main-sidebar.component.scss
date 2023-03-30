@@ -1,0 +1,44 @@
+arquivista-main-sidebar {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+
+    > .header {
+        display: flex;
+        flex: 0 1 auto;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+
+        > .logo {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+
+            .logo-text {
+                font-size: 24px;
+            }
+        }
+    }
+
+    > .content {
+
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        height: 0;
+        overflow-y: auto;
+
+        .nav .nav-subheader {
+            white-space: pre-wrap;
+            margin-bottom: 4px;
+        }
+
+        > .create-button {
+            margin: 8px;
+        }
+    }
+
+}

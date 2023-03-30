@@ -1,0 +1,10 @@
+<cdk-regra-etiqueta-grid
+        [loading]="loading"
+        [regrasEtiqueta]="regrasEtiqueta"
+        [displayedColumns]="['id', 'nome', 'descricao', 'etiqueta.nome', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (select)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-regra-etiqueta-grid>

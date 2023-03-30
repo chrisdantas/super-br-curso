@@ -1,0 +1,91 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field>
+        <mat-label>Nome</mat-label>
+        <input matInput #nome
+               name="nome"
+               formControlName="nome"
+               maxlength="255" upperCase required>
+        <mat-hint align="end">{{nome.value.length}} / 255</mat-hint>
+        <mat-error *ngIf="form.get('nome').hasError('minlength')">O campo deve ter no mínimo 3 caracteres!
+        </mat-error>
+        <mat-error *ngIf="form.get('nome').hasError('formError')">
+            {{form.get('nome').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Sigla</mat-label>
+        <input matInput #sigla
+               name="sigla"
+               formControlName="sigla"
+               maxlength="255" upperCase required>
+        <mat-hint align="end">{{sigla.value.length}} / 255</mat-hint>
+        <mat-error *ngIf="form.get('sigla').hasError('minlength')">O campo deve ter no mínimo 3 caracteres!
+        </mat-error>
+        <mat-error *ngIf="form.get('sigla').hasError('formError')">
+            {{form.get('sigla').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Descrição</mat-label>
+        <textarea formControlName="descricao"
+                  matInput #descricao
+                  cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize"
+                  maxlength="255"
+                  cdkAutosizeMinRows="4"
+                  cdkAutosizeMaxRows="10" upperCase required></textarea>
+        <mat-hint align="end">{{descricao.value.length}} / 255</mat-hint>
+        <mat-error *ngIf="form.get('descricao').hasError('minlength')">O campo deve ter no mínimo 3 caracteres!
+        </mat-error>
+        <mat-error *ngIf="form.get('descricao').hasError('formError')">
+            {{form.get('descricao').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Espécie"
+               formControlName="especieDocumento"
+               [matAutocomplete]="especieDocumento.autocomplete" required>
+        <cdk-especie-documento-autocomplete
+            #especieDocumento="especieDocumentoAutocomplete"
+            [control]="form.get('especieDocumento')">
+        </cdk-especie-documento-autocomplete>
+
+        <button matSuffix mat-button mat-icon-button
+                (click)="showEspecieDocumentoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('especieDocumento').hasError('formError')">
+            {{form.get('especieDocumento').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="ativo">
+        Ativo
+    </mat-checkbox>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-raised-button color="accent" (click)="submit()"
+                [disabled]="form.invalid" *ngIf="!saving">
+            SALVAR
+        </button>
+        <button mat-raised-button color="warn" (click)="doAbort()" *ngIf="!saving">
+            CANCELAR
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+</form>
+
+<cdk-especie-documento-gridsearch
+    *ngIf="activeCard === 'especie-tipo-documento-gridsearch'"
+    [pagination]="especieDocumentoPagination"
+    (selected)="selectEspecieDocumento($event)"
+    (cancel)="cancel()">
+    {{activeCard}}
+</cdk-especie-documento-gridsearch>

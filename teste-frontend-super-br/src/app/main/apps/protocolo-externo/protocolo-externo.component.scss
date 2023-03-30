@@ -1,0 +1,158 @@
+@import "src/@cdk/scss/cdk";
+
+protocolo-externo {
+
+    flex: 1 1 auto;
+    display: flex;
+
+    > .page-layout {
+
+        flex: 1 1 auto;
+        display: flex;
+
+        > .center {
+
+            flex: 1 1 auto;
+            display: flex;
+
+            > .header {
+
+                flex: 0 1 auto;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+
+                height: 72px !important;
+                min-height: 72px !important;
+                max-height: 72px !important;
+
+                > .search-wrapper {
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    border-radius: 28px;
+                    overflow: hidden;
+                    @include mat-elevation(1);
+
+                    > .sidebar-toggle {
+                        margin: 0 0 0 6px;
+                        width: 56px;
+                        height: 56px;
+                        border-radius: 0;
+                        border-right: 1px solid;
+                    }
+
+                    > .search {
+                        flex: 1 1 auto;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: flex-start;
+                        align-items: center;
+
+                        height: 46px;
+                        padding: 0 8px;
+
+                        > cdk-etiqueta-chips {
+                            margin-left: 8px;
+                            margin-right: 8px;
+                        }
+                    }
+                }
+
+                &.current-processo-selected {
+                    .search-wrapper {
+                        display: none !important;
+                    }
+                }
+
+            }
+
+            > .content-card {
+
+                flex: 1 1 auto;
+                display: flex;
+
+                .toolbar {
+
+                    .toolbar-separator {
+                        height: 32px;
+                        width: 1px;
+                        margin: 0 12px;
+                    }
+
+                    .processo-list-control {
+                        margin-left: auto;
+                    }
+                }
+
+                > .content {
+
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: row;
+
+                    > .processo-list {
+                        flex: 1 1 auto;
+                        display: flex;
+                        flex-direction: column;
+
+                        border-right: 1px solid;
+
+                        > .loading {
+                            flex: 1 1 auto;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: center;
+                            align-items: center;
+                        }
+
+                        &.maximizado {
+                            display: none !important;
+                        }
+
+                        &.mobile-mode {
+
+                            &.current-processo {
+                                display: none !important;
+                            }
+
+                            &.no-current-processo {
+                                max-width: 100% !important;
+                            }
+
+                        }
+                        cdk-processo-list {
+                            min-height: 100%;
+                        }
+
+                    }
+
+                    .processo-detail {
+
+                        flex: 1 1 auto;
+                        display: flex;
+                        flex-direction: column;
+
+                        &.mobile-mode {
+
+                            &.no-current-processo {
+                                display: none !important;
+                            }
+
+                            &.current-processo {
+                                max-width: 100% !important;
+                            }
+
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+

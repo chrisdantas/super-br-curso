@@ -1,0 +1,45 @@
+<div class="navbar-top">
+
+    <div class="logo">
+        <img class="logo-icon" [src]="_cdkConfigService.icone">
+        <span class="logo-text secondary-text">{{_cdkConfigService.sigla}}</span>
+    </div>
+
+    <div class="buttons">
+
+        <button mat-icon-button class="toggle-sidebar-folded"
+                (click)="toggleSidebarFolded()" fxHide.lt-lg>
+            <mat-icon class="secondary-text">menu</mat-icon>
+        </button>
+
+        <button mat-icon-button class="toggle-sidebar-opened"
+                (click)="toggleSidebarOpened()" fxHide.gt-md>
+            <mat-icon class="secondary-text">arrow_back</mat-icon>
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="navbar-scroll-container"
+     cdkPerfectScrollbar [cdkPerfectScrollbarOptions]="{suppressScrollX: true}">
+
+    <div class="user" fxLayout="column">
+
+        <div class="h3 username">{{userProfile?.nome.split(' ')[0]}}</div>
+        <div class="h5 email hint-text mt-8">{{userProfile?.email}}</div>
+        <div class="avatar-container">
+            <img class="avatar" src="assets/images/avatars/User.png"
+                 *ngIf="!!userProfile?.imgPerfil?.conteudo === false">
+            <img class="avatar" [src]="userProfile.imgPerfil.conteudo|safeResourceUrl"
+                 *ngIf="!!userProfile?.imgPerfil?.conteudo === true">
+        </div>
+
+    </div>
+
+    <div class="navbar-content">
+        <cdk-navigation class="material2" layout="vertical"></cdk-navigation>
+    </div>
+
+</div>

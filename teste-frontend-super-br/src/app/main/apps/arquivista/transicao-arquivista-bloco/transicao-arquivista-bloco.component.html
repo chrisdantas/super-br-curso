@@ -1,0 +1,34 @@
+<!-- CONTENT -->
+<div class="content" cdkPerfectScrollbar>
+
+    <h2>{{modalidadeTransicao.valor | titleCasePipe}} de processos em bloco</h2>
+
+    <h3>{{(processos$ | async)?.length}} processo(s) selecionado(s)</h3>
+
+    <cdk-realizar-transicao-form
+        [hidden]="operacoes.length > 0"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [mode]="'bloco'"
+        [modalidadeTransicao]="modalidadeTransicao"
+        (save)="submit($event)"
+        (abort)="cancel()">
+    </cdk-realizar-transicao-form>
+
+    <mat-list *ngIf="operacoes.length > 0">
+        <h3 matSubheader>
+            <span>Resultado do Bloco</span>
+        </h3>
+
+        <mat-list-item *ngFor="let operacao of operacoes">
+            <p matLine class="mb-4 p-8 secondary-text"
+               [ngClass]="{'grey-50': operacao.status === 0, 'light-green-50': operacao.status === 1, 'pink-50': operacao.status > 1}">{{operacao.content}}</p>
+        </mat-list-item>
+    </mat-list>
+
+    <div class="actions" *ngIf="operacoes.length > 0 && operacoesPendentes.length === 0">
+        <button mat-raised-button color="warn" type="button" (click)="goBack()">
+            VOLTAR
+        </button>
+    </div>
+</div>

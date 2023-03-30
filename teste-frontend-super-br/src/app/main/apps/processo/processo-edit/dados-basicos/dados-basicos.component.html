@@ -1,0 +1,22 @@
+<div class="content" cdkPerfectScrollbar>
+    <cdk-processo-form
+        [processo]="processo"
+        [form]="form"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [especieProcessoPagination]="especieProcessoPagination"
+        [setorAtualPagination]="setorAtualPagination"
+        [_classificacaoPagination]="classificacaoPagination"
+        [configuracaoNupPagination]="configuracaoNupPagination"
+        [procedencia]="procedencia"
+        [colaborador]="_loginService.isGranted('ROLE_COLABORADOR')"
+        [logEntryPagination]="logEntryPagination"
+        (gerirProcedencia)="gerirProcedencia()"
+        (editProcedencia)="editProcedencia($event)"
+        (abort)="abort()"
+        (calcularNup)="calcularNup($event)"
+        (classificacao)="doSelectClassificacao($event)"
+        (save)="submit($event)">
+    </cdk-processo-form>
+</div>
+<router-outlet (activate)="onActivate($event)" (deactivate)="onDeactivate($event)"></router-outlet>

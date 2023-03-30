@@ -1,0 +1,21 @@
+<div class="header">
+    <div class="actions">
+        <button mat-icon-button aria-label="criar atividade" matTooltip="Criar Atividade"
+                [routerLink]="'criar'"
+                [routerLinkActive]="['active', 'accent']">
+            <mat-icon class="black-fg">add</mat-icon>
+        </button>
+
+        <button mat-icon-button aria-label="ver atividades" matTooltip="Ver Atividades"
+                [routerLink]="['listar']"
+                [routerLinkActive]="['active', 'accent']">
+            <mat-icon class="black-fg">list</mat-icon>
+        </button>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content" cdkPerfectScrollbar>
+    <router-outlet></router-outlet>
+</div>
+

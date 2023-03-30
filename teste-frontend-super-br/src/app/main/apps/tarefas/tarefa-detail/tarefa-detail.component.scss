@@ -1,0 +1,53 @@
+tarefa-detail {
+
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    > .header {
+        flex: 0 1 auto;
+        border-bottom: 1px solid;
+        padding: 8px 8px 5px;
+        display: flex;
+        flex-direction: column;
+
+        > .actions {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+
+            cdk-vinculacao-etiqueta-chips {
+                margin-right: 8px;
+            }
+        }
+
+        .etiquetas-minutas {
+            display: flex;
+            flex-wrap: wrap;
+
+            .etiqueta {
+                display: flex;
+                align-items: center;
+                font-size: 11px;
+                border: 1px solid;
+                margin-right: 2px;
+                padding: 2px 2px;
+                cursor: pointer;
+                max-height: 24px;
+                align-self: center;
+                margin-bottom: 2px;
+                min-width: 70px;
+                border-radius: 3px;
+            }
+        }
+    }
+
+    > .content {
+        flex: 1 1 auto;
+        display: flex;
+        height: 0;
+        overflow-y: auto;
+    }
+}

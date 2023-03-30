@@ -1,0 +1,27 @@
+documento-edit-atividade {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    .atividade {
+        display: flex;
+        flex-direction: column;
+        flex: 0 1 auto;
+        height: 0;
+
+        > .documentos-vinculados {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+
+            ng-template {
+                display: flex;
+                flex: 1 1 auto;
+            }
+        }
+
+        .responsive-grid .content {
+            //height: 0 !important;
+        }
+    }
+}

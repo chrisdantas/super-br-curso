@@ -1,0 +1,17 @@
+<div class="header">
+    <path icone="my_location"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="unidades">
+    </path>
+</div>
+<div class="content" cdkPerfectScrollbar>
+    <cdk-localizador-form
+        [localizador]="localizador"
+        [setor]="(setor$ | async)"
+        [saving]="(isSaving$ | async)"
+        [errors]="(errors$ | async)"
+        [setorPagination]="setorPagination"
+        (save)="submit($event)"
+        (abort)="doAbort()">
+    </cdk-localizador-form>
+</div>

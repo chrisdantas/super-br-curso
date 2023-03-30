@@ -1,0 +1,176 @@
+<div class="header">
+    <mat-icon [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+        search
+    </mat-icon>
+    <span [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}"
+          *ngIf="this.mode === 'list'">Filtro</span>
+</div>
+
+<div class="content" cdkPerfectScrollbar>
+    <form fxLayoutGap="8px" name="form" [formGroup]="form" (keyup.enter)="buscar()">
+
+        <mat-form-field>
+            <mat-label>Observação</mat-label>
+            <input matInput #observacao
+                   name="observacao"
+                   formControlName="observacao">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Código Indexacao</mat-label>
+            <input matInput #codigoIndexacao
+                   name="codigoIndexacao"
+                   formControlName="codigoIndexacao">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Fundamento Legal</mat-label>
+            <input matInput #fundamentoLegal
+                   name="fundamentoLegal"
+                   formControlName="fundamentoLegal">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Razões da Classificação do Sigilo</mat-label>
+            <input matInput #razoesClassificacaoSigilo
+                   name="razoesClassificacaoSigilo"
+                   formControlName="razoesClassificacaoSigilo">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Nível de Acesso</mat-label>
+            <input matInput #nivelAcesso
+                   name="nivelAcesso"
+                   formControlName="nivelAcesso">
+        </mat-form-field>
+
+        Desclassificado
+        <mat-button-toggle-group class="mat-button-toggle-group-custom" formControlName="desclassificado">
+            <mat-button-toggle value="true" class="button-toggle-custom">Sim</mat-button-toggle>
+            <mat-button-toggle value="todos" [checked]=true class="button-toggle-custom">Todos</mat-button-toggle>
+            <mat-button-toggle value="false" class="button-toggle-custom">Não</mat-button-toggle>
+        </mat-button-toggle-group>
+
+
+        <mat-form-field>
+            <input matInput placeholder="Modalidade da Categoria do Sigilo"
+                   formControlName="modalidadeCategoriaSigilo"
+                   [matAutocomplete]="modalidadeCategoriaSigilo.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-modalidade-categoria-sigilo-autocomplete
+                #modalidadeCategoriaSigilo="modalidadeCategoriaSigiloAutocomplete"
+                [control]="form.get('modalidadeCategoriaSigilo')">
+            </cdk-modalidade-categoria-sigilo-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Tipo de Sigilo"
+                   formControlName="tipoSigilo"
+                   [matAutocomplete]="tipoSigilo.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-tipo-sigilo-autocomplete #tipoSigilo="tipoSigiloAutocomplete" [control]="form.get('tipoSigilo')">
+            </cdk-tipo-sigilo-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Processo"
+                   formControlName="processo"
+                   [matAutocomplete]="processo.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-processo-autocomplete #processo="processoAutocomplete" [control]="form.get('processo')">
+            </cdk-processo-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Documento"
+                   formControlName="documento"
+                   [matAutocomplete]="documento.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-documento-autocomplete #documento="documentoAutocomplete" [control]="form.get('documento')">
+            </cdk-documento-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Criado Por"
+                   formControlName="criadoPor"
+                   [matAutocomplete]="usuarioCriadoPor.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-usuario-autocomplete #usuarioCriadoPor="usuarioAutocomplete" [control]="form.get('criadoPor')">
+            </cdk-usuario-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Atualizado Por"
+                   formControlName="atualizadoPor"
+                   [matAutocomplete]="usuario.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-usuario-autocomplete #usuario="usuarioAutocomplete" [control]="form.get('atualizadoPor')">
+            </cdk-usuario-autocomplete>
+        </mat-form-field>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterDataHoraValidadeSigilo?.length}">Data da Validade do Sigilo</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataHoraValidadeSigilo"
+                    [ngClass]="{'filtrado': filterDataHoraValidadeSigilo?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroDataHoraValidadeSigilo="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="false" campo="dataHoraValidadeSigilo"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraDataHoraValidadeSigilo($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterDataHoraInicioSigilo?.length}">Data do Início do Sigilo</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataHoraInicioSigilo"
+                    [ngClass]="{'filtrado': filterDataHoraInicioSigilo?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroDataHoraInicioSigilo="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="false" campo="dataHoraInicioSigilo"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraDataHoraInicioSigilo($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterCriadoEm?.length}">Criado Em</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroCriadoEm"
+                    [ngClass]="{'filtrado': filterCriadoEm?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroCriadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="true" campo="criadoEm"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraCriadoEm($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterAtualizadoEm?.length}">Atualizado Em</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroAtualizadoEm"
+                    [ngClass]="{'filtrado': filterAtualizadoEm?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroAtualizadoEm="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter [datetime]="true" campo="atualizadoEm"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraAtualizadoEm($event)">
+            </cdk-date-filter>
+        </mat-menu>
+    </form>
+</div>
+
+<div class="footer">
+    <button mat-raised-button color="accent" (click)="buscar()">
+        Buscar
+    </button>
+    <button mat-raised-button color="warn" (click)="limpar()">
+        Limpar
+    </button>
+</div>

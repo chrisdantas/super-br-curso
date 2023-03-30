@@ -1,0 +1,165 @@
+<div class="page-layout left-sidebar">
+
+    <!-- SIDEBAR -->
+    <cdk-sidebar  *ngIf="actions.indexOf('filter') > -1" [lockedOpen]="(mode === 'search') ? 'gt-xs' : ''" class="sidebar" name="cdk-bloco-responsaveis-filter" position="left">
+        <cdk-bloco-responsaveis-filter (selected)="setFilter($event)" [mode]="this.mode"></cdk-bloco-responsaveis-filter>
+    </cdk-sidebar>
+    <!-- / SIDEBAR -->
+
+    <div class="responsive-grid" [ngClass]="{'search': (this.mode === 'search')}">
+
+        <div class="actions">
+
+            <div class="back">
+                <button mat-icon-button *ngIf="actions.indexOf('cancel') > -1"
+                        (click)="doCancel()"
+                        aria-label="cancelar"
+                        matTooltip="Cancelar">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <button class="accent" mat-icon-button *ngIf="actions.indexOf('create') > -1"
+                        (click)="doCreate()"
+                        aria-label="novo"
+                        matTooltip="Novo">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+
+            <mat-form-field class="colunas mr-8" *ngIf="actions.indexOf('edit') > -1">
+                <mat-select [formControl]="columns" multiple>
+                    <div *ngFor="let column of allColumns">
+                        <mat-option *ngIf="!column.fixed" [value]="column.id">{{ column.label }}</mat-option>
+                    </div>
+                </mat-select>
+            </mat-form-field>
+
+            <button class="refresh" mat-icon-button *ngIf="actions.indexOf('edit') > -1" (click)="loadPage()" aria-label="recarregar"
+                    matTooltip="Recarregar">
+                <mat-icon>refresh</mat-icon>
+            </button>
+
+            <button class="toggle-filter" *ngIf="actions.indexOf('filter') > -1" [ngClass]="{'warn': !(gridFilter | json).includes('{}')}" mat-icon-button
+                    (click)="toggleFilter()" aria-label="filtrar" matTooltip="Filtrar">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+
+            <button mat-icon-button [ngClass]="{'warn': hasExcluded}" *ngIf="actions.indexOf('showDeleted') > -1"
+                    (click)="loadExcluded()"
+                    aria-label="mostrar apagados"
+                    matTooltip="Mostrar Apagados">
+                <mat-icon>delete_sweep</mat-icon>
+            </button>
+        </div>
+
+        <div class="loading" *ngIf="loading">
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <div class="content" cdkPerfectScrollbar>
+            <table mat-table [dataSource]="usuariosSetoresDataSource" matSort [ngStyle]="loading ? {'display': 'none'} : {}">
+
+                <!-- Selection Column -->
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (click)="toggleSelectAll($event)"
+                                      [checked]="hasSelected"
+                                      [disabled]="hasExcluded"
+                                      [indeterminate]="isIndeterminate">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let responsavel">
+                        <mat-checkbox [checked]="selectedIds.indexOf(responsavel.setor?.id) > -1"
+                                      (change)="toggleInSelected(responsavel.setor?.id)"
+                                      (click)="$event.stopPropagation();"
+                                      [disabled]="deletedIds?.indexOf(responsavel.setor?.id) > -1 || hasExcluded">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- Id Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Id
+                    </th>
+                    <td mat-cell *matCellDef="let responsavel" class='has_label_on_mobile' data-label='Id: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(responsavel.usuario?.id) > -1, 'error': getProp(deletingErrors, responsavel.usuario?.id)}">
+                        {{responsavel.usuario?.id}} </td>
+                </ng-container>
+
+                <!-- Responsável Column -->
+                <ng-container matColumnDef="responsavel">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Responsável
+                    </th>
+                    <td mat-cell *matCellDef="let responsavel" class='has_label_on_mobile' data-label='Responsável: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(responsavel.usuario?.id) > -1, 'error': getProp(deletingErrors, responsavel.usuario?.id)}">
+                        {{responsavel.usuario?.nome}} </td>
+                </ng-container>
+
+                <!-- Unidade Column -->
+                <ng-container matColumnDef="unidade">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Unidade
+                    </th>
+                    <td mat-cell *matCellDef="let responsavel" class='has_label_on_mobile' data-label='Unidade: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(responsavel.setor?.unidade?.id) > -1, 'error': getProp(deletingErrors, responsavel.setor?.unidade?.id)}">
+                        {{responsavel.setor?.unidade?.nome}} </td>
+                </ng-container>
+
+                <!-- Setor Column -->
+                <ng-container matColumnDef="setor">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Setor
+                    </th>
+                    <td mat-cell *matCellDef="let responsavel" class='has_label_on_mobile' data-label='Setor: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(responsavel.setor?.id) > -1, 'error': getProp(deletingErrors, responsavel.setor?.id)}">
+                        {{responsavel.setor?.nome}} </td>
+                </ng-container>
+
+                <!-- Sigla Setor Column -->
+                <ng-container matColumnDef="sigla">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Sigla
+                    </th>
+                    <td mat-cell *matCellDef="let responsavel" class='has_label_on_mobile' data-label='Sigla: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(responsavel.setor?.id) > -1, 'error': getProp(deletingErrors, responsavel.setor?.id)}">
+                        {{responsavel.setor?.sigla}} </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let responsavel">
+
+                        <button mat-icon-button *ngIf="actions.indexOf('select') > -1 && !hasExcluded"
+                                (click)="selectResponsavel(responsavel.setor)" aria-label="selecionar"
+                                matTooltip="Selecionar">
+                            <mat-icon>keyboard_return</mat-icon>
+                        </button>
+
+                        <div class="spinner-container m-8" *ngIf="deletingIds?.indexOf(responsavel.setor?.id) > -1">
+                            <mat-spinner diameter="24"></mat-spinner>
+                        </div>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('delete') > -1 && !hasExcluded"
+                                [disabled]="deletedIds?.indexOf(responsavel.setor?.id) > -1"
+                                (click)="deleteResponsavel(responsavel.setor?.id, responsavel.usuario?.id)"
+                                aria-label="remover" matTooltip="Remover">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+                <tr mat-row *matRowDef="let responsavel; columns: displayedColumns;">
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <mat-paginator [disabled]="loading" [pageSizeOptions]="[10, 25]" showFirstLastButtons="true"></mat-paginator>
+        </div>
+
+    </div>
+</div>

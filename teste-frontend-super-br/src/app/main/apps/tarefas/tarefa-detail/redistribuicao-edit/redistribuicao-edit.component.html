@@ -1,0 +1,15 @@
+<div class="content">
+
+    <h2>Redistribuição de tarefa</h2>
+
+    <cdk-tarefa-form
+            [tarefa]="(tarefa$ | async)"
+            [saving]="(isSaving$ | async)"
+            [errors]="(errors$ | async)"
+            [mode]="'bloco-edit'"
+            [blocoEdit]="{blocoEditDistribuicao: true}"
+            (abort)="doAbort()"
+            (save)="submit($event)">
+    </cdk-tarefa-form>
+
+</div>

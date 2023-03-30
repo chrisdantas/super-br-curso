@@ -1,0 +1,176 @@
+<form fxLayoutGap="8px" name="form" [formGroup]="form" *ngIf="activeCard === 'form'">
+
+    <mat-form-field class="mr-8" aria-label="criteria">
+        <mat-select [formControl]="criteriaSelect" placeholder="Regra">
+            <div *ngFor="let criteria of especieCriteriaList">
+                <mat-option [value]="criteria">{{ criteria.descricao }}</mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="criteriaSelect.value?.id === 1">
+        <input matInput placeholder="Valor" formControlName="valor" required upperCase maxlength="255">
+    </mat-form-field>
+
+    <div class="setor-recebido" *ngIf="criteriaSelect.value?.id === 2">
+        <mat-form-field>
+            <input matInput placeholder="Unidade"
+                   formControlName="unidade"
+                   [matAutocomplete]="unidade.autocomplete" required
+                   (blur)="checkUnidadeOrigem()">
+            <cdk-setor-autocomplete
+                #unidade="setorAutocomplete"
+                [control]="form.get('unidade')"
+                [pagination]="unidadeRecebidoPagination">
+            </cdk-setor-autocomplete>
+            <button matSuffix mat-button mat-icon-button
+                    (click)="showUnidadeOrigemGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('unidade').hasError('formError')">
+                {{form.get('valor').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="form.get('unidade').value">
+            <input matInput placeholder="Setor"
+                   formControlName="setor"
+                   [matAutocomplete]="setor.autocomplete" required
+                   (blur)="checkSetorRecebido()">
+            <cdk-setor-autocomplete
+                #setor="setorAutocomplete"
+                [control]="form.get('setor')"
+                [pagination]="setorRecebidoPagination">
+            </cdk-setor-autocomplete>
+            <button matSuffix mat-button mat-icon-button
+                    (click)="showSetorRecebidoGrid()">
+                <mat-icon matTooltip="Procurar">search</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('setor').hasError('formError')">
+                {{form.get('setor').errors.formError}}
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <mat-form-field *ngIf="criteriaSelect.value?.id === 3">
+        <input matInput placeholder="Unidade"
+               formControlName="unidade"
+               [matAutocomplete]="unidade.autocomplete" required
+               (blur)="checkUnidadeRecebido()">
+        <cdk-setor-autocomplete
+            #unidade="setorAutocomplete"
+            [control]="form.get('unidade')"
+            [pagination]="unidadeRecebidoPagination">
+        </cdk-setor-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showUnidadeRecebidoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('unidade').hasError('formError')">
+            {{form.get('unidade').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="criteriaSelect.value?.id === 4">
+        <input matInput placeholder="Usuário"
+               formControlName="usuario"
+               [matAutocomplete]="usuario.autocomplete" required
+               (blur)="checkUsuarioRecebido()">
+        <cdk-usuario-autocomplete
+            #usuario="usuarioAutocomplete"
+            [control]="form.get('usuario')"
+            [pagination]="usuarioRecebidoPagination">
+        </cdk-usuario-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showUsuarioRecebidoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('usuario').hasError('formError')">
+            {{form.get('usuario').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="criteriaSelect.value?.id === 5">
+        <input matInput placeholder="Assunto"
+               formControlName="assuntoAdministrativo"
+               [matAutocomplete]="assuntoAdministrativo.autocomplete"
+               (blur)="checkAssuntoAdministrativo()" required>
+        <cdk-assunto-administrativo-autocomplete
+            #assuntoAdministrativo="assuntoAdministrativoAutocomplete"
+            [control]="form.get('assuntoAdministrativo')"
+            [assuntoAdministrativoList]="assuntoAdministrativoList"
+            [assuntoAdministrativoListIsLoading]="assuntoAdministrativoListIsLoading"
+            [pagination]="assuntoAdministrativoPagination">
+        </cdk-assunto-administrativo-autocomplete>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showAssuntoAdministrativoGridTree()">
+            <mat-icon matTooltip="Árvore de Assuntos">subdirectory_arrow_right</mat-icon>
+        </button>
+        <button matSuffix mat-button mat-icon-button
+                (click)="showAssuntoAdministrativoGrid()">
+            <mat-icon matTooltip="Procurar">search</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('assuntoAdministrativo').hasError('formError')">
+            {{form.get('assuntoAdministrativo').errors.formError}}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="valor" *ngIf="criteriaSelect.value?.id === 6">
+        Ativo
+    </mat-slide-toggle>
+
+    <mat-error *ngIf="form.hasError('rulesError')">{{form.errors.rulesError}}</mat-error>
+
+    <div class="actions">
+        <button mat-icon-button type="submit" (click)="submit()" class="accent"
+                [disabled]="!criteriaSelect.value?.id || form.invalid" *ngIf="!saving">
+            <mat-icon>check</mat-icon>
+        </button>
+        <button mat-icon-button type="button" (click)="doAbort()" *ngIf="!saving" class="warn">
+            <mat-icon>delete</mat-icon>
+        </button>
+        <mat-spinner color="accent" diameter="24" *ngIf="saving"></mat-spinner>
+    </div>
+
+    <div>{{form.errors}}</div>
+</form>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'unidade-origem-gridsearch'"
+    [pagination]="unidadeRecebidoPagination"
+    (selected)="selectUnidadeOrigem($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'setor-recebido-gridsearch'"
+    [pagination]="setorRecebidoPagination"
+    (selected)="selectSetorRecebido($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-setor-gridsearch
+    *ngIf="activeCard === 'unidade-recebido-gridsearch'"
+    [pagination]="unidadeRecebidoPagination"
+    (selected)="selectUnidadeRecebido($event)"
+    (cancel)="cancel()">
+</cdk-setor-gridsearch>
+
+<cdk-usuario-gridsearch
+    *ngIf="activeCard === 'usuario-recebido-gridsearch'"
+    [pagination]="usuarioRecebidoPagination"
+    (selected)="selectUsuarioRecebido($event)"
+    (cancel)="cancel()">
+</cdk-usuario-gridsearch>
+
+<cdk-assunto-administrativo-gridsearch
+    *ngIf="activeCard === 'assunto-administrativo-gridsearch'"
+    (selected)="selectAssuntoAdministrativo($event)"
+    (cancel)="cancel()">
+</cdk-assunto-administrativo-gridsearch>
+
+<cdk-assunto-administrativo-grid-tree
+    *ngIf="activeCard === 'assunto-administrativo-grid-tree'"
+    (selected)="selectAssuntoAdministrativo($event)"
+    (cancel)="cancel()">
+</cdk-assunto-administrativo-grid-tree>

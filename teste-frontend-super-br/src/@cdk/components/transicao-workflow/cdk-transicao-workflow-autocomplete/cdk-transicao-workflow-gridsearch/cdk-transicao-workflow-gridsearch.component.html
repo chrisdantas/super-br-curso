@@ -1,0 +1,10 @@
+<cdk-transicao-workflow-grid
+        [loading]="loading"
+        [transicoesWorkflows]="transicoesWorkflows"
+        [displayedColumns]="['id', 'especieAtividade.nome', 'especieTarefaFrom.nome', 'especieTarefaTo.nome', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-transicao-workflow-grid>

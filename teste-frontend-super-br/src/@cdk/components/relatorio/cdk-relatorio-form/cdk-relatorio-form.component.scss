@@ -1,0 +1,39 @@
+@import "../../../scss/partials/cdk-form";
+
+cdk-relatorio-form {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    .tipo-relatorio-filtros {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        flex-wrap: wrap;
+
+        mat-form-field {
+            flex: 1 1 auto;
+            display: flex;
+
+            .mat-form-field-wrapper {
+                flex: 1 1 auto;
+            }
+        }
+    }
+
+    .tipo-relatorio-formato {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+
+        .start {
+
+            mat-radio-group {
+
+                mat-radio-button {
+                    margin-right: 8px;
+                }
+            }
+        }
+    }
+}

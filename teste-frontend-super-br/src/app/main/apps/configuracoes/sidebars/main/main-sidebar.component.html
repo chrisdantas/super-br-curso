@@ -1,0 +1,21 @@
+<!-- SIDEBAR HEADER -->
+<div class="header">
+    <div class="logo">
+        <span class="logo-text" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">Perfil</span>
+    </div>
+</div>
+<!-- / SIDEBAR HEADER -->
+
+<!-- SIDEBAR CONTENT -->
+<div class="content" cdkPerfectScrollbar>
+    <div class="nav material2">
+        <div class="nav-item" *ngFor="let link of links">
+            <a class="nav-link" matRipple [routerLink]="'/apps/configuracoes/' + link.link"
+               [routerLinkActive]="['active', 'accent']" (click)="fecharSidebar()">
+                <mat-icon class="nav-link-icon">{{ link.icon }}</mat-icon>
+                <span>{{link.nome}}</span>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- / SIDEBAR CONTENT -->

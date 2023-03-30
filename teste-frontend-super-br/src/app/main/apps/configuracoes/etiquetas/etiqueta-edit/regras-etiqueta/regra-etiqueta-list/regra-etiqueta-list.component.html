@@ -1,0 +1,19 @@
+<div class="header" *ngIf="routerState.url.includes('regras')">
+    <path icone="assignment"
+          [caminhoAbsoluto]="routerState.url"
+          inicioCaminho="etiquetas">
+    </path>
+</div>
+<cdk-regra-etiqueta-grid
+        [loading]="(loading$ | async)"
+        [regrasEtiqueta]="regrasEtiqueta"
+        [deletingIds]="(deletingIds$ | async)"
+        [deletingErrors]="(deletingErrors$ | async)"
+        [deletedIds]="(deletedIds$ | async)"
+        [actions]="['create', 'delete']"
+        (reload)="reload($event)"
+        (excluded)="excluded($event)"
+        (create)="create()"
+        (delete)="delete($event)"
+        (deleteBlocoEmmitter)="deleteBloco($event)">
+</cdk-regra-etiqueta-grid>

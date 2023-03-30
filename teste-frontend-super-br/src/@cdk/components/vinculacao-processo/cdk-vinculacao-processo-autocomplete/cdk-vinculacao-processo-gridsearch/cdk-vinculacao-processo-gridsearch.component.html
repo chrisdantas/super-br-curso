@@ -1,0 +1,10 @@
+<cdk-vinculacao-processo-grid
+        [loading]="loading"
+        [vinculacoesProcessos]="vinculacoesProcessos"
+        [displayedColumns]="['id', 'processo', 'processoVinculado.NUP', 'modalidadeVinculacaoProcesso.valor', 'observacao', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-vinculacao-processo-grid>

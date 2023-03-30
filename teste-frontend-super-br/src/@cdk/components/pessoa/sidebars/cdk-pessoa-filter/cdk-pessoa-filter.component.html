@@ -1,0 +1,102 @@
+<div class="header">
+    <mat-icon [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+        search
+    </mat-icon>
+    <span [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">Filtro</span>
+</div>
+
+<div class="content" cdkPerfectScrollbar>
+    <form fxLayoutGap="8px" name="form" [formGroup]="form" (keyup.enter)="buscar()">
+
+        <mat-form-field>
+            <mat-label>Nome</mat-label>
+            <input matInput #nome
+                   name="nome"
+                   formControlName="nome">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>CPF/CNPJ</mat-label>
+            <input matInput #numeroDocumentoPrincipal
+                   name="numeroDocumentoPrincipal"
+                   formControlName="numeroDocumentoPrincipal">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>ID</mat-label>
+            <input matInput #id
+                   name="id"
+                   formControlName="id">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Nome da Genitora</mat-label>
+            <input matInput #nomeGenitora
+                   name="nomeGenitora"
+                   formControlName="nomeGenitora">
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Gênero"
+                   formControlName="modalidadeGeneroPessoa"
+                   [matAutocomplete]="modalidadeGeneroPessoa.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-modalidade-genero-pessoa-autocomplete #modalidadeGeneroPessoa="modalidadeGeneroPessoaAutocomplete"
+                                                       [control]="form.get('modalidadeGeneroPessoa')">
+            </cdk-modalidade-genero-pessoa-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Tipo"
+                   formControlName="modalidadeQualificacaoPessoa"
+                   [matAutocomplete]="modalidadeQualificacaoPessoa.autocomplete"
+                   (change)="verificarValor($event)">
+            <cdk-modalidade-qualificacao-pessoa-autocomplete
+                #modalidadeQualificacaoPessoa="modalidadeQualificacaoPessoaAutocomplete"
+                [control]="form.get('modalidadeQualificacaoPessoa')">
+            </cdk-modalidade-qualificacao-pessoa-autocomplete>
+        </mat-form-field>
+
+        <section class="checkbox">
+            <mat-checkbox formControlName="pessoaConveniada" class="check-margin">Conveniado</mat-checkbox>
+            <mat-checkbox formControlName="pessoaValidada" class="check-margin">Validado</mat-checkbox>
+        </section>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterDataNascimento?.length}">Data Nascimento</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataNascimento"
+                    [ngClass]="{'filtrado': filterDataNascimento?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroDataNascimento="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter campo="dataNascimento"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraDataNascimento($event)">
+            </cdk-date-filter>
+        </mat-menu>
+
+        <div class="filtro-data">
+            <span [ngClass]="{'filtrado': filterDataObito?.length}">Data Óbito</span>
+            <button mat-icon-button type="button" [matMenuTriggerFor]="filtroDataObito"
+                    [ngClass]="{'filtrado': filterDataObito?.length}">
+                <mat-icon class="s-16">keyboard_arrow_right</mat-icon>
+            </button>
+        </div>
+        <mat-menu #filtroDataObito="matMenu" class="menuDatas" [overlapTrigger]="false" xPosition="after">
+            <cdk-date-filter campo="dataObito"
+                             [limparForm]="this.limparFormFiltroDatas$"
+                             (filtra)="this.filtraDataObito($event)">
+            </cdk-date-filter>
+        </mat-menu>
+    </form>
+</div>
+
+<div class="footer">
+    <button mat-raised-button color="accent" (click)="buscar()">
+        Buscar
+    </button>
+    <button mat-raised-button color="warn" (click)="limpar()">
+        Limpar
+    </button>
+</div>

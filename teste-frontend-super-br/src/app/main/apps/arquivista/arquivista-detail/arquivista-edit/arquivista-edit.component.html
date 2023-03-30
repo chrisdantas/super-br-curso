@@ -1,0 +1,10 @@
+<div class="content">
+    <cdk-processo-arquivista-form
+        (abort)="cancel()"
+        (save)="submit($event)"
+        [errors]="(errors$ | async)"
+        [logEntryPagination]="logEntryPagination"
+        [processo]="(processo$ | async)"
+        [saving]="(isSaving$ | async)">
+    </cdk-processo-arquivista-form>
+</div>

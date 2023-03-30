@@ -1,0 +1,10 @@
+d<cdk-transicao-grid
+        [loading]="loading"
+        [transicoes]="transicoes"
+        [displayedColumns]="['id', 'modalidadeTransicao.valor', 'observacao', 'metodo', 'edital', 'actions']"
+        [total]="total"
+        [actions]="['select', 'cancel']"
+        (selected)="select($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-transicao-grid>

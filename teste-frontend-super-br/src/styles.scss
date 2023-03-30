@@ -1,0 +1,267 @@
+// Import Cdk core library
+@import "@cdk/scss/core";
+
+// Ag-Grid Component
+@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+
+// Import app.theme.scss
+@import "app/app.theme";
+
+content {
+    &.full-screen {
+        z-index: 1001 !important;
+
+        .ps > .ps__rail-y {
+            z-index: 0;
+        }
+    }
+}
+
+mwlResizable {
+    box-sizing: border-box; // required for the enableGhostResize option to work
+}
+
+.mat-select-panel .mat-optgroup-label, .mat-select-panel .mat-option {
+    line-height: normal !important;
+    height: auto !important;
+}
+
+tr.mat-row, tr.mat-footer-row {
+    height: auto !important;
+}
+
+mat-option.mat-option-text {
+    > span {
+        white-space: normal;
+    }
+}
+
+mat-option.mat-option {
+    height: unset;
+    line-height: 24px;
+}
+
+.mat-option-text.mat-option-text {
+    white-space: normal;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.mat-tooltip-trigger {
+    touch-action: auto !important;
+}
+
+.mat-expansion-panel-body {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-direction: column !important;
+}
+
+.danger-snackbar {
+    background: #ff4444 !important;
+    color: white !important;
+
+    .mat-simple-snackbar-action {
+        color: white !important;
+        font-weight: bold !important;
+    }
+}
+
+.notificacao-snackbar {
+    background: whitesmoke !important;
+    color: black !important;
+
+    .mat-simple-snackbar-action {
+        color: white !important;
+        font-weight: bold !important;
+    }
+}
+
+.mat-datetimepicker-calendar-body-selected {
+    background-color: #039BE5;
+}
+
+.mat-datetimepicker-calendar {
+    width: 350px !important;
+    height: 355px !important;
+}
+
+.mat-datetimepicker-calendar-header {
+    width: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+}
+
+.mat-datetimepicker-calendar-content {
+    width: 100% !important;
+}
+
+.mat-menu-panel {
+    max-width: 400px !important;
+    min-height: auto !important;
+}
+
+.mat-icon-button {
+    width: 32px !important;
+    height: 32px !important;
+    line-height: 32px !important;
+}
+
+.mat-checkbox-layout .mat-checkbox-label {
+    line-height: 16px !important;
+}
+
+.mat-card-title {
+    font-size: 15px !important;
+}
+
+.mat-card-content {
+    font-size: 13px !important;
+}
+
+.mat-cell, .mat-footer-cell {
+    font-size: 13px !important;
+}
+
+.mat-toolbar {
+    height: 48px;
+}
+
+mat-cell, .mat-cell,
+mat-footer-cell, .mat-footer-cell,
+mat-header-cell, .mat-header-cell {
+    padding: 0.75rem !important;
+}
+
+div.menu-busca {
+    max-width: 600px !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+    top: 8px !important;
+}
+
+div.menuNotificacao {
+    max-width: 1000px !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+    top: 8px !important;
+}
+
+div.menuTipoDocumento {
+    width: 400px;
+}
+
+div.menu-busca {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+
+    .custom-search-header {
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: space-between;
+        margin-left: 15px;
+        margin-right: 15px;
+
+        .title {
+            font-size: 18px;
+            margin-bottom: 5px;
+            margin-right: 3px;
+        }
+    }
+
+    .campo {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        margin-left: 15px;
+        margin-right: 15px;
+
+        &.selected {
+            cursor: default;
+            font-weight: bold;
+        }
+    }
+}
+
+div.menu-sort {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+
+    .sort-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+
+        &.selected {
+            font-weight: bold;
+        }
+    }
+}
+
+.mat-list-base .mat-list-item {
+    height: auto !important;
+}
+
+.mat-checkbox {
+    margin-bottom: 8px;
+}
+
+.mat-slide-toggle {
+    margin-bottom: 8px;
+}
+
+.mat-menu-content:not(:empty) {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.datasBackdrop {
+    background-color: rgba(204, 204, 204, 0.5);
+}
+
+.mat-chip-list-wrapper input.mat-input-element, .mat-chip-list-wrapper .mat-standard-chip {
+    margin: 2px !important;
+}
+
+.datasValidateBackdrop {
+    background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(94, 0, 0, 0.521) 10px,
+            rgba(94, 0, 0, 0.521) 20px
+    );
+    opacity: 0.1 !important;
+}
+
+.mat-standard-chip .mat-chip-remove.mat-icon, .mat-standard-chip .mat-chip-remove .mat-icon {
+    height: 16px !important;
+    width: 16px !important;
+    font-size: 16px !important;
+}
+
+.mat-option.multiline {
+    line-height: 24px !important;
+}
+
+.mat-menu-item {
+    height: 36px !important;
+    line-height: 36px !important;
+}
+
+.mat-mini-fab:not([class*=mat-elevation-z]) {
+    box-shadow:
+        0 3px 5px 0 rgb(0 0 0 / 20%),
+        0 3px 5px 0 rgb(0 0 0 / 15%),
+        0 3px 5px 0 rgb(0 0 0 / 10%) !important;
+}
+
+.mat-calendar-previous-button::after, .mat-calendar-next-button::after {
+    margin: 12px !important;
+}

@@ -1,0 +1,395 @@
+<div class="page-layout left-sidebar">
+
+    <!-- SIDEBAR -->
+    <cdk-sidebar name="cdk-juntada-filter" position="left">
+        <cdk-juntada-filter (selected)="setFilter($event)" [mode]="this.mode" [hasInatived]="hasInatived"></cdk-juntada-filter>
+    </cdk-sidebar>
+    <!-- / SIDEBAR -->
+
+    <div class="responsive-grid" [ngClass]="{'search': (this.mode === 'search')}">
+
+        <div class="actions">
+
+            <div class="back">
+                <button mat-icon-button *ngIf="actions.indexOf('cancel') > -1"
+                        (click)="doCancel()"
+                        aria-label="cancelar"
+                        matTooltip="Cancelar">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <button class="accent" mat-icon-button *ngIf="actions.indexOf('create') > -1"
+                        (click)="doCreate()"
+                        aria-label="novo"
+                        matTooltip="Novo">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+
+            <button mat-icon-button *ngIf="selectedIds.length > 1 && actions.indexOf('delete') > -1"
+                    (click)="deleteJuntadas(selectedIds)" aria-label="remover" matTooltip="Remover">
+                <mat-icon>delete</mat-icon>
+            </button>
+
+            <mat-form-field class="colunas mr-8" aria-label="colunas" matTooltip="Colunas">
+                <mat-select [formControl]="columns" multiple>
+                    <div *ngFor="let column of allColumns">
+                        <mat-option *ngIf="!column.fixed" [value]="column.id">{{ column.label }}</mat-option>
+                    </div>
+                </mat-select>
+            </mat-form-field>
+
+            <button mat-icon-button *ngIf="selectedIds.length > 1 && actions.indexOf('removerRestricoes') > -1"
+                    (click)="doRemoverRestricoes(selectedIds)" aria-label="remover restrições" matTooltip="Remover Restrições de Acesso">
+                <span class="material-icons-outlined">disabled_visible</span>
+            </button>
+
+            <button mat-icon-button *ngIf="selectedIds.length > 1 && actions.indexOf('copiar') > -1"
+                    (click)="copiarJuntadas(selectedIds)" aria-label="criar cópia" matTooltip="Criar cópia">
+                <mat-icon>file_copy</mat-icon>
+            </button>
+
+            <button class="refresh" mat-icon-button (click)="loadPage()" aria-label="recarregar"
+                    matTooltip="Recarregar">
+                <mat-icon>refresh</mat-icon>
+            </button>
+
+            <button class="toggle-filter" mat-icon-button [ngClass]="{'warn': !(gridFilter | json).includes('{}')}"
+                    (click)="toggleFilter()" aria-label="filtrar" matTooltip="Filtrar">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+
+            <button mat-icon-button [ngClass]="{'warn': hasInatived}" *ngIf="actions.indexOf('showInatived') > -1"
+                    (click)="loadInatived()"
+                    aria-label="mostrar inativo"
+                    matTooltip="Mostrar Inativos">
+                <mat-icon>visibility_off</mat-icon>
+            </button>
+
+            <button mat-icon-button [ngClass]="{'warn': hasExcluded}" *ngIf="actions.indexOf('showDeleted') > -1"
+                    (click)="loadExcluded()" aria-label="mostrar apagados" matTooltip="Mostrar Apagados">
+                <mat-icon>delete_sweep</mat-icon>
+            </button>
+
+        </div>
+
+        <div class="loading" *ngIf="loading">
+            <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <div class="content" cdkPerfectScrollbar>
+            <table mat-table [dataSource]="dataSource" matSort [ngStyle]="loading ? {'display': 'none'} : {}">
+
+                <!-- Selection Column -->
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (click)="toggleSelectAll($event)" [checked]="hasSelected" [disabled]="hasExcluded"
+                                      [indeterminate]="isIndeterminate">
+                        </mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let juntada">
+                        <mat-checkbox [checked]="selectedIds.indexOf(juntada.id) > -1"
+                                      (change)="toggleInSelected(juntada.id)" (click)="$event.stopPropagation();"
+                                      [disabled]="(deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo) || hasExcluded || desentranhadoId?.indexOf(juntada.id) > -1">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- Id Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Id
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Id: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.id}}
+                    </td>
+                </ng-container>
+
+                <!-- Descricao Column -->
+                <ng-container matColumnDef="descricao">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Descrição
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Descrição: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.descricao  | titleCasePipe}}
+                    </td>
+                </ng-container>
+
+                <!-- NumeracaoSequencial Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('numeracaoSequencial') > -1"
+                              matColumnDef="numeracaoSequencial">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Sequencial
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Sequencial: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.numeracaoSequencial}}
+                    </td>
+                </ng-container>
+
+                <!-- Documento Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('documento.tipoDocumento.nome') > -1"
+                              matColumnDef="documento.tipoDocumento.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Tipo de Documento
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Tipo de Documento: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.documento?.tipoDocumento?.nome | titleCasePipe}}
+                    </td>
+                </ng-container>
+
+                <!-- Setor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('documento.setorOrigem.nome') > -1"
+                              matColumnDef="documento.setorOrigem.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Setor
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Setor: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.documento?.setorOrigem?.nome | titleCasePipe}}
+                    </td>
+                </ng-container>
+
+                <!-- Unidade Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('documento.setorOrigem.unidade.nome') > -1"
+                              matColumnDef="documento.setorOrigem.unidade.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Unidade
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Unidade: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.documento?.setorOrigem?.unidade?.nome | titleCasePipe}}
+                    </td>
+                </ng-container>
+
+                <!-- Ativo Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('ativo') > -1" matColumnDef="ativo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Ativo
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Ativo: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        <mat-checkbox [disabled]="true" [checked]="juntada.ativo"></mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- OrigemDados Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('origemDados') > -1" matColumnDef="origemDados">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Origem de Dados
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Origem de Dados: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.origemDados?.fonteDados | titleCasePipe}}
+                    </td>
+                </ng-container>
+
+                <!-- Volume Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('volume.numeracaoSequencial') > -1"
+                              matColumnDef="volume.numeracaoSequencial">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Volume
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Volume: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.volume?.numeracaoSequencial}}
+                    </td>
+                </ng-container>
+
+                <!-- ComponentesDigitais Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('documento.componentesDigitais.extensao') > -1"
+                              matColumnDef="documento.componentesDigitais.extensao">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Componentes Digitais
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile'
+                        data-label='Componentes Digitais: '>
+                        <button *ngFor="let componenteDigital of juntada.documento?.componentesDigitais" mat-icon-button
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1" (click)="download(componenteDigital)"
+                                aria-label="download" matTooltip="{{componenteDigital.fileName}}">
+                            <mat-icon>picture_as_pdf</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <!-- CriadoPor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('criadoPor.nome') > -1" matColumnDef="criadoPor.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Criado Por
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Criado Por: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.criadoPor?.nome | titleCasePipe}}
+                    </td>
+                </ng-container>
+
+                <!-- CriadoEm Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('criadoEm') > -1" matColumnDef="criadoEm">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Criado Em
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Criado Em: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.criadoEm?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}} </td>
+                </ng-container>
+
+                <!-- AtualizadoPor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('atualizadoPor.nome') > -1"
+                              matColumnDef="atualizadoPor.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Atualizado Por
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Atualizado Por: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.atualizadoPor?.nome | titleCasePipe}}
+                    </td>
+                </ng-container>
+
+                <!-- AtualizadoEm Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('atualizadoEm') > -1" matColumnDef="atualizadoEm">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Atualizado Em
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Atualizado Em: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.atualizadoEm?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}} </td>
+                </ng-container>
+
+                <!-- ApagadoPor Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('apagadoPor.nome') > -1" matColumnDef="apagadoPor.nome">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Apagado Por
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Apagado Por: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.apagadoPor?.nome | titleCasePipe}}
+                    </td>
+                </ng-container>
+
+                <!-- ApagadoEm Column -->
+                <ng-container *ngIf="displayedColumns.indexOf('apagadoEm') > -1" matColumnDef="apagadoEm">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        Apagado Em
+                    </th>
+                    <td mat-cell *matCellDef="let juntada" class='has_label_on_mobile' data-label='Apagado Em: '
+                        [ngClass]="{'deleted':deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1, 'error': getProp(deletingErrors, juntada.id)}">
+                        {{juntada.apagadoEm?.toDate() | date: 'dd/MM/yyyy HH:mm:ss'}}
+                    </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let juntada">
+                        <button disabled mat-icon-button
+                                *ngIf="!!juntada.documento.acessoRestrito && juntada.ativo">
+                            <mat-icon matTooltip="Acesso restrito!" class="s-20 red-fg">
+                                      block
+                            </mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('view') > -1 && !hasExcluded"
+                                (click)="viewJuntada(juntada)"
+                                aria-label="visualizar"
+                                matTooltip="Visualizar">
+                            <mat-icon>pageview</mat-icon>
+                        </button>
+
+                        <button mat-icon-button *ngIf="actions.indexOf('select') > -1 && !hasExcluded"
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1"
+                                (click)="selectJuntada(juntada)" aria-label="selecionar" matTooltip="Selecionar">
+                            <mat-icon>keyboard_return</mat-icon>
+                        </button>
+
+                        <button mat-icon-button *ngIf="actions.indexOf('edit') > -1 && !hasExcluded && deletingIds?.indexOf(juntada.id) === -1"
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1"
+                                (click)="editJuntada(juntada.documento)" aria-label="editar" matTooltip="Editar">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+
+                        <div class="spinner-container" *ngIf="deletingIds?.indexOf(juntada.id) > -1 || assinandoId?.indexOf(juntada.documento?.id) > -1">
+                            <mat-spinner diameter="24"></mat-spinner>
+                        </div>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('delete') > -1 && deletingIds?.indexOf(juntada.id) === -1 && !hasExcluded"
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1"
+                                (click)="deleteJuntada(juntada.id)" aria-label="remover" matTooltip="Remover">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('desentranhar') > -1 && deletingIds?.indexOf(juntada.id) === -1"
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1"
+                                (click)="desentranharJuntadas([juntada.id])" aria-label="desentranhar"
+                                matTooltip="Desentranhar">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('desentranharJuntada') > -1 && deletingIds?.indexOf(juntada.id) === -1"
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1"
+                                (click)="doDesentranharJuntada(juntada)" aria-label="desentranhar"
+                                matTooltip="Desentranhar Juntada">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('copiar') > -1 && deletingIds?.indexOf(juntada.id) === -1"
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1"
+                                (click)="copiarJuntadas([juntada.id])" aria-label="criar cópia"
+                                matTooltip="Criar Cópia">
+                            <mat-icon>file_copy</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('desentranharBloco') > -1 && deletingIds?.indexOf(juntada.id) === -1"
+                                (click)="addDesentranhar(juntada)" aria-label="desentranhar" matTooltip="Desentranhar">
+                            <mat-icon>add_circle</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('assinar') > -1 && deletingIds?.indexOf(juntada.id) === -1 &&
+                                     (assinandoId !== undefined && assinandoId?.indexOf(juntada.documento?.id)) === -1"
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1"
+                                (click)="doAssinar(juntada.documento)" aria-label="Assinar" matTooltip="Assinar">
+                            <mat-icon>lock</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="actions.indexOf('adicionarVinculacao') > -1 &&
+                                    deletingIds?.indexOf(juntada.id) === -1 &&
+                                    !juntada.documento?.estaVinculada"
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1"
+                                (click)="doAdicionarVinculacao(juntada.id)" aria-label="Adicionar Vinculação"
+                                matTooltip="Adicionar Vinculação">
+                            <mat-icon>link</mat-icon>
+                        </button>
+
+                        <button mat-icon-button
+                                *ngIf="(actions.indexOf('removerVinculacoes') > -1 && deletingIds?.indexOf(juntada.id) === -1) &&
+                                     juntada.documento?.vinculacoesDocumentos.length > 0"
+                                [disabled]="deletedIds?.indexOf(juntada.id) > -1 || !juntada.ativo || desentranhadoId?.indexOf(juntada.id) > -1"
+                                (click)="doRemoverVinculacoes(juntada)" aria-label="Remover Vinculações"
+                                matTooltip="Remover Vinculações">
+                            <mat-icon>link_off</mat-icon>
+                        </button>
+
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+                <tr mat-row *matRowDef="let juntada; columns: displayedColumns;">
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <mat-paginator [disabled]="loading" [pageSizeOptions]="[10, 25]" showFirstLastButtons="true"></mat-paginator>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,12 @@
+<cdk-versao-grid
+        [loading]="loading"
+        [logEntrys]="logEntrys"
+        [total]="total"
+        [mode]="mode"
+        [actions]="['reverter', 'visualizar', 'comparar']"
+        (reverter)="doReverter($event)"
+        (visualizar)="doVisualizar($event)"
+        (comparar)="doComparar($event)"
+        (cancel)="doCancel()"
+        (reload)="reload($event)">
+</cdk-versao-grid>

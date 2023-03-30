@@ -1,0 +1,23 @@
+complementar {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+
+    > mat-tab-group {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: row;
+
+        .mat-tab-body {
+            display: flex;
+            flex-direction: column;
+            padding-top: 8px;
+
+            .bt-upload {
+                display: flex;
+                flex-direction: row;
+            }
+        }
+    }
+}

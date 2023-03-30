@@ -1,0 +1,195 @@
+@import "src/@cdk/scss/cdk";
+
+@mixin processoUserProfileCss {
+    .profileImage {
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        line-height: 40px;
+        margin: 0 8px 0 0;
+        border-radius: 50%;
+        font-weight: bold;
+        color: #FFFFFF;
+        text-align: center;
+        background: #3949AB;
+
+        .mat-badge-content {
+            right: calc(-8px) !important;
+            top: calc(-4px) !important;
+        }
+    }
+}
+
+processo {
+
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    width: 10vw;
+
+    > .page-layout {
+
+        > .center {
+
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+
+            > .header-processo {
+                padding-top: 8px;
+                padding-left: 8px;
+                padding-right: 8px;
+                flex: 0 1 auto;
+                display: flex;
+                flex-direction: column;
+
+                > .painel {
+                    display: flex;
+                    flex: 1 1 auto;
+                    flex-direction: row;
+
+                    > .sidebar-toggle {
+                        margin: 0 0 0 6px;
+                        width: 56px;
+                        border-radius: 0;
+                        border-right: 1px solid;
+                    }
+
+                    > .info {
+                        margin-left: 4px;
+                        margin-right: 8px;
+                        display: flex;
+                        flex: 1 1 auto;
+                        flex-direction: column;
+                    }
+
+                    > .tarefas {
+                        display: flex;
+                        flex: 0 1 auto;
+
+                        > .more-user {
+                            > .more-button {
+                                width: 40px;
+                                height: 40px;
+                                color: #FFFFFF;
+                                margin: 0 8px 0 0;
+                                > .mat-button-wrapper {
+                                    display: inline;
+                                }
+                            }
+
+                            > .more-tarefa {
+                                max-width: 261px !important;
+                                max-height: 261px !important;
+                            }
+                        }
+                    }
+
+                    >.menu_processo {
+                        flex: 0 1 auto;
+                        display: flex;
+
+                        > .actions {
+                            flex: 1 0 auto;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: flex-start;
+                        }
+                    }
+                }
+
+                > .search-wrapper {
+                    flex: 0 1 auto;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    > cdk-etiqueta-chips {
+                        margin-left: 8px;
+                        margin-right: 8px;
+                    }
+                }
+            }
+
+            > .content-card {
+                margin: 8px;
+            }
+        }
+
+    }
+
+    .user {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+
+        @include processoUserProfileCss;
+    }
+
+}
+
+.sincroniza-barramento-snackbar {
+    > * {
+        color: black;
+    }
+}
+
+.mat-menu-content:not(:empty) {
+    max-height: 550px !important;
+}
+
+.processo-tarefa-menu {
+    @include processoUserProfileCss;
+
+    mat-card {
+        &.card-usuario {
+            mat-card-header {
+                mat-card-title {
+                    display: flex !important;
+                    align-items: center;
+                }
+            }
+        }
+
+        &.card-tarefa {
+            mat-card-header {
+                .mat-card-header-text {
+                    margin: 0 !important;
+                }
+                mat-card-title {
+                    font-size: 14px !important;
+                }
+            }
+        }
+    }
+
+    &.more-tarefa {
+        background-color: transparent !important;
+        box-shadow: unset !important;
+        display: flex;
+        justify-content: flex-end;
+        left: calc(9px);
+
+        .mat-menu-content {
+            max-height: unset !important;
+            margin-top: 8px;
+
+            .mat-menu-item {
+                padding: 0 !important;
+                margin-bottom: 10px;
+                overflow: unset !important;
+
+                .mat-menu-trigger {
+                    padding: 0 !important;
+                    overflow: unset !important;
+                }
+            }
+        }
+    }
+
+    &.sub-menu-more-tarefa {
+        left: calc(-50px);
+        top: calc(-20px);
+    }
+}
